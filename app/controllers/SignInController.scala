@@ -3,19 +3,16 @@ package controllers
 import _root_.util.DefaultEnv
 import com.mohiva.play.silhouette.api.Authenticator.Implicits._
 import com.mohiva.play.silhouette.api.actions.UserAwareRequest
-import com.mohiva.play.silhouette.api.exceptions.ProviderException
 import com.mohiva.play.silhouette.api.util.{Clock, Credentials}
-import com.mohiva.play.silhouette.api.{LoginEvent, LoginInfo, Silhouette}
+import com.mohiva.play.silhouette.api.{LoginEvent, LoginInfo}
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.SignInForm
 import models.User
 import net.ceedubs.ficus.Ficus._
 import play.api.Configuration
-import play.api.i18n.Messages
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.libs.json._
-import play.api.mvc.AnyContent
+import play.api.mvc.{AnyContent, Request}
 import scaldi.Injector
 import services.UserService
 
@@ -32,7 +29,7 @@ class SignInController(implicit inj: Injector) extends ApplicationController {
   val configuration = inject[Configuration]
 
 
-  def submit = silhouette.UserAwareAction.async { implicit request =>
+  def submit = silhouette.UnsecuredAction.async { implicit request =>
     SignInForm.form.bindFromRequest.fold(
       form => Future.successful(BadRequest(views.html.signIn(form))),
       data =>
@@ -49,7 +46,7 @@ class SignInController(implicit inj: Injector) extends ApplicationController {
   private[this] def futureResult(data: SignInForm.Data,
                                  loginInfo: LoginInfo,
                                  user: User)
-                                (implicit request: UserAwareRequest[DefaultEnv, AnyContent]) = {
+                                (implicit request: Request[AnyContent]) = {
     for {
       authenticator <- authenticator(data, loginInfo)
       token <- silhouette.env.authenticatorService.init(authenticator)
@@ -62,7 +59,7 @@ class SignInController(implicit inj: Injector) extends ApplicationController {
 
   private[this] def authenticator(data: SignInForm.Data,
                                   loginInfo: LoginInfo)
-                                 (implicit request: UserAwareRequest[DefaultEnv, AnyContent]) = {
+                                 (implicit request: Request[AnyContent]) = {
     silhouette.env.authenticatorService.create(loginInfo).map {
       case authenticator if data.rememberMe =>
         val config = configuration.underlying
@@ -107,7 +104,6 @@ class SignInController(implicit inj: Injector) extends ApplicationController {
   //      case error => Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.credentials"))))
   //    }
   //  }
-
 
   def view = silhouette.UnsecuredAction.async {
     implicit request =>

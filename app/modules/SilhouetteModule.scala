@@ -4,12 +4,12 @@ import _root_.services.{UserIdentityService, UserService}
 import _root_.util.DefaultEnv
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.actions.{SecuredAction, UnsecuredAction, UserAwareAction}
-import com.mohiva.play.silhouette.api.crypto.{Crypter, CrypterAuthenticatorEncoder}
+import com.mohiva.play.silhouette.api.crypto.{AuthenticatorEncoder, CookieSigner, Crypter, CrypterAuthenticatorEncoder}
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.services.{AuthenticatorService, AvatarService}
 import com.mohiva.play.silhouette.api.util._
-import com.mohiva.play.silhouette.crypto.{JcaCrypter, JcaCrypterSettings}
-import com.mohiva.play.silhouette.impl.authenticators.{JWTAuthenticator, JWTAuthenticatorService, JWTAuthenticatorSettings}
+import com.mohiva.play.silhouette.crypto.{JcaCookieSigner, JcaCookieSignerSettings, JcaCrypter, JcaCrypterSettings}
+import com.mohiva.play.silhouette.impl.authenticators._
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import com.mohiva.play.silhouette.impl.services.GravatarService
 import com.mohiva.play.silhouette.impl.util.{DefaultFingerprintGenerator, PlayCacheLayer, SecureRandomIDGenerator}
@@ -37,7 +37,7 @@ class SilhouetteModule extends Module {
     inject[UserAwareAction])
 
   bind[Environment[DefaultEnv]] to Environment[DefaultEnv](inject[UserService],
-    inject[AuthenticatorService[JWTAuthenticator]],
+    inject[AuthenticatorService[CookieAuthenticator]],
     Seq(),
     inject[EventBus])
 
@@ -62,14 +62,31 @@ class SilhouetteModule extends Module {
     inject[PasswordHasherRegistry])
 
   bind[Crypter] identifiedBy 'authenticatorCrypter to new JcaCrypter(inject[JcaCrypterSettings])
-  bind[JcaCrypterSettings] to inject[Configuration].underlying
-    .as[JcaCrypterSettings]("silhouette.authenticator.crypter")
+  bind[JcaCrypterSettings] to inject[Configuration].underlying.as[JcaCrypterSettings]("silhouette.authenticator.crypter")
   bind[CrypterAuthenticatorEncoder] to new CrypterAuthenticatorEncoder(inject[Crypter])
-  bind[JWTAuthenticatorSettings] to inject[Configuration].underlying
-    .as[JWTAuthenticatorSettings]("silhouette.authenticator")
-  bind[AuthenticatorService[JWTAuthenticator]] to new JWTAuthenticatorService(inject[JWTAuthenticatorSettings],
+
+
+  //Cookie
+  bind[JcaCookieSignerSettings] to inject[Configuration].underlying.as[JcaCookieSignerSettings]("silhouette.authenticator.cookie.signer")
+  bind[CookieSigner] to new JcaCookieSigner(inject[JcaCookieSignerSettings])
+
+  bind[CookieAuthenticatorSettings] to inject[Configuration].underlying.as[CookieAuthenticatorSettings]("silhouette.authenticator")
+  bind[AuthenticatorService[CookieAuthenticator]] to new CookieAuthenticatorService(
+    inject[CookieAuthenticatorSettings],
     None,
-    inject[CrypterAuthenticatorEncoder],
+    inject[CookieSigner],
+    inject[AuthenticatorEncoder],
+    inject[FingerprintGenerator],
     inject[IDGenerator],
     inject[Clock])
+
+  //JWT
+  //  bind[JWTAuthenticatorSettings] to inject[Configuration].underlying
+  //    .as[JWTAuthenticatorSettings]("silhouette.authenticator")
+  //  bind[AuthenticatorService[JWTAuthenticator]] to new JWTAuthenticatorService(
+  //    inject[JWTAuthenticatorSettings],
+  //    None,
+  //    inject[CrypterAuthenticatorEncoder],
+  //    inject[IDGenerator],
+  //    inject[Clock])
 }
