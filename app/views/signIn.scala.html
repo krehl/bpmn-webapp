@@ -1,8 +1,8 @@
-@(signInForm: Form[forms.SignInForm.Data])(implicit request: RequestHeader, messages: Messages)
+@(signInForm: Form[forms.SignInForm.Data], user: Option[User])(implicit request: RequestHeader, messages: Messages)
 
 @import b3.vertical.fieldConstructor
 
-@main(Messages("sign.in.title")) {
+@main(Messages("sign.in.title"), user) {
     @request.flash.get("error").map { msg =>
         <div class="col-md-6 col-md-offset-3 alert alert-danger alert-error">
             <a href="#" class="close" data-dismiss="alert">&times;</a>

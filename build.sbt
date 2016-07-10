@@ -4,20 +4,21 @@ version := "1.0"
 
 lazy val `bpmn_webapp` = (project in file(".")).enablePlugins(PlayScala)
 
+pipelineStages := Seq(rjs, gzip)
+
 scalaVersion := "2.11.7"
 
 libraryDependencies ++= Seq(jdbc, cache, ws, specs2 % Test)
 
 unmanagedResourceDirectories in Test <+= baseDirectory(_ / "target/web/public/test")
 
-resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 
 resolvers += "Atlassian Releases" at "https://maven.atlassian.com/public/"
 
 libraryDependencies ++= Seq(
   cache,
   filters,
-//  "com.typesafe.play" %% "anorm" % "2.4.0",
+  //  "com.typesafe.play" %% "anorm" % "2.4.0",
   "net.codingwell" %% "scala-guice" % "4.0.1",
   "com.iheart" %% "ficus" % "1.2.6",
   "org.scaldi" %% "scaldi-play" % "0.5.15",
@@ -28,10 +29,11 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette-testkit" % "4.0.0-RC1" % "test",
   "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3",
   "org.webjars" %% "webjars-play" % "2.4.0-1",
-  //"org.webjars" % "bootstrap" % "3.1.1-2",
-  "org.webjars" % "flat-ui" % "bcaf2de95e",
-  "org.webjars" % "react" % "0.13.3"
-//  "org.webjars" % "marked" % "0.3.2"
+  "org.webjars" % "bootstrap" % "3.3.6",
+  "org.webjars.bower" % "bpmn-js" % "0.16.0"
+  //  "org.webjars" % "flat-ui" % "bcaf2de95e",
+  //  "org.webjars.npm" % "browserify" % "13.0.1",
+  //  "org.webjars" % "marked" % "0.3.2",
 )
 
 scalacOptions ++= Seq(

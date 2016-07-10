@@ -28,10 +28,14 @@ class SignInController(implicit inj: Injector) extends ApplicationController {
   val clock = inject[Clock]
   val configuration = inject[Configuration]
 
+  def view = silhouette.UnsecuredAction.async {
+    implicit request =>
+      Future.successful(Ok(views.html.signIn(SignInForm.form, None)))
+  }
 
   def submit = silhouette.UnsecuredAction.async { implicit request =>
     SignInForm.form.bindFromRequest.fold(
-      form => Future.successful(BadRequest(views.html.signIn(form))),
+      form => Future.successful(BadRequest(views.html.signIn(form, None))),
       data =>
         for {
           loginInfo <- credentialsProvider.authenticate(Credentials(data.email, data.password))
@@ -71,42 +75,6 @@ class SignInController(implicit inj: Injector) extends ApplicationController {
     }
   }
 
-  //  implicit val dataReads = (
-  //    (__ \ 'email).read[String] and
-  //      (__ \ 'password).read[String] and
-  //      (__ \ 'rememberMe).read[Boolean]
-  //    ) (SignInForm.Data.apply _)
 
-  //  def submit = silhouette.UnsecuredAction.async(parse.json) { implicit request =>
-  //    request.body.validate[SignInForm.Data].map { data =>
-  //      credentialsProvider.authenticate(Credentials(data.email, data.password)).flatMap { loginInfo =>
-  //        userService.retrieve(loginInfo).flatMap {
-  //          case Some(user) => silhouette.env.authenticatorService.create(loginInfo).map {
-  //            case authenticator if data.rememberMe =>
-  //              val config = configuration.underlying
-  //              authenticator.copy(
-  //                expirationDateTime = clock.now + config.as[FiniteDuration]("silhouette.authenticator.rememberMe.authenticatorExpiry"),
-  //                idleTimeout = config.getAs[FiniteDuration]("silhouette.authenticator.rememberMe.authenticatorIdleTimeout")
-  //              )
-  //            case authenticator => authenticator
-  //          }.flatMap { authenticator =>
-  //            silhouette.env.eventBus.publish(LoginEvent(user, request))
-  //            silhouette.env.authenticatorService.init(authenticator).map { token =>
-  //              Ok(Json.obj("token" -> token))
-  //            }
-  //          }
-  //          case None => Future.failed(new IdentityNotFoundException("Couldn't find user"))
-  //        }
-  //      }.recover {
-  //        case e: ProviderException => Unauthorized(Json.obj("message" -> Messages("invalid.credentials")))
-  //      }
-  //    }.recoverTotal {
-  //      case error => Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.credentials"))))
-  //    }
-  //  }
 
-  def view = silhouette.UnsecuredAction.async {
-    implicit request =>
-      Future.successful(Ok(views.html.signIn(SignInForm.form)))
-  }
 }

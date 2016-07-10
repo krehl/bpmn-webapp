@@ -1,0 +1,16 @@
+@(message: String, user: Option[User])(implicit request: RequestHeader, messages: Messages)
+@main(Messages("bpmn.modeler.title"), user) {
+    <style type="text/css">
+    html, body, #canvas, #content {
+        height: 100%;
+        padding: 0;
+    }
+    </style>
+
+    <div id="canvas" class="container-fluid"></div>
+    @*b3.buttonType("submit", 'class -> "btn btn-default"){ <span class="glyphicon glyphicon-ok"></span> Sign in }*@
+    @*<button id="save-button" type="button" class="btn btn-primary" >Save Diagram</button>*@
+
+    @*<script type='text/javascript' src="@routes.Assets.at("libs/bpmn-js/bpmn-modeler.min.js")"></script>*@
+    @*<script type='text/javascript' src="@routes.Assets.at("javascripts/modeler.js")" ></script>*@
+}

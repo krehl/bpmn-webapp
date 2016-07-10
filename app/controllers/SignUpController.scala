@@ -25,10 +25,15 @@ class SignUpController(implicit inj: Injector) extends ApplicationController {
   val passwordHash = inject[PasswordHasher]
   val authInfoRepository = inject[AuthInfoRepository]
 
+  def view = {
+    silhouette.UnsecuredAction.async { implicit request =>
+      Future.successful(Ok(views.html.signUp(SignUpForm.form, None)))
+    }
+  }
 
   def submit = silhouette.UnsecuredAction.async { implicit request =>
     SignUpForm.form.bindFromRequest.fold(
-      form => Future.successful(BadRequest(views.html.signUp(form))),
+      form => Future.successful(BadRequest(views.html.signUp(form, None))),
       data => createUser(data)
     )
   }
@@ -59,44 +64,6 @@ class SignUpController(implicit inj: Injector) extends ApplicationController {
           silhouette.env.eventBus.publish(LoginEvent(user, request))
           result
         }
-    }
-  }
-
-  //  def submit = (silhouette.UserAwareAction andThen Action).async(parse.json) { implicit request =>
-  //    request.body.validate[SignUpForm.Data].map { data =>
-  //      val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
-  //      userService.retrieve(loginInfo).flatMap {
-  //        case Some(user) => Future.successful(BadRequest(Json.obj("message" -> Messages("user.exists"))))
-  //        case None =>
-  //          val authInfo = passwordHash.hash(data.password)
-  //          val user = User(
-  //            id = UUID.randomUUID(),
-  //            loginInfo = loginInfo,
-  //            firstName = data.firstName,
-  //            lastName = data.lastName,
-  //            email = data.email,
-  //            roles = Set(Customer)
-  //          )
-  //          for {
-  //            option <- userService.save(user)
-  //            if option.isDefined
-  //            authInfo <- authInfoRepository.add(loginInfo, authInfo)
-  //            authenticator <- silhouette.env.authenticatorService.create(loginInfo)
-  //            token <- silhouette.env.authenticatorService.init(authenticator)
-  //          } yield {
-  //            silhouette.env.eventBus.publish(SignUpEvent(user, request))
-  //            silhouette.env.eventBus.publish(LoginEvent(user, request))
-  //            Ok(Json.obj("token" -> token))
-  //          }
-  //      }
-  //    }.recoverTotal {
-  //      case error => Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
-  //    }
-  //  }
-
-  def view = {
-    silhouette.UnsecuredAction.async { implicit request =>
-      Future.successful(Ok(views.html.signUp(SignUpForm.form)))
     }
   }
 }

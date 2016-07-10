@@ -1,19 +1,27 @@
-@(title: String)(content: Html)
+@(title: String, user: Option[User])(content: Html)
 
 <!DOCTYPE html>
 
 <html>
     <head>
         <title>@title</title>
-        <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css" rel="stylesheet">
+        <link rel="stylesheet" media="screen" href="@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.css"))">
+        <link rel="stylesheet" href="@routes.Assets.at("libs/bpmn-js/assets/diagram-js.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("libs/bpmn-js/assets/bpmn-font/css/bpmn-embedded.css")">
 
+        <script type='text/javascript' src="@routes.Assets.at("libs/bpmn-js/bpmn-modeler.min.js")" defer></script>
+        <script type='text/javascript' src="@routes.Assets.at("javascripts/modeler.js")" defer></script>
 
+        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))' async></script>
+        <script src="@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.js"))" async></script>
     </head>
     <body>
-        @content
+        <div id="navigation">@navigation()</div>
+        @if(user.isDefined) {
+
+        }
+        @*TODO only disabled for dev to avoid signup ... think of better way to organize html functions*@
+        <div id="content" class="container-fluid">@content</div>
     </body>
-    <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))'></script>
-    <script type='text/javascript' src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'></script>
 </html>
