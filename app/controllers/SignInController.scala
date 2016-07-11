@@ -1,13 +1,13 @@
 package controllers
 
 import _root_.util.DefaultEnv
+import forms.SignInForm
 import com.mohiva.play.silhouette.api.Authenticator.Implicits._
 import com.mohiva.play.silhouette.api.actions.UserAwareRequest
 import com.mohiva.play.silhouette.api.util.{Clock, Credentials}
 import com.mohiva.play.silhouette.api.{LoginEvent, LoginInfo}
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
-import forms.SignInForm
 import models.User
 import net.ceedubs.ficus.Ficus._
 import play.api.Configuration
@@ -42,7 +42,7 @@ class SignInController(implicit inj: Injector) extends ApplicationController {
           userOption <- userService.retrieve(loginInfo)
           futureResult <- userOption match {
             case Some(user) => futureResult(data, loginInfo, user)
-            case None => Future.failed(new IdentityNotFoundException("Couldn't find user"))
+            case None => Future.failed(new IdentityNotFoundException("Couldn't find user")) //TODO dont use excep
           }
         } yield futureResult)
   }
@@ -74,7 +74,4 @@ class SignInController(implicit inj: Injector) extends ApplicationController {
       case authenticator => authenticator
     }
   }
-
-
-
 }

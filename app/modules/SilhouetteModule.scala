@@ -2,6 +2,7 @@ package modules
 
 import _root_.services.{UserIdentityService, UserService}
 import _root_.util.DefaultEnv
+import daos.{InMemoryPasswordDAO, InMemoryUserDAO, UserDAO}
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.actions.{SecuredAction, UnsecuredAction, UserAwareAction}
 import com.mohiva.play.silhouette.api.crypto.{AuthenticatorEncoder, CookieSigner, Crypter, CrypterAuthenticatorEncoder}
@@ -16,7 +17,7 @@ import com.mohiva.play.silhouette.impl.util.{DefaultFingerprintGenerator, PlayCa
 import com.mohiva.play.silhouette.password.BCryptPasswordHasher
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import com.mohiva.play.silhouette.persistence.repositories.DelegableAuthInfoRepository
-import daos.{InMemoryPasswordDAO, InMemoryUserDAO, UserDAO}
+import daos.InMemoryUserDAO
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 import net.ceedubs.ficus.readers.EnumerationReader._

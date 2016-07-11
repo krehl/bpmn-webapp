@@ -2,11 +2,11 @@ package controllers
 
 import java.util.UUID
 
+import forms.SignUpForm
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.util.PasswordHasher
 import com.mohiva.play.silhouette.api.{LoginEvent, LoginInfo, SignUpEvent}
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
-import forms.SignUpForm
 import models.{Customer, User}
 import play.api.i18n.Messages
 import play.api.libs.concurrent.Execution.Implicits._
@@ -45,7 +45,6 @@ class SignUpController(implicit inj: Injector) extends ApplicationController {
       case None =>
         val authInfo = passwordHash.hash(data.password)
         val user = User(
-          id = UUID.randomUUID(),
           loginInfo = loginInfo,
           firstName = data.firstName,
           lastName = data.lastName,

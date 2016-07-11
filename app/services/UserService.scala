@@ -1,8 +1,8 @@
 package services
 
+import daos.UserDAO
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.services.IdentityService
-import daos.UserDAO
 import models.User
 import scaldi.{Injectable, Injector}
 

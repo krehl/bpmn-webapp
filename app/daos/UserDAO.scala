@@ -1,7 +1,9 @@
 package daos
 
+import java.util.UUID
+
 import com.mohiva.play.silhouette.api.LoginInfo
-import models.User
+import models.{Customer, Role, User}
 
 import scala.collection.mutable
 import scala.concurrent.Future
@@ -14,7 +16,7 @@ sealed trait UserDAO extends DAO[LoginInfo, User]
 
 class InMemoryUserDAO extends UserDAO {
 
-  import daos.InMemoryUserDAO._
+  import InMemoryUserDAO._
 
   override def save(user: User): Future[Boolean] = {
     Future.successful({
@@ -56,4 +58,11 @@ class InMemoryUserDAO extends UserDAO {
 
 object InMemoryUserDAO {
   val users: mutable.HashMap[LoginInfo, User] = mutable.HashMap()
+  val dummyUser = User(
+    loginInfo = LoginInfo("credentials", "1@1"),
+    firstName ="1",
+    lastName = "1",
+    email = "1@1",
+    roles = Set[Role](Customer))
+  users.put(dummyUser.loginInfo, dummyUser)
 }

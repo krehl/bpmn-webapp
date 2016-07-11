@@ -1,0 +1,14 @@
+#wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+html, body, #canvas, #content {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+#canvas {
+    border: solid black;
+}

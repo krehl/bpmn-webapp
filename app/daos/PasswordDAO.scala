@@ -17,7 +17,7 @@ sealed trait PasswordDAO extends DAO[LoginInfo, PasswordInfo]
 
 class InMemoryPasswordDAO extends DelegableAuthInfoDAO[PasswordInfo] {
 
-  import daos.InMemoryPasswordDAO._
+  import InMemoryPasswordDAO._
 
   override def find(loginInfo: LoginInfo): Future[Option[PasswordInfo]] = {
     Future.successful(passwords.get(loginInfo))
@@ -62,5 +62,8 @@ class InMemoryPasswordDAO extends DelegableAuthInfoDAO[PasswordInfo] {
 }
 
 object InMemoryPasswordDAO {
+
   val passwords: mutable.HashMap[LoginInfo, PasswordInfo] = mutable.HashMap()
+  val dummyPassword = PasswordInfo("bcrypt", "$2a$10$WrYi4ugL45Pnaql.JGGH9O65kUBdyFbtwVdTA5/5vV9EnSRkig/Be", None)
+  passwords.put(LoginInfo("credentials", "1@1"), dummyPassword)
 }

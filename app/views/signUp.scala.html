@@ -1,4 +1,5 @@
-@(signInForm: Form[forms.SignUpForm.Data], user :Option[User])(implicit request: RequestHeader, messages: Messages)
+@import forms.SignUpForm
+@(signInForm: Form[SignUpForm.Data], user :Option[User])(implicit request: RequestHeader, messages: Messages)
 
 @import b3.inline.fieldConstructor
 
