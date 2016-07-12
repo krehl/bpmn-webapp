@@ -20,7 +20,6 @@ libraryDependencies ++= Seq(
   filters,
   //  "com.typesafe.play" %% "anorm" % "2.4.0",
   "com.novus" %% "salat" % "1.9.8",
-  "net.codingwell" %% "scala-guice" % "4.0.1",
   "com.iheart" %% "ficus" % "1.2.6",
   "org.scaldi" %% "scaldi-play" % "0.5.15",
   "com.mohiva" %% "play-silhouette" % "4.0.0-RC1",

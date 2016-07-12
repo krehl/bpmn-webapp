@@ -13,6 +13,10 @@ class ApplicationController(implicit inj: Injector) extends Controller with Inje
   val messagesApi = inject[MessagesApi]
   val silhouette = inject[Silhouette[DefaultEnv]]
 
+  /**
+    * HTTP GET endpoint, presents different content depending on user authentication status
+    * @return HTTP OK status with HTML
+    */
   def index = silhouette.UserAwareAction.async { implicit request =>
     Future.successful(
       request.identity match {

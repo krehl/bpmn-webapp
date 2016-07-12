@@ -28,10 +28,20 @@ import play.api.libs.ws.WSClient
 import scaldi.Module
 
 /**
+  * Defines dependency injection wiring for the silhouette library
+  *
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/4/2016
   */
 class SilhouetteModule extends Module {
+  // DATA STORE BINDINGS
+  bind[DelegableAuthInfoDAO[PasswordInfo]] to new InMemoryPasswordDAO //TODO
+  bind[UserDAO] to new InMemoryUserDAO //TODO
+  bind[CacheLayer] to new PlayCacheLayer(inject[CacheApi])
 
+  //OTHER CLIENT SIDE BINDING
+  bind[UserService] to new UserIdentityService
+
+  //INTERNAL LIBRARY BINDINGS
   bind[Silhouette[DefaultEnv]] to new SilhouetteProvider[DefaultEnv](inject[Environment[DefaultEnv]],
     inject[SecuredAction],
     inject[UnsecuredAction],
@@ -43,7 +53,6 @@ class SilhouetteModule extends Module {
     inject[EventBus])
 
   bind[HTTPLayer] to new PlayHTTPLayer(inject[WSClient])
-  bind[CacheLayer] to new PlayCacheLayer(inject[CacheApi])
   bind[IDGenerator] to new SecureRandomIDGenerator()(defaultContext)
   bind[FingerprintGenerator] to new DefaultFingerprintGenerator(false)
   bind[EventBus] to new EventBus
@@ -51,13 +60,10 @@ class SilhouetteModule extends Module {
   bind[AvatarService] to new GravatarService(inject[HTTPLayer])
 
   //passwords
-  bind[DelegableAuthInfoDAO[PasswordInfo]] to new InMemoryPasswordDAO
   bind[AuthInfoRepository] to new DelegableAuthInfoRepository(inject[DelegableAuthInfoDAO[PasswordInfo]])
   bind[PasswordHasher] to new BCryptPasswordHasher
   binding to new PasswordHasherRegistry(inject[PasswordHasher])
 
-  bind[UserDAO] to new InMemoryUserDAO
-  bind[UserService] to new UserIdentityService
 
   bind[CredentialsProvider] to new CredentialsProvider(inject[AuthInfoRepository],
     inject[PasswordHasherRegistry])
@@ -65,7 +71,6 @@ class SilhouetteModule extends Module {
   bind[Crypter] identifiedBy 'authenticatorCrypter to new JcaCrypter(inject[JcaCrypterSettings])
   bind[JcaCrypterSettings] to inject[Configuration].underlying.as[JcaCrypterSettings]("silhouette.authenticator.crypter")
   bind[CrypterAuthenticatorEncoder] to new CrypterAuthenticatorEncoder(inject[Crypter])
-
 
   //Cookie
   bind[JcaCookieSignerSettings] to inject[Configuration].underlying.as[JcaCookieSignerSettings]("silhouette.authenticator.cookie.signer")

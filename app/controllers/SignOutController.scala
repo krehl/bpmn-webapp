@@ -8,6 +8,10 @@ import scaldi.Injector
   */
 class SignOutController(implicit inj: Injector) extends ApplicationController {
 
+  /**
+    * HTTP POST endpoint, requires a signed in user
+    * @return Ridirect to the application main page
+    */
   def signOut = silhouette.SecuredAction.async { implicit request =>
     silhouette.env.eventBus.publish(LogoutEvent(request.identity, request))
     silhouette.env.authenticatorService.discard(request.authenticator, Redirect(routes.ApplicationController.index()))

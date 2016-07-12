@@ -11,10 +11,9 @@ import scala.concurrent.Future
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/6/2016
   */
 
-//this is not good...but we ve to implement the library interface here :( ... TODO solution
 sealed trait PasswordDAO extends DAO[LoginInfo, PasswordInfo]
 
-
+//this is not good...but we ve to implement the library interface here :( ... TODO solution
 class InMemoryPasswordDAO extends DelegableAuthInfoDAO[PasswordInfo] {
 
   import InMemoryPasswordDAO._
@@ -62,7 +61,6 @@ class InMemoryPasswordDAO extends DelegableAuthInfoDAO[PasswordInfo] {
 }
 
 object InMemoryPasswordDAO {
-
   val passwords: mutable.HashMap[LoginInfo, PasswordInfo] = mutable.HashMap()
   val dummyPassword = PasswordInfo("bcrypt", "$2a$10$WrYi4ugL45Pnaql.JGGH9O65kUBdyFbtwVdTA5/5vV9EnSRkig/Be", None)
   passwords.put(LoginInfo("credentials", "1@1"), dummyPassword)
