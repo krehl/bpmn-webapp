@@ -5,6 +5,11 @@
 # Home page
 GET         /                     controllers.ApplicationController.index
 
+GET         /load/:id             controllers.BPMNDiagramController.load(id: String)
+
+GET         /BPMN/new             controllers.BPMNDiagramController.newBPMNDiagram
+GET         /BPMN/:id             controllers.BPMNDiagramController.bpmn(id: String)
+
 GET         /signUp               controllers.SignUpController.view
 POST        /signUp               controllers.SignUpController.submit
 

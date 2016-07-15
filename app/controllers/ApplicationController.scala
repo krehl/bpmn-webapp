@@ -20,7 +20,10 @@ class ApplicationController(implicit inj: Injector) extends Controller with Inje
   def index = silhouette.UserAwareAction.async { implicit request =>
     Future.successful(
       request.identity match {
-        case Some(identity) => Ok(views.html.bpmnModeler(s"Hello ${identity.firstName}!", Some(identity)))
+        case Some(identity) => Ok("ok")
+/*
+          Ok(views.html.main(s"Hello ${identity.firstName}!", Some(identity)))
+*/
         case None => Ok(views.html.signUp(SignUpForm.form, None))
       })
   }

@@ -1,7 +1,11 @@
-@(message: String, user: Option[User])(implicit request: RequestHeader, messages: Messages)
+@(message: String, user: Option[User], id: String)(implicit request: RequestHeader, messages: Messages)
 @main(Messages("bpmn.modeler.title"), user) {
 
     <div id="canvas" class="container-fluid"></div>
+    <script type='text/javascript'>
+        bpmn_id = "@id"
+    </script>
+    <script type='text/javascript' src="@routes.Assets.at("javascripts/modeler.js")" defer></script>
     @*b3.buttonType("submit", 'class -> "btn btn-default"){ <span class="glyphicon glyphicon-ok"></span> Sign in }*@
     @*<button id="save-button" type="button" class="btn btn-primary" >Save Diagram</button>*@
 }
