@@ -18,11 +18,10 @@ trait DAO[K, V] {
 
   /**
     *
-    * @param key key
     * @param value value
     * @return False if user was present, true otherwise.
     */
-  def update(key: K, value: V): Future[Boolean]
+  def update(value: V): Future[Boolean]
 
   /**
     *

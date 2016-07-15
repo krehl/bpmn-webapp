@@ -9,4 +9,5 @@ import org.bson.types.ObjectId
   */
 object Types {
   type UserID = ObjectId
+  type BPMNDiagramID = ObjectId
 }

@@ -41,10 +41,21 @@
                     console.error('diagram save failed', err);
                 } else {
                     console.info('diagram saved');
-                    console.info(xml);
+                    $.ajax({
+                        url: "/save",
+                        data: xml,
+                        type: 'POST',
+                        contentType: "text/xml",
+                        dataType: "text",
+                        success : function (a) {
+                            console.log(a)
+                        },
+                        error : function (xhr, ajaxOptions, thrownError){
+                            console.log(xhr.status);
+                            console.log(thrownError);
+                        }
+                    });
                 }
-
-                alert('diagram saved (see console (F12))');
             });
         });
     }

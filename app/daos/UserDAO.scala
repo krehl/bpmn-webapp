@@ -4,6 +4,7 @@ import java.util.UUID
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import models.{Customer, Role, User}
+import play.libs.F
 
 import scala.collection.mutable
 import scala.concurrent.Future
@@ -29,10 +30,10 @@ class InMemoryUserDAO extends UserDAO {
     })
   }
 
-  override def update(loginInfo: LoginInfo, user: User): Future[Boolean] = {
+  override def update(user: User): Future[Boolean] = {
     Future.successful({
-      if (users.contains(loginInfo)) {
-        users.put(loginInfo, user)
+      if (users.contains(user.loginInfo)) {
+        users.put(user.loginInfo, user)
         true
       } else {
         false
