@@ -11,22 +11,21 @@
                 Dropdown
             </a>
             <div class="dropdown-menu" aria-labelledby="Preview">
-                <a id="save-button" class="dropdown-item" href="#">Save Diagram</a>
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Dropdown Link 3</a>
+                <a id="new-button" class="dropdown-item">New Diagram</a>
+                <a id="save-button" class="dropdown-item">Save Diagram</a>
             </div>
         </li>
-    </ul>
-
-    <ul class="nav navbar-nav pull-xs-right">
-        <li class="nav-item">
-            <a class="nav-link" href="#">Repository</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">Profile</a>
-        </li>
-        <li class="nav-item">
+        <li class="nav-item pull-xs-right">
             <a class="nav-link" href="/signOut">Logout</a>
         </li>
+        <li class="nav-item pull-xs-right">
+            <a class="nav-link" href="#">Profile</a>
+        </li>
+        <li class="nav-item  pull-xs-right">
+            <a class="nav-link" href="#">Repository</a>
+        </li>
     </ul>
+    <form id="load-form" class="form-inline">
+        <input id="diagram-id" class="form-control" type="text" placeholder="Diagram ID">
+    </form>
 </nav>

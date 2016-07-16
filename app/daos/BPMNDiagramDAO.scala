@@ -16,7 +16,7 @@ class InMemoryBPMNDiagramDAO extends BPMNDiagramDAO {
 
   /**
     * @param value value
-    * @return False if user was already present, true otherwise.
+    * @return False if diagram was already present, true otherwise.
     */
   override def save(value: BPMNDiagram): Future[Boolean] = {
     Future.successful({
@@ -32,7 +32,7 @@ class InMemoryBPMNDiagramDAO extends BPMNDiagramDAO {
   /**
     *
     * @param value value
-    * @return False if user was present, true otherwise.
+    * @return False if diagram was present, true otherwise.
     */
   override def update(value: BPMNDiagram): Future[Boolean] = {
     Future.successful({
@@ -48,7 +48,7 @@ class InMemoryBPMNDiagramDAO extends BPMNDiagramDAO {
   /**
     *
     * @param key value
-    * @return False if user was not present, true otherwise.
+    * @return False if diagram was not present, true otherwise.
     */
   override def remove(key: BPMNDiagramID): Future[Boolean] = {
     Future.successful({
@@ -64,7 +64,7 @@ class InMemoryBPMNDiagramDAO extends BPMNDiagramDAO {
   /**
     *
     * @param key key
-    * @return None if user is not present, some search result otherwise.
+    * @return None if diagram is not present, some search result otherwise.
     */
   override def find(key: BPMNDiagramID): Future[Option[BPMNDiagram]] = {
     Future.successful(bpmnDiagrams.get(key))

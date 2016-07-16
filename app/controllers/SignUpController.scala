@@ -31,11 +31,10 @@ class SignUpController(implicit inj: Injector) extends ApplicationController {
     *
     * @return HTTP OK status with HTML of the sign up form if the user is not already signed in
     */
-  def view = {
-    silhouette.UnsecuredAction.async { implicit request =>
-      Future.successful(Ok(views.html.signUp(SignUpForm.form, None)))
-    }
+  def view = silhouette.UnsecuredAction.async { implicit request =>
+    Future.successful(Ok(views.html.signUp(SignUpForm.form, None)))
   }
+
 
   /**
     * HTTP POST endpoint, requires a logged out user
@@ -102,8 +101,7 @@ class SignUpController(implicit inj: Injector) extends ApplicationController {
         result
       } else {
         //TODO better fallback then json string
-          AuthenticatorResult(BadRequest(Json.obj("message" -> Messages("user.exists"))))
-
+        AuthenticatorResult(BadRequest(Json.obj("message" -> Messages("user.exists"))))
       }
     }
   }

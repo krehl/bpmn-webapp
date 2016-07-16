@@ -21,6 +21,7 @@ libraryDependencies ++= Seq(
   ws,
   specs2 % Test,
   //  "com.typesafe.play" %% "anorm" % "2.4.0",
+  "org.scalaz" %% "scalaz-core" % "7.2.4",
   "com.novus" %% "salat" % "1.9.8",
   "com.iheart" %% "ficus" % "1.2.6",
   "org.scaldi" %% "scaldi-play" % "0.5.15",

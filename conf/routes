@@ -3,23 +3,29 @@
 # ~~~~
 
 # Home page
-GET         /                     controllers.ApplicationController.index
+GET           /                     controllers.ApplicationController.index
 
-GET         /load/:id             controllers.BPMNDiagramController.load(id: String)
 
-GET         /BPMN/new             controllers.BPMNDiagramController.newBPMNDiagram
-GET         /BPMN/:id             controllers.BPMNDiagramController.bpmn(id: String)
+#
+# BPMN Diagram Endpoints
+#
+#GET           /bpmnDiagrams            ??? #list of all
+GET           /bpmn/new             controllers.BPMNDiagramController.newBPMNDiagram
+POST          /bpmn                 controllers.BPMNDiagramController.create
+GET           /bpmn/:id             controllers.BPMNDiagramController.retrieve(id: String)
+PUT           /bpmn/:id             controllers.BPMNDiagramController.update(id: String)
+DELETE        /bpmn/:id             controllers.BPMNDiagramController.delete(id: String)
 
-GET         /signUp               controllers.SignUpController.view
-POST        /signUp               controllers.SignUpController.submit
+GET           /signUp               controllers.SignUpController.view
+POST          /signUp               controllers.SignUpController.submit
 
-GET         /signIn               controllers.SignInController.view
-POST        /signIn               controllers.SignInController.submit
+GET           /signIn               controllers.SignInController.view
+POST          /signIn               controllers.SignInController.submit
 
-GET         /signOut              controllers.SignOutController.signOut
+GET           /signOut              controllers.SignOutController.signOut
 
-POST        /save                 controllers.BPMNDiagramController.save
+#POST          /save                    controllers.BPMNDiagramController.saveBPMNDiagram
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file         controllers.Assets.at(path="/public", file)
-GET         /webjars/*file        controllers.WebJarAssets.at(file)
+GET           /assets/*file         controllers.Assets.at(path="/public", file)
+GET           /webjars/*file        controllers.WebJarAssets.at(file)
