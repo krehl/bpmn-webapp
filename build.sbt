@@ -8,16 +8,18 @@ pipelineStages := Seq(gzip)
 
 scalaVersion := "2.11.7"
 
-libraryDependencies ++= Seq(jdbc, cache, ws, specs2 % Test)
+herokuAppName in Compile := "bpmn-modeller"
 
 unmanagedResourceDirectories in Test <+= baseDirectory(_ / "target/web/public/test")
-
 
 resolvers += "Atlassian Releases" at "https://maven.atlassian.com/public/"
 
 libraryDependencies ++= Seq(
+  jdbc,
   cache,
   filters,
+  ws,
+  specs2 % Test,
   //  "com.typesafe.play" %% "anorm" % "2.4.0",
   "com.novus" %% "salat" % "1.9.8",
   "com.iheart" %% "ficus" % "1.2.6",
@@ -29,7 +31,7 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette-testkit" % "4.0.0-RC1" % "test",
   "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3",
   "org.webjars" %% "webjars-play" % "2.4.0-1",
-    "org.webjars.bower" % "bpmn-js" % "0.15.1"
+  "org.webjars.bower" % "bpmn-js" % "0.15.1"
 )
 
 scalacOptions ++= Seq(
