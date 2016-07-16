@@ -40,15 +40,15 @@
                 if (err) {
                     console.error('diagram save failed', err);
                 } else {
-                    console.info('diagram saved');
                     $.ajax({
                         url: "/save",
-         //               data: xml,
+                        data: xml,
                         type: 'POST',
-                       contentType: "text",
-                        dataType: "text",
+                       contentType: "text/plain",
+                      //  dataType: "text",
                         success : function (a) {
                             console.log(a)
+                            console.info('diagram saved');
                         },
                         error : function (xhr, ajaxOptions, thrownError){
                             console.log(xhr.status);

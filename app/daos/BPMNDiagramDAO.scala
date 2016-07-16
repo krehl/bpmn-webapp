@@ -69,6 +69,10 @@ class InMemoryBPMNDiagramDAO extends BPMNDiagramDAO {
   override def find(key: BPMNDiagramID): Future[Option[BPMNDiagram]] = {
     Future.successful(bpmnDiagrams.get(key))
   }
+
+  def list: Future[mutable.HashMap[BPMNDiagramID, BPMNDiagram]] = {
+    Future.successful(bpmnDiagrams)
+  }
 }
 
 object InMemoryBPMNDiagramDAO {

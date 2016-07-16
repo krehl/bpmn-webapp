@@ -20,16 +20,17 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
   val configuration = inject[Configuration]
 
   def save = silhouette.SecuredAction.async(parse.text) { implicit request =>
-    val newDiagram = BPMNDiagram(
-      name = "",
-      xmlContent = request.body,
-      owner = request.identity.id,
-      canView = Set.empty[UserID],
-      canEdit = Set.empty[UserID]
-    )
-
-    bpmnDiagramDAO.save(newDiagram)
-    Future.successful(Ok(request.body))
+    Future.successful {
+      val newDiagram = BPMNDiagram(
+        name = "",
+        xmlContent = request.body,
+        owner = request.identity.id,
+        canView = Set.empty[UserID],
+        canEdit = Set.empty[UserID]
+      )
+      bpmnDiagramDAO.save(newDiagram)
+      Ok(newDiagram.id.toString())
+    }
   }
 
   def load(id: String) = silhouette.SecuredAction.async { implicit request =>
@@ -37,7 +38,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
       option <- bpmnDiagramDAO.find(new ObjectId(id))
       futureResult <- option match {
         case Some(bpmnDiagram) => Future.successful(Ok(bpmnDiagram.xmlContent))
-        case None => Future.successful(BadRequest("bad request"))
+        case None => Future.successful(BadRequest("Bad request."))
       }
     } yield futureResult
   }
@@ -55,9 +56,10 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     Future.successful(Redirect(routes.BPMNDiagramController.bpmn(newDiagram.id.toString)))
   }
 
-  def bpmn(id: String) = silhouette.SecuredAction.async{ implicit request =>
-  Future.successful{
-    Ok(views.html.bpmnModeler(s"Hello ${request.identity.firstName}!", Some(request.identity), id))
+  def bpmn(id: String) = silhouette.SecuredAction.async { implicit request =>
+    Future.successful {
+      Ok(views.html.bpmnModeler(s"Hello ${request.identity.firstName}!", Some(request.identity), id))
+    }
   }
-}
+
 }
