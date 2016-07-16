@@ -83,7 +83,8 @@
                     url: "/bpmn/" + bpmn_id,
                     data: xml,
                     type: 'PUT',
-                    contentType: "text/plain",
+                    // contentType: "text/plain",
+                    contentType: "application/xml",
                     success: function (response) {
                         console.log(response)
                     },

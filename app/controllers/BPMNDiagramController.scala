@@ -12,6 +12,7 @@ import util.Types._
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
+import scala.xml.NodeSeq
 
 /**
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 15/07/2016
@@ -39,7 +40,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
   // CRUD Operations
   //------------------------------------------------------------------------------------------//
 
-  def create = silhouette.SecuredAction.async(parse.text) { implicit request =>
+  def create: Action[NodeSeq] = silhouette.SecuredAction.async(parse.xml) { implicit request =>
     val newDiagram = BPMNDiagram(
       name = "",
       xmlContent = request.body,
@@ -52,7 +53,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
       case true =>
         val json: JsValue = Json.obj(
           "id" -> newDiagram.id.toString,
-          "xml" -> newDiagram.xmlContent)
+          "xml" -> newDiagram.xmlContent.toString())
         Ok(json)
       case false => BadRequest("ID already exists!")
     })
@@ -78,13 +79,13 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
       case true =>
         val json: JsValue = Json.obj(
           "id" -> id.toString,
-          "xml" -> diagram.xmlContent)
+          "xml" -> diagram.xmlContent.toString())
         Future.successful(Ok(json))
       case false => Future.successful(BadRequest("You are not authorized to delete this diagram!"))
     }
   }
 
-  def update(id: String): Action[String] = silhouette.SecuredAction.async(parse.text) { implicit request =>
+  def update(id: String): Action[NodeSeq] = silhouette.SecuredAction.async(parse.xml) { implicit request =>
     ObjectID(id) match {
       case Success(identifier) =>
         diagramDAO.find(identifier).flatMap({
@@ -96,7 +97,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
   }
 
   private[this] def checkUpdateAuthorization(id: String, diagram: BPMNDiagram)
-                                            (implicit request: SecuredRequest[DefaultEnv, String]): Future[Result] = {
+                                            (implicit request: SecuredRequest[DefaultEnv, NodeSeq]): Future[Result] = {
     val requestUserID = request.identity.id
     val authorizedUsers = diagram.canEdit + diagram.owner
     val isAuthorized = authorizedUsers.contains(requestUserID)
@@ -133,11 +134,4 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
       case false => Future.successful(BadRequest("You are not authorized to delete this diagram!"))
     }
   }
-
-
-  //  def getBPMNDiagram(id: String) = silhouette.SecuredAction.async { implicit request =>
-  //    Future.successful {
-  //      Ok(views.html.bpmnModeler(s"Hello ${request.identity.firstName}!", Some(request.identity), id))
-  //    }
-  //  }
 }
