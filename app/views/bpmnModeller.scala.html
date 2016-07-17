@@ -1,0 +1,11 @@
+@(message: String, user: Option[User], id: String)(implicit request: RequestHeader, messages: Messages)
+@main(Messages("bpmn.modeler.title"), user) {
+
+    <div id="canvas" class="container-fluid"></div>
+    <script>
+             bpmn_id = "@id";
+    </script>
+
+    @*b3.buttonType("submit", 'class -> "btn btn-default"){ <span class="glyphicon glyphicon-ok"></span> Sign in }*@
+    @*<button id="save-button" type="button" class="btn btn-primary" >Save Diagram</button>*@
+}

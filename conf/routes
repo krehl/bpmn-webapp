@@ -12,7 +12,9 @@ GET           /                     controllers.ApplicationController.index
 #GET           /bpmnDiagrams            ??? #list of all
 GET           /bpmn/new             controllers.BPMNDiagramController.newBPMNDiagram
 POST          /bpmn                 controllers.BPMNDiagramController.create
-GET           /bpmn/:id             controllers.BPMNDiagramController.retrieve(id: String)
+GET           /bpmn/d/:id             controllers.BPMNDiagramController.loadModeller(id: String)
+GET           /bpmn/:id            controllers.BPMNDiagramController.retrieve(id: String)
+
 PUT           /bpmn/:id             controllers.BPMNDiagramController.update(id: String)
 DELETE        /bpmn/:id             controllers.BPMNDiagramController.delete(id: String)
 
