@@ -1,20 +1,23 @@
 package daos
 
 import models.BPMNDiagram
-import util.Types.BPMNDiagramID
+import org.bson.types.ObjectId
+import util.Types.{BPMNDiagramID, UserID}
 
-import scala.concurrent.Future
 import scala.collection._
+import scala.concurrent.Future
 
 /**
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 15/07/2016
   */
 sealed trait BPMNDiagramDAO extends DAO[BPMNDiagramID, BPMNDiagram] {
-  def list: Future[mutable.HashMap[BPMNDiagramID, BPMNDiagram]]
-  def allKey: Future[Set[BPMNDiagramID]]
+  def list(key: UserID): Future[List[BPMNDiagram]]
+
+//  def allKeys: Future[Set[BPMNDiagramID]]
 }
 
 class InMemoryBPMNDiagramDAO extends BPMNDiagramDAO {
+
   import InMemoryBPMNDiagramDAO._
 
   /**
@@ -73,11 +76,12 @@ class InMemoryBPMNDiagramDAO extends BPMNDiagramDAO {
     Future.successful(bpmnDiagrams.get(key))
   }
 
-  override def list: Future[mutable.HashMap[BPMNDiagramID, BPMNDiagram]] = {
-    Future.successful(bpmnDiagrams)
+
+  override def list(key: UserID): Future[List[BPMNDiagram]] = {
+    Future.successful(bpmnDiagrams.filter(_._2.owner == key).values.toList)
   }
 
-  override def allKey = {Future.successful(bpmnDiagrams.keySet)}
+//  override def allKeys = {Future.successful(bpmnDiagrams.keySet)}
 }
 
 object InMemoryBPMNDiagramDAO {

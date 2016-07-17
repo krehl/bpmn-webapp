@@ -1,23 +1,15 @@
-@(message: String, user: Option[User], diagrams: List[String])(implicit request: RequestHeader, messages: Messages)
-    @main(Messages("bpmn.modeler.title"), user) {
-        @*b3.buttonType("submit", 'class -> "btn btn-default"){ <span class="glyphicon glyphicon-ok"></span> Sign in }*@
-        @*<button id="save-button" type="button" class="btn btn-primary" >Save Diagram</button>*@
-        <div>
-        @if(diagrams.length > 0) {
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>
-                            Process
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                @for(diagram <- diagrams) {
-                    <tr><td><a href="@routes.BPMNDiagramController.loadModeller(diagram)">@diagram</a></td></tr>
-                }
-                </tbody>
-            </table>
+@(message: String, user: Option[User], diagrams: List[BPMNDiagram])(implicit request: RequestHeader, messages: Messages)
+@main(Messages("bpmn.modeler.title"), user) {
+    @if(diagrams.nonEmpty) {
+        @for(diagram <- diagrams) {
+            <div class="card card-inverse" style="background-color: #333;
+                border-color: #333;">
+                <div class="card-block">
+                    <h3 class="card-title">@diagram.id.toString</h3>
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <a href="@routes.BPMNDiagramController.loadModeller(diagram.id.toString)" class="btn btn-primary">Open</a>
+                </div>
+            </div>
         }
-        </div>
     }
+}

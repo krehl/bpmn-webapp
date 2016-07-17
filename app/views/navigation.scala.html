@@ -3,21 +3,22 @@
     <a class="navbar-brand" href="@routes.ApplicationController.index()">Logo</a>
 
     <ul class="nav navbar-nav">
-        <li class="nav-item">
-            <a class="nav-link" href="#">Link 1</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="save-button" href="#">Save</a>
-        </li>
+
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                 Dropdown
             </a>
             <div class="dropdown-menu" aria-labelledby="Preview">
-                <a id="new-button" class="dropdown-item" href="@routes.BPMNDiagramController.newBPMNDiagram()">New Diagram</a>
-                <a id="save-button" class="dropdown-item">Save Diagram</a>
+                <a class="dropdown-item">??? </a>
             </div>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" id="save-button" href="#">Save</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="@routes.BPMNDiagramController.newBPMNDiagram()">New</a>
+        </li>
+
         <li class="nav-item pull-xs-right">
             <a class="nav-link" href="@routes.SignOutController.signOut()">Logout</a>
         </li>
@@ -25,13 +26,10 @@
             <a class="nav-link" href="#">Profile</a>
         </li>
         <li class="nav-item  pull-xs-right">
-            <a class="nav-link" href="@routes.BPMNDiagramController.repository()">Repository</a>
-        </li>
-        <li class="nav-item pull-xs-right">
-            <a class="nav-link" href="@routes.BPMNDiagramController.newBPMNDiagram()" target="_blank">New</a>
+            <a class="nav-link" href="@routes.RepositoryController.repository()">Repository</a>
         </li>
     </ul>
-    <form id="load-form" class="form-inline">
-        <input id="diagram-id" class="form-control" type="text" placeholder="Diagram ID">
-    </form>
+    @*<form id="load-form" class="form-inline">*@
+    @*<input id="diagram-id" class="form-control" type="text" placeholder="Diagram ID">*@
+    @*</form>*@
 </nav>

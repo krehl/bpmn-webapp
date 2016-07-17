@@ -1,6 +1,7 @@
 package controllers
 
 import com.mohiva.play.silhouette.api.Silhouette
+import daos.InMemoryBPMNDiagramDAO
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
@@ -21,7 +22,7 @@ class ApplicationController(implicit inj: Injector) extends Controller with Inje
   def index = silhouette.UserAwareAction.async { implicit request =>
     Future.successful(
       request.identity match {
-        case Some(identity) => Redirect(routes.BPMNDiagramController.repository())
+        case Some(identity) => Ok(views.html.bpmnRepository("Hello", Some(identity), List.empty))
         case None => Redirect(routes.SignInController.view())
       })
   }

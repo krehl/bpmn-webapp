@@ -1,7 +1,7 @@
 package controllers
 
 import com.mohiva.play.silhouette.api.actions.SecuredRequest
-import daos.{BPMNDiagramDAO, InMemoryBPMNDiagramDAO, MongoDBUtil}
+import daos.{BPMNDiagramDAO, MongoDBUtil}
 import models.BPMNDiagram
 import play.api.i18n.Messages
 import play.api.libs.concurrent.Execution.Implicits._
@@ -114,17 +114,19 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     */
   private[this] def checkRetrieveAuthorization(id: BPMNDiagramID, diagram: BPMNDiagram)
                                               (implicit request: SecuredRequest[DefaultEnv, AnyContent]): Future[Result] = {
-    val requestUserID = request.identity.id
-    val authorizedUsers = diagram.canView + diagram.owner
-    val isAuthorized = authorizedUsers.contains(requestUserID)
-    isAuthorized match {
-      case true =>
-        val json: JsValue = Json.obj(
-          "id" -> id.toString,
-          "xml" -> diagram.xmlContent.toString())
-        Future.successful(Ok(json))
-      case false => Future.successful(BadRequest(Json.obj("message" -> Messages("bpmn.diagram.delete.not.authorized"))))
-    }
+    Future.successful({
+      val requestUserID = request.identity.id
+      val authorizedUsers = diagram.canView + diagram.owner
+      val isAuthorized = authorizedUsers.contains(requestUserID)
+      isAuthorized match {
+        case true =>
+          val json: JsValue = Json.obj(
+            "id" -> id.toString,
+            "xml" -> diagram.xmlContent.toString())
+          Ok(json)
+        case false => BadRequest(Json.obj("message" -> Messages("bpmn.diagram.delete.not.authorized")))
+      }
+    })
   }
 
   /**
@@ -184,25 +186,6 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
           })
         case Failure(ex) => Future.successful(BadRequest(ex.getLocalizedMessage))
       }
-  }
-
-
-  def list = silhouette.SecuredAction.async { implicit request =>
-    diagramDAO.allKey.flatMap(keySet => Future.successful(Ok(Json.toJson(keySet.toList.map(_.toString)))))
-  }
-
-  def repository = silhouette.UserAwareAction.async { implicit request =>
-    Future.successful {
-      request.identity match {
-        case Some(identity) => {
-          val diagrams = InMemoryBPMNDiagramDAO.bpmnDiagrams map {
-            case (k,v) => k.toString
-          }
-          val diagramsList = diagrams.toList
-          Ok(views.html.bpmnRepository("Welcome", Some(identity),diagramsList))}
-        case None => Redirect(routes.SignInController.view())
-      }
-    }
   }
 
   /**
