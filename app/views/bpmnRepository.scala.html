@@ -5,10 +5,16 @@
         <div>
         @if(diagrams.length > 0) {
             <table class="table table-hover">
-                <thead></thead>
+                <thead>
+                    <tr>
+                        <th>
+                            Process
+                        </th>
+                    </tr>
+                </thead>
                 <tbody>
                 @for(diagram <- diagrams) {
-                    <tr><a href="@routes.BPMNDiagramController.loadModeller(diagram)">@diagram</a></tr>
+                    <tr><td><a href="@routes.BPMNDiagramController.loadModeller(diagram)">@diagram</a></td></tr>
                 }
                 </tbody>
             </table>

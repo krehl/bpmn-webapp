@@ -186,12 +186,23 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
       }
   }
 
+
   def list = silhouette.SecuredAction.async { implicit request =>
-    val diagrams = InMemoryBPMNDiagramDAO.bpmnDiagrams map {
-      case (k, v) => k.toString
+    diagramDAO.allKey.flatMap(keySet => Future.successful(Ok(Json.toJson(keySet.toList.map(_.toString)))))
+  }
+
+  def repository = silhouette.UserAwareAction.async { implicit request =>
+    Future.successful {
+      request.identity match {
+        case Some(identity) => {
+          val diagrams = InMemoryBPMNDiagramDAO.bpmnDiagrams map {
+            case (k,v) => k.toString
+          }
+          val diagramsList = diagrams.toList
+          Ok(views.html.bpmnRepository("Welcome", Some(identity),diagramsList))}
+        case None => Redirect(routes.SignInController.view())
+      }
     }
-    val diagramsList = diagrams.toList
-    Future.successful(Ok(Json.toJson(diagramsList)))
   }
 
   /**

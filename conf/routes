@@ -4,7 +4,7 @@
 
 # Home page
 GET           /                        controllers.ApplicationController.index
-GET           /repo                    controllers.ApplicationController.repository
+GET           /repo                    controllers.BPMNDiagramController.repository
 
 
 #
