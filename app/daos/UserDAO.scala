@@ -65,5 +65,12 @@ object InMemoryUserDAO {
     lastName = "1",
     email = "1@1",
     roles = Set[Role](Customer))
+  val dummyUser2 = User(
+    loginInfo = LoginInfo("credentials", "2@2"),
+    firstName ="2",
+    lastName = "2",
+    email = "2@2",
+    roles = Set[Role](Customer))
   users.put(dummyUser.loginInfo, dummyUser)
+  users.put(dummyUser.loginInfo, dummyUser2)
 }
