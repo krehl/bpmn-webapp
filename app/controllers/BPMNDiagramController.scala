@@ -1,7 +1,7 @@
 package controllers
 
 import com.mohiva.play.silhouette.api.actions.SecuredRequest
-import daos.{BPMNDiagramDAO, MongoDBUtil}
+import daos.{BPMNDiagramDAO, InMemoryBPMNDiagramDAO, MongoDBUtil}
 import models.BPMNDiagram
 import play.api.i18n.Messages
 import play.api.libs.concurrent.Execution.Implicits._
@@ -184,6 +184,14 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
           })
         case Failure(ex) => Future.successful(BadRequest(ex.getLocalizedMessage))
       }
+  }
+
+  def list = silhouette.SecuredAction.async { implicit request =>
+    val diagrams = InMemoryBPMNDiagramDAO.bpmnDiagrams map {
+      case (k, v) => k.toString
+    }
+    val diagramsList = diagrams.toList
+    Future.successful(Ok(Json.toJson(diagramsList)))
   }
 
   /**

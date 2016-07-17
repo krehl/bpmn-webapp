@@ -1,6 +1,17 @@
-@(message: String, user: Option[User])(implicit request: RequestHeader, messages: Messages)
-@main(Messages("bpmn.modeler.title"), user) {
-    Hello
-    @*b3.buttonType("submit", 'class -> "btn btn-default"){ <span class="glyphicon glyphicon-ok"></span> Sign in }*@
-    @*<button id="save-button" type="button" class="btn btn-primary" >Save Diagram</button>*@
-}
+@(message: String, user: Option[User], diagrams: List[String])(implicit request: RequestHeader, messages: Messages)
+    @main(Messages("bpmn.modeler.title"), user) {
+        @*b3.buttonType("submit", 'class -> "btn btn-default"){ <span class="glyphicon glyphicon-ok"></span> Sign in }*@
+        @*<button id="save-button" type="button" class="btn btn-primary" >Save Diagram</button>*@
+        <div>
+        @if(diagrams.length > 0) {
+            <table class="table table-hover">
+                <thead></thead>
+                <tbody>
+                @for(diagram <- diagrams) {
+                    <tr><a href="@routes.BPMNDiagramController.loadModeller(diagram)">@diagram</a></tr>
+                }
+                </tbody>
+            </table>
+        }
+        </div>
+    }

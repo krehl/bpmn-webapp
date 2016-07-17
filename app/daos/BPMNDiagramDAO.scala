@@ -9,7 +9,9 @@ import scala.collection._
 /**
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 15/07/2016
   */
-sealed trait BPMNDiagramDAO extends DAO[BPMNDiagramID, BPMNDiagram]
+sealed trait BPMNDiagramDAO extends DAO[BPMNDiagramID, BPMNDiagram] {
+  def list: Future[mutable.HashMap[BPMNDiagramID, BPMNDiagram]]
+}
 
 class InMemoryBPMNDiagramDAO extends BPMNDiagramDAO {
   import InMemoryBPMNDiagramDAO._
@@ -70,7 +72,7 @@ class InMemoryBPMNDiagramDAO extends BPMNDiagramDAO {
     Future.successful(bpmnDiagrams.get(key))
   }
 
-  def list: Future[mutable.HashMap[BPMNDiagramID, BPMNDiagram]] = {
+  override def list: Future[mutable.HashMap[BPMNDiagramID, BPMNDiagram]] = {
     Future.successful(bpmnDiagrams)
   }
 }

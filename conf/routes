@@ -4,12 +4,13 @@
 
 # Home page
 GET           /                        controllers.ApplicationController.index
+GET           /repo                    controllers.ApplicationController.repository
 
 
 #
 # BPMN Diagram Endpoints
 #
-#GET           /bpmnDiagrams            ??? #list of all
+GET           /bpmn/list               controllers.BPMNDiagramController.list
 GET           /bpmn/new                controllers.BPMNDiagramController.newBPMNDiagram
 POST          /bpmn                    controllers.BPMNDiagramController.create
 GET           /bpmn/d/:id              controllers.BPMNDiagramController.loadModeller(id: String)
