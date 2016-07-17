@@ -22,8 +22,8 @@ class ApplicationController(implicit inj: Injector) extends Controller with Inje
   def index = silhouette.UserAwareAction.async { implicit request =>
     Future.successful(
       request.identity match {
-        case Some(identity) => Ok(views.html.bpmnRepository("Hello", Some(identity), List.empty))
-        case None => Redirect(routes.SignInController.view())
+        case Some(identity) => Redirect(routes.RepositoryController.repository())
+        case None => Ok(views.html.landing(""))
       })
   }
 
