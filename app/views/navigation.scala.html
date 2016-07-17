@@ -11,12 +11,12 @@
                 Dropdown
             </a>
             <div class="dropdown-menu" aria-labelledby="Preview">
-                <a id="new-button" class="dropdown-item" href="/bpmn/new">New Diagram</a>
+                <a id="new-button" class="dropdown-item" href="@routes.BPMNDiagramController.newBPMNDiagram()">New Diagram</a>
                 <a id="save-button" class="dropdown-item">Save Diagram</a>
             </div>
         </li>
         <li class="nav-item pull-xs-right">
-            <a class="nav-link" href="/signOut">Logout</a>
+            <a class="nav-link" href="@routes.SignOutController.signOut()">Logout</a>
         </li>
         <li class="nav-item pull-xs-right">
             <a class="nav-link" href="#">Profile</a>

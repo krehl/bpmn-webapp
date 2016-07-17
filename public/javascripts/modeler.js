@@ -13,9 +13,10 @@
         container: '#canvas'
     });
 
+    var router = jsRoutes.controllers.BPMNDiagramController.retrieve(window.bpmn_id);
     $.ajax({
-        url: "/bpmn/" + window.bpmn_id,
-        type: 'GET',
+        url: router.url,
+        type: router.type,
         success: function (response) {
             window.bpmn_id = response.id;
             importXML(response.xml);
@@ -25,6 +26,21 @@
             console.log(thrownError);
         }
     });
+
+    // $.ajax({
+    //     url: "/bpmn/" + window.bpmn_id,
+    //     type: 'GET',
+    //     success: function (response) {
+    //         window.bpmn_id = response.id;
+    //         importXML(response.xml);
+    //     },
+    //     error: function (xhr, ajaxOptions, thrownError) {
+    //         console.log(xhr.status);
+    //         console.log(thrownError);
+    //     }
+    // });
+
+
     // $.ajax({
     //     url: "/bpmn/new",
     //     type: 'GET',
@@ -42,28 +58,29 @@
     // $("#new-button").click(function () {
     //     window.location.replace("/bpmn/new");
 
-        // $.ajax({
-        //     url: "/bpmn/new",
-        //     type: 'GET',
-        //     success: function (response) {
-        //         window.bpmn_id = response.id;
-        //         console.log(window.bpmn_id);
-        //         importXML(response.xml);
-        //     },
-        //     error: function (xhr, ajaxOptions, thrownError) {
-        //         console.log(xhr.status);
-        //         console.log(thrownError);
-        //     }
-        // });
+    // $.ajax({
+    //     url: "/bpmn/new",
+    //     type: 'GET',
+    //     success: function (response) {
+    //         window.bpmn_id = response.id;
+    //         console.log(window.bpmn_id);
+    //         importXML(response.xml);
+    //     },
+    //     error: function (xhr, ajaxOptions, thrownError) {
+    //         console.log(xhr.status);
+    //         console.log(thrownError);
+    //     }
+    // });
     // });
 
 
     $("#load-form").submit(function (e) {
         e.preventDefault();
 
+        var router = jsRoutes.controllers.BPMNDiagramController.retrieve($('#diagram-id').val());
         $.ajax({
-            url: "/bpmn/" + $('#diagram-id').val(),
-            type: 'GET',
+            url: router.url,
+            type: router.type,
             success: function (response) {
                 window.bpmn_id = response.id;
                 importXML(response.xml);
@@ -103,11 +120,11 @@
             if (err) {
                 console.error('diagram save failed', err);
             } else {
-                console.info('diagram saved');
+                var router = jsRoutes.controllers.BPMNDiagramController.update(window.bpmn_id);
                 $.ajax({
-                    url: "/bpmn/" + window.bpmn_id,
+                    url: router.url,
                     data: xml,
-                    type: 'PUT',
+                    type: router.type,
                     contentType: "application/xml",
                     success: function (response) {
                         console.log(response)

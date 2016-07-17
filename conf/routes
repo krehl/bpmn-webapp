@@ -3,31 +3,31 @@
 # ~~~~
 
 # Home page
-GET           /                     controllers.ApplicationController.index
+GET           /                        controllers.ApplicationController.index
 
 
 #
 # BPMN Diagram Endpoints
 #
 #GET           /bpmnDiagrams            ??? #list of all
-GET           /bpmn/new             controllers.BPMNDiagramController.newBPMNDiagram
-POST          /bpmn                 controllers.BPMNDiagramController.create
-GET           /bpmn/d/:id             controllers.BPMNDiagramController.loadModeller(id: String)
-GET           /bpmn/:id            controllers.BPMNDiagramController.retrieve(id: String)
+GET           /bpmn/new                controllers.BPMNDiagramController.newBPMNDiagram
+POST          /bpmn                    controllers.BPMNDiagramController.create
+GET           /bpmn/d/:id              controllers.BPMNDiagramController.loadModeller(id: String)
+GET           /bpmn/:id                controllers.BPMNDiagramController.retrieve(id: String)
 
-PUT           /bpmn/:id             controllers.BPMNDiagramController.update(id: String)
-DELETE        /bpmn/:id             controllers.BPMNDiagramController.delete(id: String)
+PUT           /bpmn/:id                controllers.BPMNDiagramController.update(id: String)
+DELETE        /bpmn/:id                controllers.BPMNDiagramController.delete(id: String)
 
-GET           /signUp               controllers.SignUpController.view
-POST          /signUp               controllers.SignUpController.submit
+GET           /signUp                  controllers.SignUpController.view
+POST          /signUp                  controllers.SignUpController.submit
 
-GET           /signIn               controllers.SignInController.view
-POST          /signIn               controllers.SignInController.submit
+GET           /signIn                  controllers.SignInController.view
+POST          /signIn                  controllers.SignInController.submit
 
-GET           /signOut              controllers.SignOutController.signOut
+GET           /signOut                 controllers.SignOutController.signOut
 
-#POST          /save                    controllers.BPMNDiagramController.saveBPMNDiagram
 
 # Map static resources from the /public folder to the /assets URL path
-GET           /assets/*file         controllers.Assets.at(path="/public", file)
-GET           /webjars/*file        controllers.WebJarAssets.at(file)
+GET           /assets/*file            controllers.Assets.at(path="/public", file)
+GET           /webjars/*file           controllers.WebJarAssets.at(file)
+GET           /javascriptRoutes        controllers.ApplicationController.javascriptRoutes
