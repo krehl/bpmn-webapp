@@ -11,6 +11,7 @@ import scala.collection._
   */
 sealed trait BPMNDiagramDAO extends DAO[BPMNDiagramID, BPMNDiagram] {
   def list: Future[mutable.HashMap[BPMNDiagramID, BPMNDiagram]]
+  def allKey: Future[Set[BPMNDiagramID]]
 }
 
 class InMemoryBPMNDiagramDAO extends BPMNDiagramDAO {
@@ -75,6 +76,8 @@ class InMemoryBPMNDiagramDAO extends BPMNDiagramDAO {
   override def list: Future[mutable.HashMap[BPMNDiagramID, BPMNDiagram]] = {
     Future.successful(bpmnDiagrams)
   }
+
+  override def allKey = {Future.successful(bpmnDiagrams.keySet)}
 }
 
 object InMemoryBPMNDiagramDAO {
