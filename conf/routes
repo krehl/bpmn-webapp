@@ -14,6 +14,7 @@ GET           /bpmn/new                controllers.BPMNDiagramController.newBPMN
 POST          /bpmn                    controllers.BPMNDiagramController.create
 GET           /bpmn/d/:id              controllers.BPMNDiagramController.loadModeller(id: String)
 GET           /bpmn/:id                controllers.BPMNDiagramController.retrieve(id: String)
+GET           /download/:id            controllers.BPMNDiagramController.download(id: String)
 
 PUT           /bpmn/:id                controllers.BPMNDiagramController.update(id: String)
 DELETE        /bpmn/:id                controllers.BPMNDiagramController.delete(id: String)

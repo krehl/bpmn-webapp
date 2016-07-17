@@ -208,4 +208,24 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
       case false => Future.successful(BadRequest("You are not authorized to delete this diagram!"))
     }
   }
+
+  /**
+    * Downloads a diagram with the given id
+    *
+    * @param id database id
+    * @return HTTP response depending on success
+    */
+  def download(id: String): Action[AnyContent] = silhouette.SecuredAction.async {
+    implicit request =>
+      ObjectID(id) match {
+        case Success(identifier) =>
+          diagramDAO.find(identifier).flatMap({
+            case Some(diagram) => Future.successful(Ok(diagram.xmlContent).withHeaders(CONTENT_TYPE -> "application/x-download",
+                                                                                        CONTENT_DISPOSITION -> "attachment; filename=".concat(diagram.id.toString).concat(".bpmn")))
+            case None => Future.successful(BadRequest(Json.obj("message" -> Messages("bpmn.id.exists"))))
+          })
+        case Failure(ex) => Future.successful(BadRequest(Json.obj("message" -> Messages("bpmn.id.invalid.format"))))
+      }
+  }
+
 }
