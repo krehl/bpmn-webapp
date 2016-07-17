@@ -22,6 +22,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
   with MongoDBUtil {
   //TODO write a monad transformer for user authorization
   //TODO json for everything; think about xml integration
+  //TODO read diagram name from request
   val diagramDAO = inject[BPMNDiagramDAO]
 
   /**
