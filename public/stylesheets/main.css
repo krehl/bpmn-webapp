@@ -9,6 +9,22 @@ html, body, #canvas, #content {
     margin: 0;
 }
 
-#canvas {
-    border: solid black;
+#jumbo {
+    border-radius: 0;
 }
+
+#canvas {
+    /*border: solid black;*/
+    border-top: darkgray 1px solid;
+}
+
+.navbar {
+    border-bottom: 1px solid darkgrey;
+    border-radius: 0;
+}
+
+.card {
+float: left;
+margin: 9px;
+min-width: 444px;
+width: 32%; }

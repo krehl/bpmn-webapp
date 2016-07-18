@@ -222,7 +222,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
           diagramDAO.find(identifier).flatMap({
             case Some(diagram) => Future.successful(Ok(diagram.xmlContent).withHeaders(CONTENT_TYPE -> "application/x-download",
                                                                                         CONTENT_DISPOSITION -> "attachment; filename=".concat(diagram.id.toString).concat(".bpmn")))
-            case None => Future.successful(BadRequest(Json.obj("message" -> Messages("bpmn.id.exists"))))
+            case None => Future.successful(BadRequest(Json.obj("message" -> Messages("bpmn.id.not_exists"))))
           })
         case Failure(ex) => Future.successful(BadRequest(Json.obj("message" -> Messages("bpmn.id.invalid.format"))))
       }
