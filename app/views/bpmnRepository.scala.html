@@ -1,15 +1,21 @@
 @(message: String, user: Option[User], diagrams: List[BPMNDiagram])(implicit request: RequestHeader, messages: Messages)
-@main(Messages("bpmn.modeler.title"), user) {
-    @if(diagrams.nonEmpty) {
-        @for(diagram <- diagrams) {
-            <div class="card card-inverse" style="background-color: #333;
-                border-color: #333;">
-                <div class="card-block">
-                    <h3 class="card-title">@diagram.id.toString</h3>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="@routes.BPMNDiagramController.loadModeller(diagram.id.toString)" class="btn btn-primary">Open</a>
+    @main(Messages("bpmn.modeler.title"), user) {
+        @if(diagrams.nonEmpty) {
+            @for(diagram <- diagrams) {
+                <div class="card card-inverse" style="background-color: #333;
+                    border-color: #333; ">
+                    <div class="card-block">
+                        <h3 class="card-title">@diagram.id.toString</h3>
+                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                        <a href="@routes.BPMNDiagramController.loadModeller(diagram.id.toString)" class="btn btn-primary">
+                            Open
+                        </a>
+                        <a href="@routes.BPMNDiagramController.download(diagram.id.toString)" class="btn btn-info">
+                            <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                            Download
+                        </a>
+                    </div>
                 </div>
-            </div>
+            }
         }
     }
-}

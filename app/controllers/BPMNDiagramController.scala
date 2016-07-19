@@ -1,26 +1,19 @@
 package controllers
 
-import com.mohiva.play.silhouette.api.actions.SecuredRequest
 import daos.{BPMNDiagramDAO, MongoDBUtil}
-import models.BPMNDiagram
-import play.api.i18n.Messages
+import models.{BPMNDiagram, CanEdit, CanView, Owns}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, Result}
 import scaldi.Injector
-import util.DefaultEnv
-import util.Types._
+import util.Types.UserID
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
-import scala.xml.NodeSeq
 
 /**
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 15/07/2016
   */
 class BPMNDiagramController(implicit inj: Injector) extends ApplicationController
   with MongoDBUtil {
-  //TODO write a monad transformer for user authorization
   //TODO json for everything; think about xml integration
   //TODO read diagram name from request
   val diagramDAO = inject[BPMNDiagramDAO]
@@ -30,18 +23,19 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     *
     * @return
     */
-  def newBPMNDiagram = silhouette.SecuredAction.async { implicit request =>
-    val newDiagram = BPMNDiagram(
-      name = "",
-      xmlContent = BPMNDiagram.default,
-      owner = request.identity.id,
-      canView = Set.empty[UserID],
-      canEdit = Set.empty[UserID]
-    )
-    diagramDAO.save(newDiagram).map({
-      case true => Redirect(routes.BPMNDiagramController.loadModeller(newDiagram.id.toString))
-      case false => BadRequest("ID already exists!")
-    })
+  def newBPMNDiagram = silhouette.SecuredAction.async {
+    implicit request =>
+      val newDiagram = BPMNDiagram(
+        name = "",
+        xmlContent = BPMNDiagram.default,
+        owner = request.identity.id,
+        canView = Set.empty[UserID],
+        canEdit = Set.empty[UserID]
+      )
+      diagramDAO.save(newDiagram).map({
+        case true => Redirect(routes.BPMNDiagramController.loadModeller(newDiagram.id.toString))
+        case false => BadRequest("ID already exists!")
+      })
   }
 
   /**
@@ -50,14 +44,36 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     * @param id id
     * @return HTML
     */
-  def loadModeller(id: String) = silhouette.SecuredAction.async { implicit request =>
-    //    render {//TODO make content negotiation working
-    //      case Accepts.Html() => Ok(views.html.bpmnModeller(s"Hello ${request.identity.firstName}!", Some(request.identity), id))
-    //      case Accepts.Json() => retrieve3(id)
-    //    }
-    Future.successful {
-      Ok(views.html.bpmnModeller(s"Hello ${request.identity.firstName}!", Some(request.identity), id))
-    }
+  def loadModeller(id: String) = silhouette.SecuredAction.async {
+    implicit request =>
+      //    render {//TODO make content negotiation working
+      //      case Accepts.Html() => Ok(views.html.bpmnModeller(s"Hello ${request.identity.firstName}!", Some(request.identity), id))
+      //      case Accepts.Json() => retrieve3(id)
+      //    }
+      Future.successful {
+        Ok(views.html.bpmnModeller(s"Hello ${
+          request.identity.firstName
+        }!", Some(request.identity), id))
+      }
+  }
+
+  /**
+    * Downloads a diagram with the given id
+    *
+    * @param id database id
+    * @return HTTP response depending on success
+    */
+  def download(id: String) = DiagramWithPermissionAction(id, CanView).async {
+    implicit request =>
+      Future.successful({
+        Ok(request.diagram.xmlContent)
+          .withHeaders(
+            CONTENT_DISPOSITION ->
+              "attachment; filename="
+                .concat(request.diagram.id.toString)
+                .concat(".bpmn"))
+          .as("application/x-download")
+      })
   }
 
   //------------------------------------------------------------------------------------------//
@@ -66,24 +82,26 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
   /**
     * Creates a new diagram resource
     *
-    * @return HTTP response depending on success
+    * @return json HTTP response depending on success
     */
-  def create: Action[NodeSeq] = silhouette.SecuredAction.async(parse.xml) { implicit request =>
-    val newDiagram = BPMNDiagram(
-      name = "",
-      xmlContent = request.body,
-      owner = request.identity.id,
-      canView = Set.empty[UserID],
-      canEdit = Set.empty[UserID]
-    )
-    diagramDAO.save(newDiagram).map({
-      case true =>
-        val json: JsValue = Json.obj(
-          "id" -> newDiagram.id.toString,
-          "xml" -> newDiagram.xmlContent.toString())
-        Ok(json)
-      case false => BadRequest("ID already exists!")
-    })
+  def create = silhouette.SecuredAction.async(parse.xml) {
+    implicit request =>
+      val newDiagram = BPMNDiagram(
+        name = "",
+        xmlContent = request.body,
+        owner = request.identity.id,
+        canView = Set.empty[UserID],
+        canEdit = Set.empty[UserID]
+      )
+      diagramDAO.save(newDiagram).map({
+        case true =>
+          val json: JsValue = Json.obj(
+            "id" -> newDiagram.id.toString,
+            "name" -> newDiagram.name,
+            "xml" -> newDiagram.xmlContent.toString())
+          Ok(json)
+        case false => BadRequest("ID already exists!")
+      })
   }
 
   /**
@@ -92,41 +110,16 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     * @param id database id
     * @return HTTP response depending on success
     */
-  def retrieve(id: String): Action[AnyContent] = silhouette.SecuredAction.async {
+  def retrieve(id: String) = DiagramWithPermissionAction(id, CanView).async {
     implicit request =>
-      ObjectID(id) match {
-        case Success(identifier) =>
-          diagramDAO.find(identifier).flatMap({
-            case Some(diagram) => checkRetrieveAuthorization(identifier, diagram)
-            case None => Future.successful(BadRequest(Json.obj("message" -> Messages("bpmn.id.exists"))))
-          })
-        case Failure(ex) => Future.successful(BadRequest(Json.obj("message" -> Messages("bpmn.id.invalid.format"))))
-      }
-  }
-
-  /**
-    * Checks if user is authorized
-    *
-    * @param id      id
-    * @param diagram diagram
-    * @param request HTTP request
-    * @return future depending on success
-    */
-  private[this] def checkRetrieveAuthorization(id: BPMNDiagramID, diagram: BPMNDiagram)
-                                              (implicit request: SecuredRequest[DefaultEnv, AnyContent]): Future[Result] = {
-    Future.successful({
-      val requestUserID = request.identity.id
-      val authorizedUsers = diagram.canView + diagram.owner
-      val isAuthorized = authorizedUsers.contains(requestUserID)
-      isAuthorized match {
-        case true =>
-          val json: JsValue = Json.obj(
-            "id" -> id.toString,
-            "xml" -> diagram.xmlContent.toString())
-          Ok(json)
-        case false => BadRequest(Json.obj("message" -> Messages("bpmn.diagram.delete.not.authorized")))
-      }
-    })
+      Future.successful({
+        val diagram = request.diagram
+        val json: JsValue = Json.obj(
+          "id" -> id.toString,
+          "name" -> diagram.name,
+          "xml" -> diagram.xmlContent.toString())
+        Ok(json)
+      })
   }
 
   /**
@@ -135,39 +128,12 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     * @param id database id
     * @return xml
     */
-  def update(id: String): Action[NodeSeq] = silhouette.SecuredAction.async(parse.xml) {
+  def update(id: String) = DiagramWithPermissionAction(id, CanEdit).async(parse.xml) {
     implicit request =>
-      ObjectID(id) match {
-        case Success(identifier) =>
-          diagramDAO.find(identifier).flatMap({
-            case Some(diagram) => checkUpdateAuthorization(diagram.id.toString, diagram)
-            case None => Future.successful(BadRequest("ID not found!"))
-          })
-        case Failure(ex) => Future.successful(BadRequest(ex.getLocalizedMessage))
-      }
-  }
-
-  /**
-    * Checks if user is authorized
-    *
-    * @param id      id
-    * @param diagram diagram
-    * @param request HTTP request
-    * @return future depending on success
-    */
-  private[this] def checkUpdateAuthorization(id: String, diagram: BPMNDiagram)
-                                            (implicit request: SecuredRequest[DefaultEnv, NodeSeq]): Future[Result] = {
-    val requestUserID = request.identity.id
-    val authorizedUsers = diagram.canEdit + diagram.owner
-    val isAuthorized = authorizedUsers.contains(requestUserID)
-    isAuthorized match {
-      case true =>
-        diagramDAO.update(diagram.copy(xmlContent = request.body)).map({
-          case true => Ok("Update successful!")
-          case false => BadRequest("Internal server error, ID not found!")
-        })
-      case false => Future.successful(BadRequest("You are not authorized to update this diagram!"))
-    }
+      diagramDAO.update(request.diagram.copy(xmlContent = request.body)).map({
+        case true => Ok
+        case false => InternalServerError
+      })
   }
 
   /**
@@ -176,36 +142,11 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     * @param id database id
     * @return json
     */
-  def delete(id: String): Action[String] = silhouette.SecuredAction.async(parse.text) {
+  def delete(id: String) = DiagramWithPermissionAction(id, Owns).async {
     implicit request =>
-      ObjectID(id) match {
-        case Success(identifier) =>
-          diagramDAO.find(identifier).flatMap({
-            case Some(diagram) => checkDeleteAuthorization(identifier, diagram)
-            case None => Future.successful(BadRequest("ID not found!"))
-          })
-        case Failure(ex) => Future.successful(BadRequest(ex.getLocalizedMessage))
-      }
-  }
-
-  /**
-    * Checks if user is authorized
-    *
-    * @param id      id
-    * @param diagram diagram
-    * @param request HTTP request
-    * @return future depending on success
-    */
-  private[this] def checkDeleteAuthorization(id: BPMNDiagramID, diagram: BPMNDiagram)
-                                            (implicit request: SecuredRequest[DefaultEnv, String]): Future[Result] = {
-    val isAuthorized = request.identity.id == diagram.owner
-    isAuthorized match {
-      case true =>
-        diagramDAO.remove(id).map({
-          case true => Ok("Delete successful!")
-          case false => BadRequest("Internal server error, ID not found!")
-        })
-      case false => Future.successful(BadRequest("You are not authorized to delete this diagram!"))
-    }
+      diagramDAO.remove(request.diagram.id).map({
+        case true => Ok
+        case false => InternalServerError
+      })
   }
 }

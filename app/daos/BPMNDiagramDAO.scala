@@ -1,7 +1,6 @@
 package daos
 
 import models.BPMNDiagram
-import org.bson.types.ObjectId
 import util.Types.{BPMNDiagramID, UserID}
 
 import scala.collection._
@@ -11,15 +10,54 @@ import scala.concurrent.Future
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 15/07/2016
   */
 sealed trait BPMNDiagramDAO extends DAO[BPMNDiagramID, BPMNDiagram] {
-  def list(key: UserID): Future[List[BPMNDiagram]]
 
-//  def allKeys: Future[Set[BPMNDiagramID]]
+  def listCanEdit(userId: UserID): Future[List[BPMNDiagram]]
+
+  def listCanView(userId: UserID): Future[List[BPMNDiagram]]
+
+  def listOwns(userId: UserID): Future[List[BPMNDiagram]]
+
+//  def canEdit(userId: UserID, diagramId: BPMNDiagramID): Future[Boolean]
+//
+//  def canView(userId: UserID, diagramId: BPMNDiagramID): Future[Boolean]
+//
+//  def owns(userId: UserID, diagramId: BPMNDiagramID): Future[Boolean]
+
+
 }
 
 class InMemoryBPMNDiagramDAO extends BPMNDiagramDAO {
 
   import InMemoryBPMNDiagramDAO._
 
+
+  override def listOwns(key: UserID): Future[List[BPMNDiagram]] = {
+    Future.successful(bpmnDiagrams.filter(_._2.owner == key).values.toList)
+  }
+
+  override def listCanEdit(key: UserID): Future[List[BPMNDiagram]] = {
+    Future.successful(bpmnDiagrams.filter(_._2.canEdit.contains(key)).values.toList)
+  }
+
+  override def listCanView(key: UserID): Future[List[BPMNDiagram]] = {
+    Future.successful(bpmnDiagrams.filter(_._2.canView.contains(key)).values.toList)
+  }
+
+//  override def canEdit(userId: UserID, diagramId: BPMNDiagramID): Future[Boolean] = {
+//    Future.successful(bpmnDiagrams.exists(_._2.canEdit.contains(userId)))
+//  }
+//
+//  override def canView(userId: UserID, diagramId: BPMNDiagramID): Future[Boolean] = {
+//    Future.successful(bpmnDiagrams.exists(_._2.canView.contains(userId)))
+//  }
+//
+//  override def owns(userId: UserID, diagramId: BPMNDiagramID): Future[Boolean] = {
+//    Future.successful(bpmnDiagrams.exists(_._2.owner == userId))
+//  }
+
+  //------------------------------------------------------------------------------------------//
+  // CRUD OPERATIONS
+  //------------------------------------------------------------------------------------------//
   /**
     * @param value value
     * @return False if diagram was already present, true otherwise.
@@ -75,13 +113,6 @@ class InMemoryBPMNDiagramDAO extends BPMNDiagramDAO {
   override def find(key: BPMNDiagramID): Future[Option[BPMNDiagram]] = {
     Future.successful(bpmnDiagrams.get(key))
   }
-
-
-  override def list(key: UserID): Future[List[BPMNDiagram]] = {
-    Future.successful(bpmnDiagrams.filter(_._2.owner == key).values.toList)
-  }
-
-//  override def allKeys = {Future.successful(bpmnDiagrams.keySet)}
 }
 
 object InMemoryBPMNDiagramDAO {

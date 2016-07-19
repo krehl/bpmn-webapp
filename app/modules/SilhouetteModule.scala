@@ -62,7 +62,7 @@ class SilhouetteModule extends Module {
   //passwords
   bind[AuthInfoRepository] to new DelegableAuthInfoRepository(inject[DelegableAuthInfoDAO[PasswordInfo]])
   bind[PasswordHasher] to new BCryptPasswordHasher
-  binding to new PasswordHasherRegistry(inject[PasswordHasher])
+  binding to PasswordHasherRegistry(inject[PasswordHasher])
 
 
   bind[CredentialsProvider] to new CredentialsProvider(inject[AuthInfoRepository],

@@ -1,0 +1,101 @@
+@(message: String)(implicit request: RequestHeader, messages: Messages)
+<!DOCTYPE html>
+
+<html>
+    @head(message)
+<body>
+            <style class="custom-css">
+            #jumbo {
+                background-color: #333;
+                color: #eee;
+            }
+            #jumbo p {
+                font-size: 16px;
+            }
+
+            #try-header {
+                margin: 30px 0px;
+            }
+
+            #try-more {
+                margin: 30px 0px;
+                font-style: italic;
+            }
+            </style>
+
+            <div id="jumbo" class="jumbotron">
+                <div class="container">
+                    <h1>
+                        @Messages("welcome") @Messages("app.name")
+                    </h1>
+                    <p>
+                        This is the a demo. Feel free to play around with it!
+                    </p>
+                    <p>
+                        Try modelling your processes using BPMN 2.0.
+                    </p>
+                    <p>
+                        When you are ready to try the real thing, click Sign up above!
+                    </p>
+                    <a href="@routes.SignUpController.view()" class="btn btn-primary pull-left">@Messages("sign.up")</a>
+                    <a href="@routes.SignInController.view()" class="btn btn-default pull-right">@Messages("sign.in")</a>
+</div>
+</div>
+<div class="container">
+        <!-- Example row of columns -->
+    <h2 id="try-header">
+        Try the full version to get
+    </h2>
+    <div class="row">
+        <div class="col-md-4">
+            <h3>
+                Cloud Saving
+            </h3>
+            <p>
+                We save all your processes in the cloud, so you can work on them from
+                anywhere, at any time.
+            </p>
+            <p>
+                No software to install means we are fast and easy to use!
+            </p>
+        </div>
+        <div class="col-md-4">
+            <h3>
+                Sharing and Linking
+            </h3>
+            <p>
+                You can &nbsp;share your work with anyone in the world!
+            </p>
+            <p>
+                Quickly show clients and co-workers your work, and let them collaborate
+                on your process models.
+            </p>
+        </div>
+        <div class="col-md-4">
+            <h3>
+                Full BPMN capabilities
+            </h3>
+            <p>
+                Lorem Ipsum ....
+            </p>
+            <p>
+            </p>
+        </div>
+    </div>
+    <h2 id="try-more">
+        And more!
+    </h2>
+</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

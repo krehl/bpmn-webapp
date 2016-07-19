@@ -17,6 +17,7 @@
     $.ajax({
         url: router.url,
         type: router.type,
+        cache: false,
         success: function (response) {
             window.bpmn_id = response.id;
             importXML(response.xml);
@@ -81,6 +82,7 @@
         $.ajax({
             url: router.url,
             type: router.type,
+            cache: false,
             success: function (response) {
                 window.bpmn_id = response.id;
                 importXML(response.xml);
@@ -125,6 +127,7 @@
                     url: router.url,
                     data: xml,
                     type: router.type,
+                    cache: false,
                     contentType: "application/xml",
                     success: function (response) {
                         console.log(response)
