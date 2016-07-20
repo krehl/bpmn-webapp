@@ -6,6 +6,8 @@ import models.Permission
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
+import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
+import reactivemongo.bson.BSONObjectID
 import scaldi.{Injectable, Injector}
 import util.DefaultEnv
 
@@ -13,15 +15,20 @@ import scala.concurrent.Future
 
 class ApplicationController(implicit inj: Injector) extends Controller
   with Injectable
-  with I18nSupport {
+  with I18nSupport
+  with MongoController
+  with ReactiveMongoComponents{
   val messagesApi = inject[MessagesApi]
   val silhouette = inject[Silhouette[DefaultEnv]]
+  val reactiveMongoApi= inject[ReactiveMongoApi]
 
-  def DiagramWithPermissionAction(id: String, permission: Permission) = {
+
+  //------------------------------------------------------------------------------------------//
+  // COMPOSED ACTIONS
+  //------------------------------------------------------------------------------------------//
+  def DiagramWithPermissionAction(id: BSONObjectID, permission: Permission) = {
     silhouette.SecuredAction andThen DiagramAction(id) andThen DiagramPermissionAction(permission)
   }
-
-
 
   /**
     * HTTP GET endpoint, presents different content depending on user authentication status

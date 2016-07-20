@@ -12,12 +12,12 @@ GET           /repository              controllers.RepositoryController.reposito
 #
 GET           /bpmn/new                controllers.BPMNDiagramController.newBPMNDiagram
 POST          /bpmn                    controllers.BPMNDiagramController.create
-GET           /bpmn/d/:id              controllers.BPMNDiagramController.loadModeller(id: String)
-GET           /bpmn/:id                controllers.BPMNDiagramController.retrieve(id: String)
-GET           /download/:id            controllers.BPMNDiagramController.download(id: String)
+GET           /bpmn/d/:id              controllers.BPMNDiagramController.loadModeller(id: reactivemongo.bson.BSONObjectID)
+GET           /bpmn/:id                controllers.BPMNDiagramController.retrieve(id: reactivemongo.bson.BSONObjectID)
+GET           /download/:id            controllers.BPMNDiagramController.download(id: reactivemongo.bson.BSONObjectID)
 
-PUT           /bpmn/:id                controllers.BPMNDiagramController.update(id: String)
-DELETE        /bpmn/:id                controllers.BPMNDiagramController.delete(id: String)
+PUT           /bpmn/:id                controllers.BPMNDiagramController.update(id: reactivemongo.bson.BSONObjectID)
+DELETE        /bpmn/:id                controllers.BPMNDiagramController.delete(id: reactivemongo.bson.BSONObjectID)
 
 GET           /signUp                  controllers.SignUpController.view
 POST          /signUp                  controllers.SignUpController.submit

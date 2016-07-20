@@ -1,6 +1,6 @@
 package modules
 
-import daos.{BPMNDiagramDAO, InMemoryBPMNDiagramDAO}
+import models.daos.{BPMNDiagramDAO, InMemoryBPMNDiagramDAO}
 import scaldi.Module
 
 /**

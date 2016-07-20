@@ -1,7 +1,7 @@
 package models
 
-import org.bson.types.ObjectId
-import util.Types.{BPMNDiagramID, UserID}
+import reactivemongo.bson.BSONObjectID
+import util.Types._
 
 import scala.xml.{NodeSeq, XML}
 
@@ -9,7 +9,7 @@ import scala.xml.{NodeSeq, XML}
 /**
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/11/2016
   */
-case class BPMNDiagram(id: BPMNDiagramID = new ObjectId(),
+case class BPMNDiagram(id: BPMNDiagramID = BSONObjectID.generate,
                        name: String,
                        xmlContent: NodeSeq,
                        owner: UserID,

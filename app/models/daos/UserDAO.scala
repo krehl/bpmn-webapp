@@ -1,4 +1,4 @@
-package daos
+package models.daos
 
 import java.util.UUID
 

@@ -1,3 +1,5 @@
+import play.sbt.routes.RoutesKeys
+
 name := "BPMN_Webapp"
 
 version := "1.0"
@@ -21,6 +23,8 @@ libraryDependencies ++= Seq(
   ws,
   specs2 % Test,
   //  "com.typesafe.play" %% "anorm" % "2.4.0",
+  //  "org.reactivemongo" %% "reactivemongo" % "0.11.14",
+  "org.reactivemongo" %% "play2-reactivemongo" % "0.11.13",
   "org.scalaz" %% "scalaz-core" % "7.2.4",
   "com.novus" %% "salat" % "1.9.8",
   "com.iheart" %% "ficus" % "1.2.6",
@@ -51,5 +55,7 @@ scalacOptions ++= Seq(
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
 routesGenerator := InjectedRoutesGenerator
+
+RoutesKeys.routesImport += "play.modules.reactivemongo.PathBindables._"
 
 fork in run := true

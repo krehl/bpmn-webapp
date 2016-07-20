@@ -1,6 +1,6 @@
 package controllers
 
-import daos.BPMNDiagramDAO
+import models.daos.BPMNDiagramDAO
 import scaldi.Injector
 import play.api.libs.concurrent.Execution.Implicits._
 

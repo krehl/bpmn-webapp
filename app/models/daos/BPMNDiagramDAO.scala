@@ -1,4 +1,4 @@
-package daos
+package models.daos
 
 import models.BPMNDiagram
 import util.Types.{BPMNDiagramID, UserID}

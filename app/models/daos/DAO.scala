@@ -1,4 +1,4 @@
-package daos
+package models.daos
 
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.Result

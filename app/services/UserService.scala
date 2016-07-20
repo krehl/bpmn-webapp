@@ -1,6 +1,6 @@
 package services
 
-import daos.UserDAO
+import models.daos.UserDAO
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.services.IdentityService
 import models.User
