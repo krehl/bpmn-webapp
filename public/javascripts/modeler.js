@@ -6,7 +6,7 @@
  */
 
 
-(function (BpmnModeler, $) {
+var bpmnModeler = (function (BpmnModeler, $) {
 
     // create modeler
     const bpmnModeler = new BpmnModeler({
@@ -111,9 +111,19 @@
         });
     }
 
+    var changed = false;
+
+    var eventBus = bpmnModeler.get('eventBus');
+    window.eventBus = eventBus;
+    eventBus.on('element.changed', function (e) {
+        console.log(event, 'on', e.element.id);
+        changed = true;
+    })
+
 // save diagram on button click
     const saveButton = document.querySelector('#save-button');
-    const svgdownload = document.querySelector('#svg-button');
+    const svgDownload = document.querySelector('#svg-button');
+    const xmlDownload = document.querySelector('#xml-button');
 
 
     saveButton.addEventListener('click', function () {
@@ -132,7 +142,8 @@
                     cache: false,
                     contentType: "application/xml",
                     success: function (response) {
-                        console.log(response)
+                        console.log(response);
+                        changed = false;
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
                         console.log(xhr.status);
@@ -143,7 +154,7 @@
         });
     });
 
-    svgdownload.addEventListener('click', function (event) {
+    svgDownload.addEventListener('click', function (event) {
         //event.preventDefault();
         bpmnModeler.saveSVG({},function(err,svg){
             if (err) {
@@ -159,7 +170,25 @@
         });
     })
 
+    xmlDownload.addEventListener('click', function (event) {
+        //event.preventDefault();
+        bpmnModeler.saveXML({format: true},function(err,xml){
+            if (err) {
+                console.log(err);
+                return;
+            }
+            var link = document.createElement('a');
+            link.download = window.bpmn_id + '.bpmn';
+            link.target = '_blank';
+            link.href = 'data:application/bpmn20-xml;charset:UFT-8,'+encodeURIComponent(xml)
+            link.click();
+            console.log(xml);
+        });
+    })
+
+    return bpmnModeler;
 
 })(window.BpmnJS, window.jQuery);
 
 
+bpmnModeler.get()

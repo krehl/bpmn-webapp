@@ -6,18 +6,18 @@
 
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                Dropdown
+                Export
             </a>
-            <div class="dropdown-menu" aria-labelledby="Preview">
-                <a class="dropdown-item" href="#"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>Download</a>
+            <div class="dropdown-menu" aria-labelledby="Export">
+                <a class="dropdown-item" href="#" id="xml-button"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>Download XML</a>
+                <a class="dropdown-item" href="#" id="svg-button"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>Download SVG</a>
             </div>
+
         </li>
         <li class="nav-item">
         <a class="nav-link" id="save-button" href="#">Save</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" id="svg-button" href="#" target="_blank" download="diagram.svg">Download SVG</a>
-        </li>
+
         <li class="nav-item">
             <a class="nav-link" href="@routes.BPMNDiagramController.newBPMNDiagram()">New</a>
         </li>
