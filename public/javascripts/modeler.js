@@ -186,9 +186,37 @@ var bpmnModeler = (function (BpmnModeler, $) {
         });
     })
 
-    return bpmnModeler;
+    const xmlUpload = document.querySelector('#xml-upload');
+    const xmlFile = document.querySelector('#xml-file');
+    const xmlUploadForm = document.querySelector('#xml-upload-form');
+
+    xmlFile.addEventListener('change',function(event){
+        event.preventDefault;
+        var file = document.forms['xml-upload-form']['xml-file'].files[0];
+        var reader = new FileReader();
+
+        reader.onload = function(event) {
+
+            bpmnModeler.importXML(event.target.result,function (err) {
+                if (err) {
+                    return console.error('could not import BPMN 2.0 diagram', err);
+                }
+                var canvas = bpmnModeler.get('canvas');
+                // zoom to fit full viewport
+                canvas.zoom('fit-viewport');
+            });
+
+        };
+
+        reader.readAsText(file);
+
+    })
+0
+
+    xmlUpload.addEventListener('click',function (e) {
+        xmlFile.click();
+        console.log();
+        e.preventDefault();
+    })
 
 })(window.BpmnJS, window.jQuery);
-
-
-bpmnModeler.get()
