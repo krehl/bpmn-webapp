@@ -113,6 +113,8 @@
 
 // save diagram on button click
     const saveButton = document.querySelector('#save-button');
+    const svgdownload = document.querySelector('#svg-button');
+
 
     saveButton.addEventListener('click', function () {
 
@@ -140,6 +142,22 @@
             }
         });
     });
+
+    svgdownload.addEventListener('click', function (event) {
+        //event.preventDefault();
+        bpmnModeler.saveSVG({},function(err,svg){
+            if (err) {
+                console.log(err);
+                return;
+            }
+            var link = document.createElement('a');
+            link.download = window.bpmn_id + '.svg';
+            link.target = '_blank';
+            link.href = 'data:application/bpmn20-xml;charset:UFT-8,'+encodeURIComponent(svg)
+            link.click();
+            console.log(svg);
+        });
+    })
 
 
 })(window.BpmnJS, window.jQuery);
