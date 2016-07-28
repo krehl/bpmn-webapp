@@ -6,7 +6,7 @@
  */
 
 
-(function (BpmnModeler, $) {
+var bpmnModeler = (function (BpmnModeler, $) {
 
     // create modeler
     const bpmnModeler = new BpmnModeler({
@@ -111,8 +111,20 @@
         });
     }
 
+    var changed = false;
+
+    var eventBus = bpmnModeler.get('eventBus');
+    window.eventBus = eventBus;
+    eventBus.on('element.changed', function (e) {
+        console.log(event, 'on', e.element.id);
+        changed = true;
+    })
+
 // save diagram on button click
     const saveButton = document.querySelector('#save-button');
+    const svgDownload = document.querySelector('#svg-button');
+    const xmlDownload = document.querySelector('#xml-button');
+
 
     saveButton.addEventListener('click', function () {
 
@@ -130,7 +142,8 @@
                     cache: false,
                     contentType: "application/xml",
                     success: function (response) {
-                        console.log(response)
+                        console.log(response);
+                        changed = false;
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
                         console.log(xhr.status);
@@ -141,7 +154,69 @@
         });
     });
 
+    svgDownload.addEventListener('click', function (event) {
+        //event.preventDefault();
+        bpmnModeler.saveSVG({},function(err,svg){
+            if (err) {
+                console.log(err);
+                return;
+            }
+            var link = document.createElement('a');
+            link.download = window.bpmn_id + '.svg';
+            link.target = '_blank';
+            link.href = 'data:application/bpmn20-xml;charset:UFT-8,'+encodeURIComponent(svg)
+            link.click();
+            console.log(svg);
+        });
+    })
+
+    xmlDownload.addEventListener('click', function (event) {
+        //event.preventDefault();
+        bpmnModeler.saveXML({format: true},function(err,xml){
+            if (err) {
+                console.log(err);
+                return;
+            }
+            var link = document.createElement('a');
+            link.download = window.bpmn_id + '.bpmn';
+            link.target = '_blank';
+            link.href = 'data:application/bpmn20-xml;charset:UFT-8,'+encodeURIComponent(xml)
+            link.click();
+            console.log(xml);
+        });
+    })
+
+    const xmlUpload = document.querySelector('#xml-upload');
+    const xmlFile = document.querySelector('#xml-file');
+    const xmlUploadForm = document.querySelector('#xml-upload-form');
+
+    xmlFile.addEventListener('change',function(event){
+        event.preventDefault;
+        var file = document.forms['xml-upload-form']['xml-file'].files[0];
+        var reader = new FileReader();
+
+        reader.onload = function(event) {
+
+            bpmnModeler.importXML(event.target.result,function (err) {
+                if (err) {
+                    return console.error('could not import BPMN 2.0 diagram', err);
+                }
+                var canvas = bpmnModeler.get('canvas');
+                // zoom to fit full viewport
+                canvas.zoom('fit-viewport');
+            });
+
+        };
+
+        reader.readAsText(file);
+
+    })
+0
+
+    xmlUpload.addEventListener('click',function (e) {
+        xmlFile.click();
+        console.log();
+        e.preventDefault();
+    })
 
 })(window.BpmnJS, window.jQuery);
-
-

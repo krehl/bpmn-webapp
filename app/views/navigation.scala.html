@@ -6,15 +6,39 @@
 
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                Dropdown
+                Export / Import
             </a>
-            <div class="dropdown-menu" aria-labelledby="Preview">
-                <a class="dropdown-item" href="#"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>Download</a>
-            </div>
-        </li>
+            <ul class="dropdown-menu" aria-labelledby="Export">
+                <li><a class="dropdown-item" href="#" id="xml-button"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                    Download XML</a>
+                </li>
+                <li><a class="dropdown-item" href="#" id="svg-button"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                    Download SVG</a>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li><a class="dropdown-item" href="#" id="xml-upload"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                    Upload XML</a> <form id="xml-upload-form" name="xml-upload-form"><input name="xml-file" type="file" id="xml-file" style="display: none;" /></form>
+                </li>
+            </ul>
+
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                Edit
+        </a>
+        <div class="dropdown-menu" aria-labelledby="Export">
+            <a class="dropdown-item" href="#"><span class="glyphicon" aria-hidden="true"></span>
+                Delete</a>
+            <a class="dropdown-item" href="#"><span class="glyphicon" aria-hidden="true"></span>
+                Rename</a>
+            <a class="dropdown-item" href="#"><span class="glyphicon" aria-hidden="true"></span>
+                Copy</a>
+        </div>
+
+    </li>
         <li class="nav-item">
             <a class="nav-link" id="save-button" href="#">Save</a>
         </li>
+
         <li class="nav-item">
             <a class="nav-link" href="@routes.BPMNDiagramController.newBPMNDiagram()">New</a>
         </li>
