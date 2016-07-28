@@ -11,7 +11,7 @@ import scala.concurrent.Future
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/18/2016
   */
 
-sealed abstract case class Role(subSet: Set[Role])
+sealed case class Role(subSet: Set[Role])
 
 object Customer extends Role(subSet = Set.empty)
 

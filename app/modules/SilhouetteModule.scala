@@ -2,7 +2,7 @@ package modules
 
 import _root_.services.{UserIdentityService, UserService}
 import _root_.util.DefaultEnv
-import models.daos.{InMemoryPasswordDAO, InMemoryUserDAO, UserDAO}
+import models.daos._
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.actions.{SecuredAction, UnsecuredAction, UserAwareAction}
 import com.mohiva.play.silhouette.api.crypto.{AuthenticatorEncoder, CookieSigner, Crypter, CrypterAuthenticatorEncoder}
@@ -17,7 +17,6 @@ import com.mohiva.play.silhouette.impl.util.{DefaultFingerprintGenerator, PlayCa
 import com.mohiva.play.silhouette.password.BCryptPasswordHasher
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import com.mohiva.play.silhouette.persistence.repositories.DelegableAuthInfoRepository
-import models.daos.InMemoryUserDAO
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 import net.ceedubs.ficus.readers.EnumerationReader._
@@ -34,8 +33,8 @@ import scaldi.Module
   */
 class SilhouetteModule extends Module {
   // DATA STORE BINDINGS
-  bind[DelegableAuthInfoDAO[PasswordInfo]] to new InMemoryPasswordDAO //TODO
-  bind[UserDAO] to new InMemoryUserDAO //TODO
+  bind[DelegableAuthInfoDAO[PasswordInfo]] to new MongoPasswordDAO
+  bind[UserDAO] to new MongoUserDAO 
   bind[CacheLayer] to new PlayCacheLayer(inject[CacheApi])
 
   //OTHER CLIENT SIDE BINDING
