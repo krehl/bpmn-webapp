@@ -1,6 +1,7 @@
 package models
 
 import _root_.util.Types.{UserID, _}
+import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import reactivemongo.bson.BSONObjectID
@@ -32,17 +33,18 @@ object BPMNDiagram {
     "width=\"36.0\" x=\"412.0\" y=\"240.0\"/>\n            </bpmndi:BPMNShape>\n        </bpmndi:BPMNPlane>\n    " +
     "</bpmndi:BPMNDiagram>\n</bpmn2:definitions>")
 
-
-  private[this] val xmlReads: Reads[NodeSeq] = (JsPath \ "xmlContent").read[String].map {
-    string => XML.loadString(string)
+  implicit private[this] object XMLBlobWrites extends Writes[NodeSeq] {
+    def writes(xml: NodeSeq) = JsString(xml.toString)
   }
 
-
-  private[this] val xmlWrites: Writes[NodeSeq] = (JsPath \ "xmlContent").write[String].contramap {
-    (nodeSeq: NodeSeq) => nodeSeq.toString
+  implicit private[this] object XMLBlobReads extends Reads[NodeSeq] {
+    def reads(json: JsValue) = json match {
+      case JsString(s) => JsSuccess(XML.loadString(s))
+      case _ => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsstring"))))
+    }
   }
 
-  implicit private[this] val xmlFormat: Format[NodeSeq] = Format(xmlReads, xmlWrites)
+  implicit private[this] val xmlFormat: Format[NodeSeq] = Format(XMLBlobReads, XMLBlobWrites)
 
   implicit val jsonFormat = Json.format[BPMNDiagram]
 }
