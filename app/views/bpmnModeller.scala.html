@@ -1,6 +1,12 @@
 @(message: String, user: Option[User], id: String)(implicit request: RequestHeader, messages: Messages)
 @main(Messages("bpmn.modeler.title"), user) {
 
+    <!--
+        Modellierfunktion in BPMN zum Zeichnen der Graphen.
+        Hauptfläche mit Elementen.
+        CSS = canvas in main.css
+    -->
+
     <div id="canvas" class="container-fluid"></div>
     <script>
             bpmn_id = "@id";

@@ -10,6 +10,31 @@
             <strong>@Messages("error")</strong> @msg
         </div>
     }
+
+    <style>
+    header{
+        border-radius: 5px;
+        background: #333;
+        color: white;
+        padding-bottom: 20px;
+        padding-top: 25px;
+        margin-top: -5px;
+    }
+
+    footer{
+        padding-top: 50px;
+        font-style: italic;
+    }
+    </style>
+
+        <!-- header -->
+    <div class="col-md-6 col-md-offset-3">
+        <header>
+            <h1>Welcome back to @Messages("app.name")</h1>
+            <p>The free process modeller in the cloud</p>
+        </header>
+    </div>
+
     <fieldset class="col-md-6 col-md-offset-3">
         <legend>@Messages("sign.in.credentials")</legend>
         @b3.form(action = routes.SignInController.submit()) {
@@ -39,4 +64,11 @@
             <p class="not-a-member">@Messages("not.a.member") <a href="@routes.SignUpController.view">@Messages("sign.up.now")</a></p>
         </div>
     </fieldset>
+
+    <!-- footer -->
+    <div class="col-md-6 col-md-offset-3">
+        <footer>
+            <p class="text-muted">Process Modeller 2016 powered by BPMN.io</p>
+        </footer>
+    </div>
 }
