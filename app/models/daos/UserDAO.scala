@@ -74,7 +74,7 @@ object InMemoryUserDAO {
 
 class MongoUserDAO(implicit inj: Injector) extends UserDAO
   with Injectable {
-  val mongoApi: ReactiveMongoApi = inject[ReactiveMongoApi]
+  val mongoApi = inject[ReactiveMongoApi]
 
   def collection: Future[JSONCollection] = {
     mongoApi.database.map(_.collection[JSONCollection]("user"))
