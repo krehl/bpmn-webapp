@@ -36,6 +36,7 @@ import scala.xml.{NodeSeq, XML}
 
 case class BPMNDiagram(id: BPMNDiagramID = BSONObjectID.generate,
                        name: String,
+                       description: String,
                        timeStamp: Instant,
                        xmlContent: NodeSeq,
                        owner: UserID,

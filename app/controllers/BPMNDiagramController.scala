@@ -29,6 +29,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     implicit request =>
       val newDiagram = BPMNDiagram(
         name = "",
+        description = "Process Description",
         timeStamp = Instant.now(),
         xmlContent = BPMNDiagram.default,
         owner = request.identity.id,
@@ -141,6 +142,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     implicit request =>
       val newDiagram = BPMNDiagram(
         name = "",
+        description = "Process Description",
         timeStamp = Instant.now(),
         xmlContent = request.body,
         owner = request.identity.id,
