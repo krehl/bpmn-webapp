@@ -1,22 +1,23 @@
 @(message: String, user: Option[User], diagrams: List[BPMNDiagram])(implicit request: RequestHeader, messages: Messages)
     @main(Messages("bpmn.modeler.title"), user) {
         @if(diagrams.nonEmpty) {
+
+            <style>
+            .nav-item.dropdown {
+                /* hide useless navbar elements */
+                display: none !important;
+                width:0px !important;
+                height:0px !important;
+            }
+            </style>
+
             @for(diagram <- diagrams) {
 
                 <!--
                     Dateielement im Repository mit Name, Beschreibung und Optionen
                 -->
 
-                <style>
-                .nav-item.dropdown {
-                    /* hide useless navbar elements */
-                    display: none !important;
-                    width:0px !important;
-                    height:0px !important;
-                }
-                </style>
-
-                <div class="card card-inverse" style="background-color: #333;
+                <div class="card card-inverse id-@diagram.id.stringify" style="background-color: #333;
                     border-color: #333; ">
                     <div class="card-block">
                         <!-- repository file name -->
@@ -31,9 +32,29 @@
                             <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
                             Download
                         </a>
+                        <a href="@routes.BPMNDiagramController.delete(diagram.id)" class="btn btn-warn process-delete">
+                            Delete
+                        </a>
                         <!-- -->
                     </div>
                 </div>
+
+
             }
+
+            <script type='text/javascript'>
+                    var repository = (function(){
+                        xhttp = new XMLHttpRequest();
+                        deleteLinks = document.querySelectorAll('.process-delete');
+                        Array.from(deleteLinks).forEach(link => {
+                            link.addEventListener('click',function(event){
+                            event.preventDefault();
+                            console.log(event);
+                            xhttp.open('DELETE',event.currentTarget.valueOf('href'),true);
+                            xhttp.send();
+                            event.currentTarget.parentNode.parentNode.remove();
+                            console.log(event.currentTarget.valueOf('href'));
+                        })})})();
+            </script>
         }
     }

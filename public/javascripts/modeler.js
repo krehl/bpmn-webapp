@@ -9,6 +9,9 @@
 var bpmnModeler = (function (BpmnModeler, $) {
 
     // create modeler
+
+    if (!$('#canvas')[0]) return;
+
     const bpmnModeler = new BpmnModeler({
         container: '#canvas'
     });
