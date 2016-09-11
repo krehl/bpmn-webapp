@@ -23,8 +23,20 @@
                         <!-- repository file name -->
                         <h3 class="card-title">@diagram.id.stringify</h3>
                         <!-- description of file -->
-                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
                         <p class="card-text">@diagram.description</p>
+
+                        <p class="card-text">Owner: @diagram.owner.stringify</p>
+                        @if(diagram.canEdit.nonEmpty) {
+                            <p class="card-text">Editor:
+                                @for(editor <- diagram.canEdit) {<span>@editor.stringify</span><br/>}
+                            </p>
+                        }
+                        @if(diagram.canView.nonEmpty) {
+                            <p class="card-text">Editor:
+                                @for(viewer <- diagram.canView) {<span>@viewer.stringify</span><br/>}
+                            </p>
+                        }
+
                         <!-- controls -->
                         <a href="@routes.BPMNDiagramController.loadModeller(diagram.id)" class="btn btn-primary">
                             Open
