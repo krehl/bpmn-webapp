@@ -2,10 +2,14 @@ package models
 
 import _root_.util.Types.{UserID, _}
 import play.api.data.validation.ValidationError
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
-import reactivemongo.bson.BSONObjectID
+import play.api.libs.json.{Json, _}
+import reactivemongo.bson.{BSONDateTime, BSONObjectID, BSONValue}
 import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
+import java.time.Instant
+
+import models.daos.BPMNDiagramDAO
+import play.modules.reactivemongo.ReactiveMongoApi
+import scaldi.{Injectable, Injector}
 
 import scala.xml.{NodeSeq, XML}
 
@@ -13,8 +17,26 @@ import scala.xml.{NodeSeq, XML}
 /**
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/11/2016
   */
+
+//case class BPMNDiagram(data: BPMNDiagramData)(implicit inj: Injector) extends Injectable {
+//  val bpmnDiagramDAO= inject[BPMNDiagramDAO]
+//
+//  lazy val canView = ???
+//}
+//case class Data(firstName: String,
+//                lastName: String,
+//                email: String,
+//                password: String)
+//
+//object Data {
+//
+//  implicit val jsonFormat = Json.format[Data]
+//}
+//                       versionId: BPMNDiagramVersionID = BSONObjectID.generate,
+
 case class BPMNDiagram(id: BPMNDiagramID = BSONObjectID.generate,
                        name: String,
+                       timeStamp: Instant,
                        xmlContent: NodeSeq,
                        owner: UserID,
                        canView: Set[UserID],
@@ -33,6 +55,9 @@ object BPMNDiagram {
     "width=\"36.0\" x=\"412.0\" y=\"240.0\"/>\n            </bpmndi:BPMNShape>\n        </bpmndi:BPMNPlane>\n    " +
     "</bpmndi:BPMNDiagram>\n</bpmn2:definitions>")
 
+  //------------------------------------------------------------------------------------------//
+  // NodeSeq to JSON
+  //------------------------------------------------------------------------------------------//
   implicit private[this] object XMLBlobWrites extends Writes[NodeSeq] {
     def writes(xml: NodeSeq) = JsString(xml.toString)
   }
@@ -45,6 +70,26 @@ object BPMNDiagram {
   }
 
   implicit private[this] val xmlFormat: Format[NodeSeq] = Format(XMLBlobReads, XMLBlobWrites)
+
+  //------------------------------------------------------------------------------------------//
+  // java.time.Instant to JSON
+  //------------------------------------------------------------------------------------------//
+  implicit private[this] object InstantWrites extends Writes[Instant] {
+    def writes(stamp: Instant) = Json.obj("$date" -> stamp.toEpochMilli)
+  }
+
+  implicit private[this] object InstantReads extends Reads[Instant] {
+    def reads(json: JsValue) = json match {
+      case DateValue(value) => JsSuccess(Instant.ofEpochMilli(value))
+      case _ => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsnumber"))))
+    }
+    private object DateValue {
+      def unapply(obj: JsObject): Option[Long] = (obj \ "$date").asOpt[Long]
+    }
+  }
+
+  implicit private[this] val instantFormat: Format[Instant] = Format(InstantReads, InstantWrites)
+
 
   implicit val jsonFormat = Json.format[BPMNDiagram]
 }

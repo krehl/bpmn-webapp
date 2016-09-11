@@ -9,6 +9,7 @@ import play.modules.reactivemongo.json._
 import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
 import reactivemongo.play.json.collection.JSONCollection
 import scaldi.{Injectable, Injector}
+import util.Types.Email
 
 import scala.collection.mutable
 import scala.concurrent.Future
@@ -16,12 +17,20 @@ import scala.concurrent.Future
 /**
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/4/2016
   */
-sealed trait UserDAO extends DAO[LoginInfo, User]
+sealed trait UserDAO extends DAO[LoginInfo, User] {
+  def findByEmail(key: Email): Future[Option[User]]
+
+  def exists(key: Email): Future[Boolean]
+}
 
 
 class InMemoryUserDAO extends UserDAO {
 
   import InMemoryUserDAO._
+
+  override def findByEmail(key: Email): Future[Option[User]] = ???
+
+  override def exists(key: Email): Future[Boolean] = ???
 
   override def save(user: User): Future[Boolean] = {
     Future.successful({
@@ -79,6 +88,24 @@ class MongoUserDAO(implicit inj: Injector) extends UserDAO
   def collection: Future[JSONCollection] = {
     mongoApi.database.map(_.collection[JSONCollection]("user"))
   }
+
+  override def findByEmail(key: Email): Future[Option[User]] = {
+    for {
+      collection <- collection
+      result <- collection
+        .find(Json.obj("email" -> key))
+        .one[User]
+    } yield result
+  }
+
+  override def exists(key: Email): Future[Boolean] = {
+    for {
+      collection <- collection
+      result <- collection
+        .count(Some(Json.obj("email" -> key)))
+    } yield result > 0
+  }
+
 
   /**
     * @param value value

@@ -118,7 +118,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
     eventBus.on('element.changed', function (e) {
         console.log(event, 'on', e.element.id);
         changed = true;
-    })
+    });
 
 // save diagram on button click
     const saveButton = document.querySelector('#save-button');
@@ -168,7 +168,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
             link.click();
             console.log(svg);
         });
-    })
+    });
 
     xmlDownload.addEventListener('click', function (event) {
         //event.preventDefault();
@@ -184,7 +184,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
             link.click();
             console.log(xml);
         });
-    })
+    });
 
     const xmlUpload = document.querySelector('#xml-upload');
     const xmlFile = document.querySelector('#xml-file');
@@ -210,8 +210,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
 
         reader.readAsText(file);
 
-    })
-0
+    });
 
     xmlUpload.addEventListener('click',function (e) {
         xmlFile.click();

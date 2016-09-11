@@ -30,7 +30,13 @@ class RepositoryController(implicit inj: Injector) extends ApplicationController
 
   //TODO infinity scroll; fetch only first x diagrams
   def repository = silhouette.SecuredAction.async { implicit request =>
-    diagramDAO.listOwns(request.identity.id).map({
+    val repository = for {
+      owns <- diagramDAO.listOwns(request.identity.id)
+      edits <- diagramDAO.listCanEdit(request.identity.id)
+      views <- diagramDAO.listCanView(request.identity.id)
+    } yield owns ::: edits ::: views
+
+    repository.map({
       list => Ok(views.html.bpmnRepository("Welcome", Some(request.identity), list))
     })
   }

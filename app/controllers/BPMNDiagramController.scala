@@ -1,12 +1,13 @@
 package controllers
 
-import models.daos.BPMNDiagramDAO
-import models.{BPMNDiagram, CanEdit, CanView, Owns}
+import java.time.Instant
+
+import models._
+import models.daos.{BPMNDiagramDAO, UserDAO}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.{JsValue, Json}
-import reactivemongo.bson.BSONObjectID
 import scaldi.Injector
-import util.Types.{BPMNDiagramID, UserID}
+import util.Types.{BPMNDiagramID, Email, UserID}
 
 import scala.concurrent.Future
 
@@ -17,6 +18,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
   //TODO json for everything; think about xml integration
   //TODO read diagram name from request
   val diagramDAO = inject[BPMNDiagramDAO]
+  val userDAO = inject[UserDAO]
 
   /**
     * Creates a new diagram and returns a HTML page
@@ -27,6 +29,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     implicit request =>
       val newDiagram = BPMNDiagram(
         name = "",
+        timeStamp = Instant.now(),
         xmlContent = BPMNDiagram.default,
         owner = request.identity.id,
         canView = Set.empty[UserID],
@@ -42,17 +45,19 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     * Returns a HTML page
     *
     * @param id id
+    *
     * @return HTML
     */
   def loadModeller(id: BPMNDiagramID) = silhouette.SecuredAction.async {
     implicit request =>
       //    render {//TODO make content negotiation working
-      //      case Accepts.Html() => Ok(views.html.bpmnModeller(s"Hello ${request.identity.firstName}!", Some(request.identity), id))
+      //      case Accepts.Html() => Ok(views.html.bpmnModeller(s"Hello ${request.identity.firstName}!", Some(request
+      // .identity), id))
       //      case Accepts.Json() => retrieve3(id)
       //    }
 
       Future.successful {
-        Ok(views.html.bpmnModeller(s"Hello ${ request.identity.firstName}!",
+        Ok(views.html.bpmnModeller(s"Hello ${request.identity.firstName}!",
           Some(request.identity),
           id.stringify)
         )
@@ -63,6 +68,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     * Downloads a diagram with the given id
     *
     * @param id database id
+    *
     * @return HTTP response depending on success
     */
   def download(id: BPMNDiagramID) = DiagramWithPermissionAction(id, CanView).async {
@@ -78,6 +84,51 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
       })
   }
 
+  def addEditors(id: BPMNDiagramID, editor: Email) = DiagramWithPermissionAction(id, Owns).async {
+    implicit request =>
+      val editors = List(editor)
+      val list = Future.sequence(editors.map(userDAO.findByEmail)).map(_.flatten.map(_.id))
+      list.flatMap(diagramDAO.addEditors(id, _).map({
+        case true => Ok
+        case false => BadRequest("Diagram not found!")
+      }))
+  }
+
+  def removeEditors(id: BPMNDiagramID, editor: Email) = DiagramWithPermissionAction(id, Owns).async {
+    implicit request =>
+      val editors = List(editor)
+
+      val list = Future.sequence(editors.map(userDAO.findByEmail)).map(_.flatten.map(_.id))
+
+      list.flatMap(diagramDAO.removeEditors(id, _).map({
+        case true => Ok
+        case false => BadRequest("Diagram not found!")
+      }))
+  }
+
+  def addViewers(id: BPMNDiagramID, viewer: Email) = DiagramWithPermissionAction(id, Owns).async {
+    implicit request =>
+      val viewers = List(viewer)
+
+      val list = Future.sequence(viewers.map(userDAO.findByEmail)).map(_.flatten.map(_.id))
+
+      list.flatMap(diagramDAO.addViewers(id, _).map({
+        case true => Ok
+        case false => BadRequest("Diagram not found!")
+      }))
+  }
+
+  def removeViewers(id: BPMNDiagramID, viewer: Email) = DiagramWithPermissionAction(id, Owns).async {
+    implicit request =>
+      val viewers = List(viewer)
+      val list = Future.sequence(viewers.map(userDAO.findByEmail)).map(_.flatten.map(_.id))
+
+      list.flatMap(diagramDAO.removeViewers(id, _).map({
+        case true => Ok
+        case false => BadRequest("Diagram not found!")
+      }))
+  }
+
   //------------------------------------------------------------------------------------------//
   // CRUD Operations
   //------------------------------------------------------------------------------------------//
@@ -90,6 +141,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     implicit request =>
       val newDiagram = BPMNDiagram(
         name = "",
+        timeStamp = Instant.now(),
         xmlContent = request.body,
         owner = request.identity.id,
         canView = Set.empty[UserID],
@@ -110,6 +162,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     * Retrieves a diagram with the given id
     *
     * @param id database id
+    *
     * @return HTTP response depending on success
     */
   def retrieve(id: BPMNDiagramID) = DiagramWithPermissionAction(id, CanView).async {
@@ -124,15 +177,24 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
       })
   }
 
+  def getHistory(id: BPMNDiagramID) = DiagramWithPermissionAction(id, CanView).async {
+    implicit request =>
+      diagramDAO.findHistory(id).map({
+        case list: List[BPMNDiagram] => Ok(Json.toJson(list))
+        case _ => InternalServerError
+      })
+  }
+
   /**
     * Updates the diagram resource at the given id
     *
     * @param id database id
+    *
     * @return xml
     */
   def update(id: BPMNDiagramID) = DiagramWithPermissionAction(id, CanEdit).async(parse.xml) {
     implicit request =>
-      diagramDAO.update(request.diagram.copy(xmlContent = request.body)).map({
+      diagramDAO.save(request.diagram.copy(xmlContent = request.body)).map({
         case true => Ok
         case false => InternalServerError
       })
@@ -142,6 +204,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     * Deletes the diagram resource at the given id
     *
     * @param id database id
+    *
     * @return json
     */
   def delete(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async {
