@@ -4,6 +4,7 @@ import java.time.Instant
 
 import models._
 import models.daos.{BPMNDiagramDAO, UserDAO}
+import play.api.i18n.Messages
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.{JsValue, Json}
 import scaldi.Injector
@@ -28,8 +29,8 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
   def newBPMNDiagram = silhouette.SecuredAction.async {
     implicit request =>
       val newDiagram = BPMNDiagram(
-        name = "",
-        description = "Process Description",
+        name = Messages("bpmn.default.title"),
+        description = Messages("bpmn.default.description"),
         timeStamp = Instant.now(),
         xmlContent = BPMNDiagram.default,
         owner = request.identity.id,
@@ -141,8 +142,8 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
   def create = silhouette.SecuredAction.async(parse.xml) {
     implicit request =>
       val newDiagram = BPMNDiagram(
-        name = "",
-        description = "Process Description",
+        name = Messages("bpmn.default.title"),
+        description = Messages("bpmn.default.description"),
         timeStamp = Instant.now(),
         xmlContent = request.body,
         owner = request.identity.id,
@@ -174,6 +175,8 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
         val json: JsValue = Json.obj(
           "id" -> id.stringify,
           "name" -> diagram.name,
+          "description" -> diagram.description,
+          "owner" -> diagram.owner.stringify,
           "xml" -> diagram.xmlContent.toString())
         Ok(json)
       })
