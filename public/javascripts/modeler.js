@@ -12,6 +12,8 @@ var bpmnModeler = (function (BpmnModeler, $) {
 
     if (!$('#canvas')[0]) return;
 
+    console.log("bpmnModeller loading");
+
     const bpmnModeler = new BpmnModeler({
         container: '#canvas'
     });
@@ -22,7 +24,9 @@ var bpmnModeler = (function (BpmnModeler, $) {
         type: router.type,
         cache: false,
         success: function (response) {
+            console.log(response);
             window.bpmn_id = response.id;
+
             importXML(response.xml);
         },
         error: function (xhr, ajaxOptions, thrownError) {
