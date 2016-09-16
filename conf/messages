@@ -11,7 +11,7 @@ welcome.signed.in = Welcome, you are now signed in!
 
 #application
 app.name = Process Modeller
-
+landing.title = Welcome
 sign.up.account = Sign up for a new account
 sign.in.credentials = Sign in with your credentials
 welcome = Welcome to
