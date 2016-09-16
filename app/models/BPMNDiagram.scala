@@ -39,13 +39,18 @@ class BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) ex
 
   def history = bpmnDiagramDAO.findHistory(id)
 
-  def addEditors(editors: List[UserID]) = bpmnDiagramDAO.addEditors(id, editors)
+  def addPermissions(viewers: List[UserID], editors: List[UserID]) = {
+    bpmnDiagramDAO.addPermissions(id, viewers, editors)
+  }
 
-  def removeEditors(editors: List[UserID]) = bpmnDiagramDAO.removeEditors(id, editors)
+  /*
 
-  def addViewers(viewers: List[UserID]) = bpmnDiagramDAO.addEditors(id, viewers)
+    def removeEditors(editors: List[UserID]) = bpmnDiagramDAO.removeEditors(id, editors)
 
-  def removeViewers(editors: List[UserID]) = bpmnDiagramDAO.removeViewers(id, editors)
+    def addViewers(viewers: List[UserID]) = bpmnDiagramDAO.addEditors(id, viewers)
+
+    def removeViewers(editors: List[UserID]) = bpmnDiagramDAO.removeViewers(id, editors)
+  */
 
 }
 

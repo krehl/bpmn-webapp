@@ -109,7 +109,7 @@
                             <div class="modal-body">
 
                             @b3.inline.form(
-                                action = routes.BPMNDiagramController.addEditors(diagramId.get)
+                                action = routes.BPMNDiagramController.addPermissions(diagramId.get)
                             ) { implicit hfc =>
                                 @b3.email(
                                     permissionForm("emails"),

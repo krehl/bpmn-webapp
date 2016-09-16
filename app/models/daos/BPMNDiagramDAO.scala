@@ -28,21 +28,13 @@ sealed trait BPMNDiagramDAO extends DAO[BPMNDiagramID, BPMNDiagram] {
 
   def findHistory(key: BPMNDiagramID): Future[List[BPMNDiagram]]
 
-  def addEditors(key: BPMNDiagramID, editors: List[UserID]): Future[Boolean]
+  def addPermissions(key: BPMNDiagramID,
+                     viewers: List[UserID],
+                     editors: List[UserID]): Future[Boolean]
 
-  def addViewers(key: BPMNDiagramID, viewers: List[UserID]): Future[Boolean]
-
-  def removeViewers(key: BPMNDiagramID, viewers: List[UserID]): Future[Boolean]
-
-  def removeEditors(key: BPMNDiagramID, viewers: List[UserID]): Future[Boolean]
-
-
-  //  def canEdit(userId: UserID, diagramId: BPMNDiagramID): Future[Boolean]
-  //
-  //  def canView(userId: UserID, diagramId: BPMNDiagramID): Future[Boolean]
-  //
-  //  def owns(userId: UserID, diagramId: BPMNDiagramID): Future[Boolean]
-
+  def removePermissions(key: BPMNDiagramID,
+                        viewers: List[UserID],
+                        editors: List[UserID]): Future[Boolean]
 }
 
 class MongoBPMNDiagramDAO(implicit inj: Injector) extends BPMNDiagramDAO
@@ -86,48 +78,15 @@ class MongoBPMNDiagramDAO(implicit inj: Injector) extends BPMNDiagramDAO
     } yield data.map(BPMNDiagram(_)).groupBy(_.id).map(_._2.sorted.head).toList
   }
 
-
-  override def addViewers(key: BPMNDiagramID, viewers: List[UserID]): Future[Boolean] = {
+  override def addPermissions(key: BPMNDiagramID,
+                              viewers: List[UserID],
+                              editors: List[UserID]): Future[Boolean] = {
     val query = Json.obj("id" -> BSONObjectIDFormat.writes(key))
     val modifier = Json.obj(
       "$addToSet" -> Json.obj(
         "canView" -> Json.obj(
           "$each" -> JsArray(viewers.map(BSONObjectIDFormat.writes))
-        )
-      )
-    )
-
-    for {
-      collection <- collection
-      result <- collection.update(query,
-        modifier,
-        upsert = false,
-        multi = true)
-    } yield result.ok
-  }
-
-
-  override def removeViewers(key: BPMNDiagramID, viewers: List[UserID]): Future[Boolean] = {
-    val query = Json.obj("id" -> BSONObjectIDFormat.writes(key))
-    val modifier = Json.obj(
-      "$pullAll" -> Json.obj(
-        "canView" -> JsArray(viewers.map(BSONObjectIDFormat.writes))
-      )
-    )
-    
-    for {
-      collection <- collection
-      result <- collection.update(query,
-        modifier,
-        upsert = false,
-        multi = true)
-    } yield result.ok
-  }
-
-  override def addEditors(key: BPMNDiagramID, editors: List[UserID]): Future[Boolean] = {
-    val query = Json.obj("id" -> BSONObjectIDFormat.writes(key))
-    val modifier = Json.obj(
-      "$addToSet" -> Json.obj(
+        ),
         "canEdit" -> Json.obj(
           "$each" -> JsArray(editors.map(BSONObjectIDFormat.writes))
         )
@@ -143,11 +102,14 @@ class MongoBPMNDiagramDAO(implicit inj: Injector) extends BPMNDiagramDAO
     } yield result.ok
   }
 
-  override def removeEditors(key: BPMNDiagramID, editors: List[UserID]): Future[Boolean] = {
+
+  override def removePermissions(key: BPMNDiagramID,
+                                 viewers: List[UserID],
+                                 editors: List[UserID]): Future[Boolean] = {
     val query = Json.obj("id" -> BSONObjectIDFormat.writes(key))
-    //    val modifier = Json.obj("$pullAll" -> Json.obj("canEdit" -> Json.arr(BSONObjectIDFormat.writes(viewers.head))))
     val modifier = Json.obj(
       "$pullAll" -> Json.obj(
+        "canView" -> JsArray(viewers.map(BSONObjectIDFormat.writes)),
         "canEdit" -> JsArray(editors.map(BSONObjectIDFormat.writes))
       )
     )
