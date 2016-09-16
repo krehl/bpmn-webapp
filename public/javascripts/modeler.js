@@ -56,6 +56,24 @@ var bpmnModeler = (function (BpmnModeler, $) {
                         canView: response.canView
                     },
                     methods: {
+                        popEdit: function (index) {
+                            this.canEdit.splice(index,1);
+                        },
+                        popView: function (index) {
+                            this.canView.splice(index,1);
+                        },
+                        refresh: function () {
+                            var router = jsRoutes.controllers.BPMNDiagramController.listPermissions(window.bpmn_id.toString());
+                            $.ajax({
+                                url: router.url,
+                                method: 'GET',
+                                success: function (response) {
+                                    console.log(response);
+                                    permissionVue.canEdit = response.canEdit;
+                                    permissionVue.canView = response.canView;
+                                }
+                            });
+                        },
                         addViewer: function () {
                             if (this.user != "") {
                                 this.canView.push(this.user);

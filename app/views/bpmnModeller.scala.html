@@ -71,16 +71,14 @@
 
 
                         <ul class="list-group" v-cloak>
-                            <li class="list-group-item" v-for="item in canView">{{item}} (View)</li>
-                        </ul>
-
-                        <ul class="list-group" v-cloak>
-                            <li class="list-group-item" v-for="item in canEdit">{{item}} (Edit)</li>
+                            <li class="list-group-item" v-for="item in canView">{{item}} (View)<button class="pull-xs-right" v-on:click="popView($index)">X</button></li>
+                            <li class="list-group-item" v-for="item in canEdit">{{item}} (Edit)<button class="pull-xs-right" v-on:click="popEdit($index)">X</button></li>
                         </ul>
 
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="submit">Save changes</button>
+                        <button type="button" class="btn btn-default" v-on:click="refresh">Refresh</button>
                     </div>
                 </div>
             </div>
