@@ -39,6 +39,10 @@ class BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) ex
 
   def history = bpmnDiagramDAO.findHistory(id)
 
+  def listUserThatCanView = userDAO.getAll(canView.toList)
+
+  def listUserThatCanEdit = userDAO.getAll(canEdit.toList)
+
   def addPermissions(viewers: List[UserID], editors: List[UserID]) = {
     bpmnDiagramDAO.addPermissions(id, viewers, editors)
   }

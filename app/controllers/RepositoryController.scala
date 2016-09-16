@@ -16,7 +16,7 @@ class RepositoryController(implicit inj: Injector) extends ApplicationController
       owns <- diagramDAO.listOwns(request.identity.id)
       edits <- diagramDAO.listCanEdit(request.identity.id)
       views <- diagramDAO.listCanView(request.identity.id)
-    } yield owns ::: edits ::: views
+    } yield (owns ::: edits ::: views).distinct
 
     repository.map({
       list => Ok(views.html.bpmnRepository("Welcome", Some(request.identity), list))
