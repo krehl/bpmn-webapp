@@ -7,6 +7,7 @@ import models.daos.{BPMNDiagramDAO, UserDAO}
 import play.api.i18n.Messages
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.{JsValue, Json}
+import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
 import scaldi.Injector
 import util.Types.{BPMNDiagramID, UserID}
 
@@ -89,7 +90,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
       val viewers = (json \ "canView").as[List[UserID]]
       val editors = (json \ "canEdit").as[List[UserID]]
 
-      diagramDAO.addPermissions(id, viewers, editors).map({
+      request.diagram.addPermissions(viewers, editors).map({
         case true => Ok
         case false => BadRequest("Diagram not found!")
       })
