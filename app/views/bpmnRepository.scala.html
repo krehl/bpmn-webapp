@@ -77,11 +77,13 @@
                         Array.from(deleteLinks).forEach(link => {
                             link.addEventListener('click',function(event){
                             event.preventDefault();
-                            console.log(event);
-                            xhttp.open('DELETE',event.currentTarget.valueOf('href'),true);
-                            xhttp.send();
-                            event.currentTarget.parentNode.parentNode.remove();
-                            console.log(event.currentTarget.valueOf('href'));
+                            if (window.confirm("Are you sure that you want to delete the diagram?")) {
+                                console.log(event);
+                                xhttp.open('DELETE',event.currentTarget.valueOf('href'),true);
+                                xhttp.send();
+                                event.currentTarget.parentNode.parentNode.remove();
+                                console.log(event.currentTarget.valueOf('href'));
+                            }
                         })})})();
             </script>
         }
