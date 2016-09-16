@@ -52,7 +52,9 @@ class ApplicationController(implicit inj: Injector) extends Controller
         controllers.routes.javascript.BPMNDiagramController.addViewers,
 */
         controllers.routes.javascript.BPMNDiagramController.getHistory,
-        controllers.routes.javascript.BPMNDiagramController.addPermissions
+        controllers.routes.javascript.BPMNDiagramController.addPermissions,
+        controllers.routes.javascript.BPMNDiagramController.delete,
+        controllers.routes.javascript.RepositoryController.repository
       )
     ).as("text/javascript")
   }

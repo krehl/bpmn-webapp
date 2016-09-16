@@ -106,7 +106,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
             console.log(thrownError);
         }
     });
-    $('#app h1').on('click', function (event) {
+    $('#app h1, #rename-btn').on('click', function (event) {
         var name = prompt('Process Title:', app.name);
         if (!name=="") app.name = name;
     })
@@ -208,6 +208,26 @@ var bpmnModeler = (function (BpmnModeler, $) {
     const svgDownload = document.querySelector('#svg-button');
     const xmlDownload = document.querySelector('#xml-button');
     const historyButton = document.querySelector('#history');
+    const deleteButton = document.querySelector('#delete-btn');
+
+    deleteButton.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (window.confirm("Are you sure that you want to delete the diagram?")) {
+            var router = jsRoutes.controllers.BPMNDiagramController.delete(window.bpmn_id.toString());
+            $.ajax({
+                url: router.url,
+                method: "DELETE",
+                success: function (response) {
+                    console.log('deleted');
+                    location.href = jsRoutes.controllers.RepositoryController.repository().url;
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(xhr.status);
+                    console.log(thrownError);
+                }
+            });
+        }
+    });
 
     historyButton.addEventListener('click', function () {
        var router = jsRoutes.controllers.BPMNDiagramController.getHistory(window.bpmn_id.toString());
