@@ -171,7 +171,10 @@ class MongoBPMNDiagramDAO(implicit inj: Injector) extends BPMNDiagramDAO
     val query = Json.obj("id" -> BSONObjectIDFormat.writes(key))
     for {
       collection <- collection
-      dataOption <- collection.find(query).cursor[BPMNDiagram.Data]().collect[List]()
+      dataOption <- collection
+        .find(query)
+        .sort(Json.obj("timeStamp" -> -1))
+        .cursor[BPMNDiagram.Data]().collect[List]()
     } yield dataOption.map(BPMNDiagram(_))
   }
 
