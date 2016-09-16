@@ -2,6 +2,7 @@
 #GET           /bpmn/:id/view                     ???
 GET           /bpmn/:id/history                     controllers.BPMNDiagramController.getHistory(id: reactivemongo.bson.BSONObjectID)
 GET           /bpmn/:id/addeditors/:email          controllers.BPMNDiagramController.addEditors(id: reactivemongo.bson.BSONObjectID,email: String)
+GET           /bpmn/:id/addviewer/:email            controllers.BPMNDiagramController.addViewers(id: reactivemongo.bson.BSONObjectID, email: String)
 GET           /bpmn/:id/removeeditors/:email       controllers.BPMNDiagramController.removeEditors(id: reactivemongo.bson.BSONObjectID,email: String)
 #http://localhost:9000/bpmn/id/removeeditors?emails[]=123?emails[]=456
 
