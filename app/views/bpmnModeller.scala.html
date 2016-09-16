@@ -19,7 +19,7 @@
 
     <div id="app">
         <div v-cloak>
-            <h1 style="margin: 10px;">{{title}}</h1>
+            <h1 style="margin: 10px;">{{name}}</h1>
         </div>
     </div>
 
@@ -37,37 +37,7 @@
             console.log(bpmn_id);
     </script>
 
-    <script type="text/javascript" src="https://vuejs.org/js/vue.js"></script>
     <script type="text/javascript">
-            var router = jsRoutes.controllers.BPMNDiagramController.retrieve(window.bpmn_id);
-            $.ajax({
-                url: router.url,
-                type: router.type,
-                cache: false,
-                success: function (response) {
-                    console.log(response);
-                    window.bpmn_id = response.id;
-                    app = new Vue({
-                        el: '#app',
-                        data: {
-                            title: response.name,
-                            description: response.description,
-                            owner: response.owner,
-                            id: response.id
-                        }
-                    });
-
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    console.log(xhr.status);
-                    console.log(thrownError);
-                }
-            });
-            $('#app h1').on('click', function (event) {
-                var title = prompt('Process Title:', app.title);
-                app.title = title;
-            })
-
 
 
     </script>

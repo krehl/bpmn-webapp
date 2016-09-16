@@ -205,12 +205,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     implicit request =>
       Future.successful({
         val diagram = request.diagram
-        val json: JsValue = Json.obj(
-          "id" -> id.stringify,
-          "name" -> diagram.name,
-          "description" -> diagram.description,
-          "owner" -> diagram.owner.stringify,
-          "xml" -> diagram.xmlContent.toString())
+        val json: JsValue = Json.toJson(BPMNDiagram.toData(diagram))
         Ok(json)
       })
   }

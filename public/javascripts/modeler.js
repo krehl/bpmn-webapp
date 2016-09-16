@@ -26,14 +26,26 @@ var bpmnModeler = (function (BpmnModeler, $) {
         success: function (response) {
             console.log(response);
             window.bpmn_id = response.id;
+            importXML(response.xmlContent);
+            app = new Vue({
+                el: '#app',
+                data: {
+                    name: response.name,
+                    description: response.description,
+                    xmlContent: response.xmlContent,
+                }
+            });
 
-            importXML(response.xml);
         },
         error: function (xhr, ajaxOptions, thrownError) {
             console.log(xhr.status);
             console.log(thrownError);
         }
     });
+    $('#app h1').on('click', function (event) {
+        var name = prompt('Process Title:', app.name);
+        if (!name=="") app.name = name;
+    })
 
     // $.ajax({
     //     url: "/bpmn/" + window.bpmn_id,
