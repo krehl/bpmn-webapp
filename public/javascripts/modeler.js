@@ -143,14 +143,26 @@ var bpmnModeler = (function (BpmnModeler, $) {
     const saveButton = document.querySelector('#save-button');
     const svgDownload = document.querySelector('#svg-button');
     const xmlDownload = document.querySelector('#xml-button');
-    const history = document.querySelector('#history');
+    const historyButton = document.querySelector('#history');
 
-    history.addEventListener('click', function () {
+    historyButton.addEventListener('click', function () {
        var router = jsRoutes.controllers.BPMNDiagramController.getHistory(window.bpmn_id.toString());
         $.ajax({
             url: router.url,
             success: function(response) {
                 console.log(response);
+
+                historyVue = new Vue({
+                    el: '#history-modal',
+                    data: {
+                        items: response
+                    },
+                    methods: {
+                        fromNow: function(string) {
+                            return moment(new Date(string)).fromNow();
+                        }
+                    }
+                });
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.log(xhr.status);
