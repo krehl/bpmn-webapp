@@ -1,14 +1,13 @@
 package models
 
-import _root_.util.Types.{UserID, _}
-import play.api.data.validation.ValidationError
-import play.api.libs.json.{Json, _}
-import reactivemongo.bson.{BSONDateTime, BSONObjectID, BSONValue}
-import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
 import java.time.Instant
 
-import models.daos.BPMNDiagramDAO
-import play.modules.reactivemongo.ReactiveMongoApi
+import _root_.util.Types.{UserID, _}
+import models.daos.{BPMNDiagramDAO, UserDAO}
+import play.api.data.validation.ValidationError
+import play.api.libs.json.{Json, _}
+import reactivemongo.bson.BSONObjectID
+import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
 import scaldi.{Injectable, Injector}
 
 import scala.xml.{NodeSeq, XML}
@@ -18,33 +17,57 @@ import scala.xml.{NodeSeq, XML}
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/11/2016
   */
 
-//case class BPMNDiagram(data: BPMNDiagramData)(implicit inj: Injector) extends Injectable {
-//  val bpmnDiagramDAO= inject[BPMNDiagramDAO]
-//
-//  lazy val canView = ???
-//}
-//case class Data(firstName: String,
-//                lastName: String,
-//                email: String,
-//                password: String)
-//
-//object Data {
-//
-//  implicit val jsonFormat = Json.format[Data]
-//}
-//                       versionId: BPMNDiagramVersionID = BSONObjectID.generate,
+class BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) extends Injectable {
+  val bpmnDiagramDAO = inject[BPMNDiagramDAO]
+  val userDAO = inject[UserDAO]
 
-case class BPMNDiagram(id: BPMNDiagramID = BSONObjectID.generate,
-                       name: String,
-                       description: String,
-                       timeStamp: Instant,
-                       xmlContent: NodeSeq,
-                       owner: UserID,
-                       canView: Set[UserID],
-                       canEdit: Set[UserID])
+  def id = data.id
+
+  def name = data.name
+
+  def description = data.description
+
+  def timeStamp = data.timeStamp
+
+  def xmlContent = data.xmlContent
+
+  def owner = data.owner
+
+  def canView = data.canView
+
+  def canEdit = data.canEdit
+
+  def history = bpmnDiagramDAO.findHistory(id)
+
+  def addEditors(editors: List[UserID]) = bpmnDiagramDAO.addEditors(id, editors)
+
+  def removeEditors(editors: List[UserID]) = bpmnDiagramDAO.removeEditors(id, editors)
+
+  def addViewers(viewers: List[UserID]) = bpmnDiagramDAO.addEditors(id, viewers)
+
+  def removeViewers(editors: List[UserID]) = bpmnDiagramDAO.removeViewers(id, editors)
+
+}
 
 object BPMNDiagram {
-  val default = XML.loadString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn2:definitions xmlns:xsi=\"http://www" +
+
+  def apply(data: BPMNDiagram.Data)(implicit inj: Injector): BPMNDiagram = new BPMNDiagram(data)(inj)
+
+  implicit def orderingByTimeStamp[A <: BPMNDiagram]: Ordering[A] = Ordering.by(_.timeStamp)
+
+  def toData(diagram: BPMNDiagram) = diagram.data
+
+  case class Data(id: BPMNDiagramID = BSONObjectID.generate,
+                  name: String,
+                  description: String,
+                  timeStamp: Instant,
+                  xmlContent: NodeSeq = default,
+                  owner: UserID,
+                  canView: Set[UserID],
+                  canEdit: Set[UserID])
+
+  private[this] val default = XML.loadString("<?xml version=\"1.0\" " +
+    "encoding=\"UTF-8\"?>\n<bpmn2:definitions xmlns:xsi=\"http://www" +
     ".w3.org/2001/XMLSchema-instance\" xmlns:bpmn2=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" " +
     "xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" " +
     "xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xsi:schemaLocation=\"http://www.omg" +
@@ -84,13 +107,18 @@ object BPMNDiagram {
       case DateValue(value) => JsSuccess(Instant.ofEpochMilli(value))
       case _ => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsnumber"))))
     }
+
     private object DateValue {
       def unapply(obj: JsObject): Option[Long] = (obj \ "$date").asOpt[Long]
     }
+
   }
 
   implicit private[this] val instantFormat: Format[Instant] = Format(InstantReads, InstantWrites)
 
+  //------------------------------------------------------------------------------------------//
+  // BPMNDiagram to JSON
+  //------------------------------------------------------------------------------------------//
+  implicit val jsonFormat = Json.format[Data]
 
-  implicit val jsonFormat = Json.format[BPMNDiagram]
 }

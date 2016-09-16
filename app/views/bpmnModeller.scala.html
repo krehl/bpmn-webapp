@@ -1,4 +1,6 @@
-@(message: String, user: Option[User], id: String)(implicit request: RequestHeader, messages: Messages)
+@import util.Types.BPMNDiagramID
+@(message: String, user: Option[User], id: BPMNDiagramID)(implicit request: RequestHeader,
+        messages: Messages)
 @main(Messages("bpmn.modeler.title"), user) {
 
     <!--
@@ -25,14 +27,14 @@
 
 
     @if(user.isDefined) {
-        <div id="navigation">@navigation()</div>
+        <div id="navigation">@navigation(diagramId = Some(id))</div>
     }
 
 
     <div id="canvas" class="container-fluid"></div>
     <script>
-            bpmn_id = "@id";
-        console.log(bpmn_id);
+            bpmn_id = "@id.stringify";
+            console.log(bpmn_id);
     </script>
 
     <script type="text/javascript" src="https://vuejs.org/js/vue.js"></script>
@@ -45,13 +47,15 @@
                 success: function (response) {
                     console.log(response);
                     window.bpmn_id = response.id;
-                    app = new Vue({ el: '#app',
+                    app = new Vue({
+                        el: '#app',
                         data: {
                             title: response.name,
                             description: response.description,
                             owner: response.owner,
                             id: response.id
-                        }});
+                        }
+                    });
 
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
@@ -59,10 +63,10 @@
                     console.log(thrownError);
                 }
             });
-        $('#app h1').on('click',function(event){
-            var title = prompt('Process Title:',app.title);
-            app.title = title;
-        })
+            $('#app h1').on('click', function (event) {
+                var title = prompt('Process Title:', app.title);
+                app.title = title;
+            })
 
 
 
