@@ -43,6 +43,9 @@ class BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) ex
     bpmnDiagramDAO.addPermissions(id, viewers, editors)
   }
 
+  def removePermissions(viewers: List[UserID], editors: List[UserID]) = {
+    bpmnDiagramDAO.removePermissions(id, viewers, editors)
+  }
   /*
 
     def removeEditors(editors: List[UserID]) = bpmnDiagramDAO.removeEditors(id, editors)
