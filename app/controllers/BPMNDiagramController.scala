@@ -12,6 +12,7 @@ import scaldi.Injector
 import util.Types.{BPMNDiagramID, UserID}
 
 import scala.concurrent.Future
+import scala.xml.{NodeSeq, XML}
 
 /**
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 15/07/2016
@@ -205,12 +206,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     implicit request =>
       Future.successful({
         val diagram = request.diagram
-        val json: JsValue = Json.obj(
-          "id" -> id.stringify,
-          "name" -> diagram.name,
-          "description" -> diagram.description,
-          "owner" -> diagram.owner.stringify,
-          "xml" -> diagram.xmlContent.toString())
+        val json: JsValue = Json.toJson(BPMNDiagram.toData(diagram))
         Ok(json)
       })
   }
@@ -221,11 +217,30 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     * @param id database id
     * @return xml
     */
-  def update(id: BPMNDiagramID) = DiagramWithPermissionAction(id, CanEdit).async(parse.xml) {
+/*   def updateB(id: BPMNDiagramID) = DiagramWithPermissionAction(id, CanEdit).async(parse.xml) {
+     implicit request =>
+       diagramDAO.save(BPMNDiagram(
+         BPMNDiagram.toData(request.diagram).copy(xmlContent = request.body))
+       ).map({
+         case true => Ok
+         case false => InternalServerError
+       })
+   }*/
+
+  def update(id: BPMNDiagramID) = DiagramWithPermissionAction(id, CanEdit).async(parse.json) {
     implicit request =>
-      diagramDAO.save(BPMNDiagram(
-        BPMNDiagram.toData(request.diagram).copy(xmlContent = request.body))
-      ).map({
+      val json = request.body
+      val name = (json \ "name").as[String]
+      val description = (json \ "description").as[String]
+      val xmlContent = scala.xml.XML.loadString((json \ "xmlContent").as[String])
+      val diagram = BPMNDiagram(
+        BPMNDiagram.toData(request.diagram).copy(
+          name = name,
+          description = description,
+          xmlContent = xmlContent)
+      )
+
+      diagramDAO.save(diagram).map({
         case true => Ok
         case false => InternalServerError
       })
