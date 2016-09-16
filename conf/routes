@@ -33,6 +33,7 @@ PUT           /bpmn/:id/removePermissions        controllers.BPMNDiagramControll
 # Home page
 GET           /                                  controllers.ApplicationController.index
 GET           /repository                        controllers.RepositoryController.repository
+GET           /profile                           controllers.ProfileController.getProfile
 
 
 #

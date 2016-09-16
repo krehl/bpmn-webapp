@@ -57,29 +57,3 @@ class ApplicationController(implicit inj: Injector) extends Controller
     ).as("text/javascript")
   }
 }
-
-
-//object AuthenticatedAction extends ActionBuilder[BPMNDiagramRequest]
-//  with ActionRefiner[SecuredRequest, BPMNDiagramRequest] {
-//
-//  def refine[T](request: SecuredRequest[DefaultEnv, T]): Future[Either[Result, BPMNDiagramRequest[T]]] = {
-//    val result = request.session.get("username")
-//      .flatMap(User.findByUsername(_))
-//      .map(user => new AuthenticatedRequest[T](user, request))
-//      .toRight(left = Results.Forbidden)
-//    Future.successful(result)
-//  }
-//}
-//
-//object CheckSSLAction
-//  extends ActionBuilder[Request]
-//    with ActionFilter[Request] {
-//
-//  def filter[A](request: Request[A]): Future[Option[Result]] = {
-//    val result = request.headers.get("X-Forwarded-Proto") match {
-//      case Some(proto) if proto == "https" => None
-//      case _ => Some(Results.Forbidden)
-//    }
-//    Future.successful(result)
-//  }
-//}

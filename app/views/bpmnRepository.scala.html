@@ -1,6 +1,7 @@
 @(message: String, user: Option[User], diagrams: List[BPMNDiagram])(implicit request: RequestHeader, messages: Messages)
     @main(Messages("bpmn.modeler.title"), user) {
 
+        <!-- navbar -->
         @if(user.isDefined) {
             <div id="navigation">@navigation()</div>
         }
@@ -8,12 +9,26 @@
         @if(diagrams.nonEmpty) {
 
             <style>
-            .nav-item.dropdown {
-                /* hide useless navbar elements */
-                display: none !important;
-                width:0px !important;
-                height:0px !important;
-            }
+                .nav-item.dropdown {
+                    /* hide useless navbar elements */
+                    display: none !important;
+                    width:0px !important;
+                    height:0px !important;
+                }
+                #save-button {
+                     /* hide useless navbar elements */
+                     display: none !important;
+                     width:0px !important;
+                     height:0px !important;
+                     overflow: hidden !important;
+                 }
+                #history {
+                    /* hide useless navbar elements */
+                    display: none !important;
+                    width:0px !important;
+                    height:0px !important;
+                    overflow: hidden !important;
+                }
             </style>
 
             @for(diagram <- diagrams) {
