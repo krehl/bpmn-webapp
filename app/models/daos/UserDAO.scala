@@ -1,9 +1,9 @@
 package models.daos
 
 import com.mohiva.play.silhouette.api.LoginInfo
-import models.User
+import models.{BPMNDiagram, User}
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsArray, Json}
 import play.modules.reactivemongo.ReactiveMongoApi
 import play.modules.reactivemongo.json._
 import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
@@ -52,15 +52,15 @@ class MongoUserDAO(implicit inj: Injector) extends UserDAO
 
 
   def getAll(list: List[UserID]): Future[List[User]] = {
-  /*  val query = Json.obj("id" -> Json.obj("$in" -> list))
+    val query = Json.obj("id" -> Json.obj("$in" -> JsArray(list.map(BSONObjectIDFormat.writes))))
 
     for {
       collection <- collection
-      dataOption <- collection
+      data <- collection
         .find(query)
-        .one[User.Data]
-    } yield dataOption.map(User(_))*/
-    ???
+        .cursor[User.Data]()
+        .collect[List]()
+    } yield data.map(User(_))
   }
 
 

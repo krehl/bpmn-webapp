@@ -84,6 +84,17 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
       })
   }
 
+  def listPermissions(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async {
+    implicit request =>
+      (for {
+        viewerEmails <- request.diagram.listUserThatCanView.map(_.map(_.email))
+        editorEmails <- request.diagram.listUserThatCanEdit.map(_.map(_.email))
+      } yield Json.obj(
+        "canView" -> Json.toJson(viewerEmails),
+        "canEdit" -> Json.toJson(editorEmails)
+      )).map(Ok(_))
+  }
+
   def addPermissions(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async(parse.json) {
     implicit request =>
       val json = request.body
