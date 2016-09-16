@@ -16,7 +16,7 @@
     }
     </style>
 
-
+    <!-- diagram title above navbar -->
     <div id="app">
         <div v-cloak>
             <h1 style="margin: 10px;">{{name}}</h1>
@@ -44,12 +44,12 @@
     </div><!-- /.modal -->
 
 
-
+    <!-- navbar -->
     @if(user.isDefined) {
         <div id="navigation">@navigation(diagramId = Some(id))</div>
     }
 
-
+    <!-- main modeller -->
     <div id="canvas" class="container-fluid"></div>
     <script>
             bpmn_id = "@id.stringify";

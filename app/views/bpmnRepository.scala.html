@@ -1,6 +1,7 @@
 @(message: String, user: Option[User], diagrams: List[BPMNDiagram])(implicit request: RequestHeader, messages: Messages)
     @main(Messages("bpmn.modeler.title"), user) {
 
+        <!-- navbar -->
         @if(user.isDefined) {
             <div id="navigation">@navigation()</div>
         }
