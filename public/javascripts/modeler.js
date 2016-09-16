@@ -108,7 +108,12 @@ var bpmnModeler = (function (BpmnModeler, $) {
     });
     $('#app h1, #rename-btn').on('click', function (event) {
         var name = prompt('Process Title:', app.name);
-        if (!name=="") app.name = name;
+        if (!name=="") {
+            if (!(name == app.name)) {
+                app.name = name;
+                changed = true;
+            }
+        }
     })
 
     // $.ajax({
@@ -272,33 +277,37 @@ var bpmnModeler = (function (BpmnModeler, $) {
 
 
     saveButton.addEventListener('click', function () {
+        if (changed) {
+            // get the diagram contents
+            bpmnModeler.saveXML({format: true}, function (err, xml) {
 
-        // get the diagram contents
-        bpmnModeler.saveXML({format: true}, function (err, xml) {
+                if (err) {
+                    console.error('diagram save failed', err);
+                } else {
+                    app.xmlContent = xml;
+                    var router = jsRoutes.controllers.BPMNDiagramController.update(window.bpmn_id.toString());
+                    $.ajax({
+                        url: router.url,
+                        data: JSON.stringify(app.$data),
+                        type: router.type,
+                        cache: false,
+                        contentType: "application/json",
+                        success: function (response) {
+                            console.log("update successful")
+                            console.log(response);
+                            changed = false;
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            console.log(xhr.status);
+                            console.log(thrownError);
+                        }
+                    });
+                }
+            });
+        } else {
+            console.log('no changes, save unneccessary');
+        }
 
-            if (err) {
-                console.error('diagram save failed', err);
-            } else {
-                app.xmlContent = xml;
-                var router = jsRoutes.controllers.BPMNDiagramController.update(window.bpmn_id.toString());
-                $.ajax({
-                    url: router.url,
-                    data: JSON.stringify(app.$data),
-                    type: router.type,
-                    cache: false,
-                    contentType: "application/json",
-                    success: function (response) {
-                        console.log("update successful")
-                        console.log(response);
-                        changed = false;
-                    },
-                    error: function (xhr, ajaxOptions, thrownError) {
-                        console.log(xhr.status);
-                        console.log(thrownError);
-                    }
-                });
-            }
-        });
     });
 
     svgDownload.addEventListener('click', function (event) {
@@ -348,6 +357,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
                 if (err) {
                     return console.error('could not import BPMN 2.0 diagram', err);
                 }
+                changed = true;
                 var canvas = bpmnModeler.get('canvas');
                 // zoom to fit full viewport
                 canvas.zoom('fit-viewport');
