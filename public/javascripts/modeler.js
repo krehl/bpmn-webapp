@@ -25,15 +25,27 @@ var bpmnModeler = (function (BpmnModeler, $) {
         cache: false,
         success: function (response) {
             console.log(response);
-            window.bpmn_id = response.id;
-
+            //window.bpmn_id = response.id;
             importXML(response.xmlContent);
+            app = new Vue({
+                el: '#app',
+                data: {
+                    name: response.name,
+                    description: response.description,
+                    xmlContent: response.xmlContent,
+                }
+            });
+
         },
         error: function (xhr, ajaxOptions, thrownError) {
             console.log(xhr.status);
             console.log(thrownError);
         }
     });
+    $('#app h1').on('click', function (event) {
+        var name = prompt('Process Title:', app.name);
+        if (!name=="") app.name = name;
+    })
 
     // $.ajax({
     //     url: "/bpmn/" + window.bpmn_id,
@@ -123,7 +135,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
     var eventBus = bpmnModeler.get('eventBus');
     window.eventBus = eventBus;
     eventBus.on('element.changed', function (e) {
-        console.log(event, 'on', e.element.id);
+        //console.log(event, 'on', e.element.id);
         changed = true;
     });
 
@@ -131,6 +143,21 @@ var bpmnModeler = (function (BpmnModeler, $) {
     const saveButton = document.querySelector('#save-button');
     const svgDownload = document.querySelector('#svg-button');
     const xmlDownload = document.querySelector('#xml-button');
+    const history = document.querySelector('#history');
+
+    history.addEventListener('click', function () {
+       var router = jsRoutes.controllers.BPMNDiagramController.getHistory(window.bpmn_id.toString());
+        $.ajax({
+            url: router.url,
+            success: function(response) {
+                console.log(response);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        })
+    });
 
 
     saveButton.addEventListener('click', function () {
@@ -141,14 +168,16 @@ var bpmnModeler = (function (BpmnModeler, $) {
             if (err) {
                 console.error('diagram save failed', err);
             } else {
-                var router = jsRoutes.controllers.BPMNDiagramController.update(window.bpmn_id);
+                app.xmlContent = xml;
+                var router = jsRoutes.controllers.BPMNDiagramController.update(window.bpmn_id.toString());
                 $.ajax({
                     url: router.url,
-                    data: xml,
+                    data: JSON.stringify(app.$data),
                     type: router.type,
                     cache: false,
                     contentType: "application/json",
                     success: function (response) {
+                        console.log("update successful")
                         console.log(response);
                         changed = false;
                     },
