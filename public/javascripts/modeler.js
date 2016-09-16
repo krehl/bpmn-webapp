@@ -159,7 +159,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
                     data: xml,
                     type: router.type,
                     cache: false,
-                    contentType: "application/xml",
+                    contentType: "application/json",
                     success: function (response) {
                         console.log(response);
                         changed = false;
