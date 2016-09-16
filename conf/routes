@@ -4,6 +4,7 @@
 GET           /bpmn/:id/history              controllers.BPMNDiagramController.getHistory(id: reactivemongo.bson.BSONObjectID)
 PUT           /bpmn/:id/addEditors/          controllers.BPMNDiagramController.addEditors(id: reactivemongo.bson.BSONObjectID)
 PUT           /bpmn/:id/removeEditors        controllers.BPMNDiagramController.removeEditors(id: reactivemongo.bson.BSONObjectID)
+PUT           /bpmn/:id/addViewers/          controllers.BPMNDiagramController.addViewers(id: reactivemongo.bson.BSONObjectID)
 #make this post ..get just temp
 #GET           /bpmn/:id/edit/:version            ???
 #GET           /bpmn/:id/view/:version            ???

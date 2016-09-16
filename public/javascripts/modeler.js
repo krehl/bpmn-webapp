@@ -131,25 +131,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
     const saveButton = document.querySelector('#save-button');
     const svgDownload = document.querySelector('#svg-button');
     const xmlDownload = document.querySelector('#xml-button');
-    const addViewer = document.querySelector('#add-viewer');
 
-
-    addViewer.addEventListener('click',function() {
-        var email = prompt('Add viewer');
-        var router = jsRoutes.controllers.BPMNDiagramController.addViewers(window.bpmn_id, email);
-
-        $.ajax({
-            url: router.url,
-            data: email,
-            success: function (response) {
-                console.log(response);
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                console.log(xhr.status);
-                console.log(thrownError);
-            }
-        });
-    });
 
     saveButton.addEventListener('click', function () {
 
