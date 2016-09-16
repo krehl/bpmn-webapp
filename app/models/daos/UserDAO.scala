@@ -9,7 +9,7 @@ import play.modules.reactivemongo.json._
 import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
 import reactivemongo.play.json.collection.JSONCollection
 import scaldi.{Injectable, Injector}
-import util.Types.Email
+import util.Types._
 
 import scala.concurrent.Future
 
@@ -20,7 +20,10 @@ sealed trait UserDAO extends DAO[LoginInfo, User] {
   def findByEmail(key: Email): Future[Option[User]]
 
   def exists(key: Email): Future[Boolean]
+
+  def getAll(list: List[UserID]): Future[List[User]]
 }
+
 class MongoUserDAO(implicit inj: Injector) extends UserDAO
   with Injectable {
   val mongoApi = inject[ReactiveMongoApi]
@@ -28,6 +31,7 @@ class MongoUserDAO(implicit inj: Injector) extends UserDAO
   def collection: Future[JSONCollection] = {
     mongoApi.database.map(_.collection[JSONCollection]("user"))
   }
+
 
   override def findByEmail(key: Email): Future[Option[User]] = {
     for {
@@ -44,6 +48,19 @@ class MongoUserDAO(implicit inj: Injector) extends UserDAO
       result <- collection
         .count(Some(Json.obj("email" -> key)))
     } yield result > 0
+  }
+
+
+  def getAll(list: List[UserID]): Future[List[User]] = {
+  /*  val query = Json.obj("id" -> Json.obj("$in" -> list))
+
+    for {
+      collection <- collection
+      dataOption <- collection
+        .find(query)
+        .one[User.Data]
+    } yield dataOption.map(User(_))*/
+    ???
   }
 
 
