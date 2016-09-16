@@ -1,31 +1,67 @@
 @(user: User)(implicit request: RequestHeader, messages: Messages)
 
-    <style>
-    header {
-        border-radius: 5px;
-        background: #333;
-        color: white;
-        padding-bottom: 20px;
-        padding-top: 25px;
-        margin-top: -5px;
-    }
+@head("profile") @* nie leeren string übergeben *@
 
-    footer {
-        padding-top: 50px;
-        font-style: italic;
-    }
-    #userInfo {
-        margin-top: 5%;
-        margin-bottom: 5%;
-    }
+    <div id="navigation">@navigation()</div>
+
+    <style>
+        header {
+            background: #333;
+            color: white;
+            border-top: 1px darkgrey solid; /* solid darkgrey */
+            border-bottom: 1px darkgrey solid; /* solid darkgrey */
+        }
+        footer {
+            padding-top: 50px;
+            font-style: italic;
+        }
+        #userInfo {
+            margin-top: 5%;
+            margin-bottom: 5%;
+        }
+        #profile-head {
+            background: #333;
+            color: #333;
+            border-top: 1px darkgrey solid; /* solid darkgrey */
+            border-bottom: 1px darkgrey solid; /* solid darkgrey */
+        }
+        .nav-item.dropdown {
+            /* hide useless navbar elements */
+            display: none !important;
+            width:0px !important;
+            height:0px !important;
+            overflow: hidden !important;
+        }
+        #save-button {
+            /* hide useless navbar elements */
+            display: none !important;
+            width:0px !important;
+            height:0px !important;
+            overflow: hidden !important;
+        }
+        #history {
+            /* hide useless navbar elements */
+            display: none !important;
+            width:0px !important;
+            height:0px !important;
+            overflow: hidden !important;
+        }
     </style>
 
         <!-- header -->
-    <div class="col-md-6 col-md-offset-3">
-        <header>
+    <div>
+        <div id="profile-head" class="col-md-3">
+            <h1>A</h1>
+            <p>A</p>
+        </div>
+        <header class="col-md-6">
             <h1>Hello @user.firstName,</h1>
             <p>This is your profile page!</p>
         </header>
+        <div id="profile-head" class="col-md-3">
+            <h1>A</h1>
+            <p>A</p>
+        </div>
     </div>
 
         <!-- profile main -->
