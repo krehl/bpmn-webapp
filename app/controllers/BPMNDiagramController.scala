@@ -2,7 +2,6 @@ package controllers
 
 import java.time.Instant
 
-import forms.PermissionForm
 import models._
 import models.daos.{BPMNDiagramDAO, UserDAO}
 import play.api.i18n.Messages
@@ -12,14 +11,11 @@ import scaldi.Injector
 import util.Types.{BPMNDiagramID, UserID}
 
 import scala.concurrent.Future
-import scala.xml.{NodeSeq, XML}
 
 /**
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 15/07/2016
   */
 class BPMNDiagramController(implicit inj: Injector) extends ApplicationController {
-  //TODO json for everything; think about xml integration
-  //TODO read diagram name from request
   val diagramDAO = inject[BPMNDiagramDAO]
   val userDAO = inject[UserDAO]
 
@@ -87,74 +83,81 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
       })
   }
 
-  def addEditors(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async {
+  def addPermissions(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async(parse.json) {
     implicit request =>
-      PermissionForm.form.bindFromRequest.fold(
-        invalidForm => Future.successful(BadRequest),
-        //          views.html.signIn(invalidForm, None))),
-        validData => {
-          val list = Future.sequence(
-            validData.emails.map(userDAO.findByEmail)).map(_.flatten.map(_.id)
-          )
-          list.flatMap(diagramDAO.addEditors(id, _).map({
-            case true => Ok
-            case false => BadRequest("Diagram not found!")
-          }))
-        }
-      )
+      val json = request.body
+      val viewers = (json \ "canView").as[List[UserID]]
+      val editors = (json \ "canEdit").as[List[UserID]]
+
+      diagramDAO.addPermissions(id, viewers, editors).map({
+        case true => Ok
+        case false => BadRequest("Diagram not found!")
+      })
   }
 
-  def removeEditors(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async {
+  def removePermissions(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async(parse.json) {
     implicit request =>
-      PermissionForm.form.bindFromRequest.fold(
-        invalidForm => Future.successful(BadRequest),
-        //          views.html.signIn(invalidForm, None))),
-        validData => {
-          val list = Future.sequence(
-            validData.emails.map(userDAO.findByEmail)).map(_.flatten.map(_.id)
-          )
-          list.flatMap(diagramDAO.removeEditors(id, _).map({
-            case true => Ok
-            case false => BadRequest("Diagram not found!")
-          }))
-        }
-      )
+      val json = request.body
+      val viewers = (json \ "canView").as[List[UserID]]
+      val editors = (json \ "canEdit").as[List[UserID]]
 
+      diagramDAO.removePermissions(id, viewers, editors).map({
+        case true => Ok
+        case false => BadRequest("Diagram not found!")
+      })
   }
 
-  def addViewers(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async {
-    implicit request =>
-      PermissionForm.form.bindFromRequest.fold(
-        invalidForm => Future.successful(BadRequest),
-        //          views.html.signIn(invalidForm, None))),
-        validData => {
-          val list = Future.sequence(
-            validData.emails.map(userDAO.findByEmail)).map(_.flatten.map(_.id)
-          )
-          list.flatMap(diagramDAO.addViewers(id, _).map({
-            case true => Ok
-            case false => BadRequest("Diagram not found!")
-          }))
-        }
-      )
-  }
+  /*  def removeEditors(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async {
+      implicit request =>
+        PermissionForm.form.bindFromRequest.fold(
+          invalidForm => Future.successful(BadRequest),
+          //          views.html.signIn(invalidForm, None))),
+          validData => {
+            val list = Future.sequence(
+              validData.emails.map(userDAO.findByEmail)).map(_.flatten.map(_.id)
+            )
+            list.flatMap(diagramDAO.removeEditors(id, _).map({
+              case true => Ok
+              case false => BadRequest("Diagram not found!")
+            }))
+          }
+        )
 
-  def removeViewers(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async {
-    implicit request =>
-      PermissionForm.form.bindFromRequest.fold(
-        invalidForm => Future.successful(BadRequest),
-        //          views.html.signIn(invalidForm, None))),
-        validData => {
-          val list = Future.sequence(
-            validData.emails.map(userDAO.findByEmail)).map(_.flatten.map(_.id)
-          )
-          list.flatMap(diagramDAO.removeViewers(id, _).map({
-            case true => Ok
-            case false => BadRequest("Diagram not found!")
-          }))
-        }
-      )
-  }
+    }
+
+    def addViewers(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async {
+      implicit request =>
+        PermissionForm.form.bindFromRequest.fold(
+          invalidForm => Future.successful(BadRequest),
+          //          views.html.signIn(invalidForm, None))),
+          validData => {
+            val list = Future.sequence(
+              validData.emails.map(userDAO.findByEmail)).map(_.flatten.map(_.id)
+            )
+            list.flatMap(diagramDAO.addViewers(id, _).map({
+              case true => Ok
+              case false => BadRequest("Diagram not found!")
+            }))
+          }
+        )
+    }
+
+    def removeViewers(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async {
+      implicit request =>
+        PermissionForm.form.bindFromRequest.fold(
+          invalidForm => Future.successful(BadRequest),
+          //          views.html.signIn(invalidForm, None))),
+          validData => {
+            val list = Future.sequence(
+              validData.emails.map(userDAO.findByEmail)).map(_.flatten.map(_.id)
+            )
+            list.flatMap(diagramDAO.removeViewers(id, _).map({
+              case true => Ok
+              case false => BadRequest("Diagram not found!")
+            }))
+          }
+        )
+    }*/
 
   def getHistory(id: BPMNDiagramID) = DiagramWithPermissionAction(id, CanView).async {
     implicit request =>
@@ -173,7 +176,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     *
     * @return json HTTP response depending on success
     */
-  def create = silhouette.SecuredAction.async(parse.xml) {
+  def create = silhouette.SecuredAction.async {
     implicit request =>
       val newDiagram = BPMNDiagram(
         BPMNDiagram.Data(
@@ -217,16 +220,6 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     * @param id database id
     * @return xml
     */
-/*   def updateB(id: BPMNDiagramID) = DiagramWithPermissionAction(id, CanEdit).async(parse.xml) {
-     implicit request =>
-       diagramDAO.save(BPMNDiagram(
-         BPMNDiagram.toData(request.diagram).copy(xmlContent = request.body))
-       ).map({
-         case true => Ok
-         case false => InternalServerError
-       })
-   }*/
-
   def update(id: BPMNDiagramID) = DiagramWithPermissionAction(id, CanEdit).async(parse.json) {
     implicit request =>
       val json = request.body
