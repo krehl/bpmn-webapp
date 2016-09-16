@@ -10,7 +10,18 @@ var bpmnModeler = (function (BpmnModeler, $) {
 
     // create modeler
 
+    var initDiagram = true;
+    var initHistory = true;
+    changed = false;
+
     if (!$('#canvas')[0]) return;
+
+    window.onbeforeunload = function () {
+        if (changed) {
+            return "Are you sure?";
+        }
+
+    };
 
     console.log("bpmnModeller loading");
 
@@ -27,14 +38,67 @@ var bpmnModeler = (function (BpmnModeler, $) {
             console.log(response);
             //window.bpmn_id = response.id;
             importXML(response.xmlContent);
-            app = new Vue({
-                el: '#app',
-                data: {
-                    name: response.name,
-                    description: response.description,
-                    xmlContent: response.xmlContent,
-                }
-            });
+
+            if (initDiagram) {
+                app = new Vue({
+                    el: '#app',
+                    data: {
+                        name: response.name,
+                        description: response.description,
+                        xmlContent: response.xmlContent,
+                    }
+                });
+                permissionVue = new Vue({
+                    el: '#permissionModal',
+                    data: {
+                        user: "",
+                        canEdit: response.canEdit,
+                        canView: response.canView
+                    },
+                    methods: {
+                        addViewer: function () {
+                            if (this.user != "") {
+                                this.canView.push(this.user);
+                                this.user = "";}
+                        },
+                        addEditor: function () {
+                            if (this.user != "") {
+                                this.canEdit.push(this.user);
+                                this.user = "";
+                            }
+                        },
+                        submit: function () {
+                            var router = jsRoutes.controllers.BPMNDiagramController.addPermissions(window.bpmn_id.toString());
+                            $.ajax({
+                                url: router.url,
+                                method : 'PUT',
+                                data: JSON.stringify(permissionVue.$data),
+                                type: router.type,
+                                cache: false,
+                                contentType: "application/json",
+                                success: function (response) {
+                                    console.log("permissions updated")
+                                    console.log(response);
+                                    changed = false;
+                                },
+                                error: function (xhr, ajaxOptions, thrownError) {
+                                    console.log(xhr.status);
+                                    console.log(thrownError);
+                                }
+                            });
+                        }
+                    }
+                });
+
+                initDiagram = false;
+            } else {
+                app.name = response.name;
+                app.xmlContent = response.xmlContent;
+                permissionVue.canEdit = response.canEdit;
+                permissionVue.canEdit = response.canView;
+            };
+            const offsetHeight = document.getElementById('app').offsetHeight;
+            document.getElementById('content').setAttribute("style", "height:" + (window.innerHeight - offsetHeight - 10) + "px");
 
         },
         error: function (xhr, ajaxOptions, thrownError) {
@@ -130,7 +194,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
         });
     }
 
-    var changed = false;
+    changed = false;
 
     var eventBus = bpmnModeler.get('eventBus');
     window.eventBus = eventBus;
@@ -151,18 +215,33 @@ var bpmnModeler = (function (BpmnModeler, $) {
             url: router.url,
             success: function(response) {
                 console.log(response);
-
-                historyVue = new Vue({
-                    el: '#history-modal',
-                    data: {
-                        items: response
-                    },
-                    methods: {
-                        fromNow: function(string) {
-                            return moment(new Date(string)).fromNow();
+                if (initHistory) {
+                    historyVue = new Vue({
+                        el: '#history-modal',
+                        data: {
+                            items: response
+                        },
+                        methods: {
+                            fromNow: function(string) {
+                                return moment(new Date(string)).fromNow();
+                            },
+                            loadVersion: function (index) {
+                                console.log(this.items[index].xmlContent);
+                                importXML(this.items[index].xmlContent);
+                                var options =  {
+                                    content: "diagram loaded", // text of the snackbar
+                                    style: "toast", // add a custom class to your snackbar
+                                    timeout: 1000 // time in milliseconds after the snackbar autohides, 0 is disabled
+                                }
+                                $.snackbar(options);
+                            }
                         }
-                    }
-                });
+                    });
+                    initHistory = false;
+                } else {
+                    historyVue.items = response;
+                }
+
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.log(xhr.status);

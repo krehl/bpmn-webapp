@@ -9,7 +9,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.{JsValue, Json}
 import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
 import scaldi.Injector
-import util.Types.{BPMNDiagramID, UserID}
+import util.Types.{BPMNDiagramID, Email, UserID}
 
 import scala.concurrent.Future
 
@@ -88,13 +88,25 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     implicit request =>
       val json = request.body
       val diagram = request.diagram
-      val viewers = (json \ "canView").as[List[UserID]].filter(_ != diagram.owner)
-      val editors = (json \ "canEdit").as[List[UserID]].filter(_ != diagram.owner)
+      //transforms List[Future[Option[User]]] into Future[List[Option[User]]] into Future[List[User]]
+      // into Future[List[UserID]]
+      val viewers: Future[List[UserID]] = Future.sequence(
+        (json \ "canView").as[List[Email]].filter(_ != diagram.owner).map(userDAO.findByEmail)
+      ).map(_.flatten.map(_.id))
 
-      diagram.addPermissions(viewers, editors).map({
+      val editors: Future[List[UserID]] = Future.sequence(
+        (json \ "canEdit").as[List[Email]].filter(_ != diagram.owner).map(userDAO.findByEmail)
+      ).map(_.flatten.map(_.id))
+
+      //little hacky
+      (for {
+        permissions <- Future.sequence(List(viewers, editors)).map(list => (list.head, list(1)))
+        result <- diagram.addPermissions(permissions._1, permissions._2)
+      } yield result).map({
         case true => Ok
         case false => BadRequest("Diagram not found!")
       })
+
   }
 
   def removePermissions(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async(parse.json) {
@@ -117,6 +129,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
         case _ => InternalServerError
       })
   }
+
   //------------------------------------------------------------------------------------------//
   // CRUD Operations
   //------------------------------------------------------------------------------------------//
