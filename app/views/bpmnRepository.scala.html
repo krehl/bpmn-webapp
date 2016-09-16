@@ -1,12 +1,48 @@
 @(message: String, user: Option[User], diagrams: List[BPMNDiagram])(implicit request: RequestHeader, messages: Messages)
     @main(Messages("bpmn.modeler.title"), user) {
+
+        @if(user.isDefined) {
+            <div id="navigation">@navigation()</div>
+        }
+
         @if(diagrams.nonEmpty) {
+
+            <style>
+            .nav-item.dropdown {
+                /* hide useless navbar elements */
+                display: none !important;
+                width:0px !important;
+                height:0px !important;
+            }
+            </style>
+
             @for(diagram <- diagrams) {
-                <div class="card card-inverse" style="background-color: #333;
+
+                <!--
+                    Dateielement im Repository mit Name, Beschreibung und Optionen
+                -->
+
+                <div class="card card-inverse id-@diagram.id.stringify" style="background-color: #333;
                     border-color: #333; ">
                     <div class="card-block">
-                        <h3 class="card-title">@diagram.id.stringify</h3>
-                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                        <!-- repository file name -->
+                        <h3 class="card-title">@diagram.name</h3>
+                        <!-- description of file -->
+                        <p class="card-text">@diagram.description</p>
+
+                        <p class="card-text">Owner: @diagram.owner.stringify</p>
+                        @if(diagram.canEdit.nonEmpty) {
+                            <p class="card-text">Editor:
+                                @for(editor <- diagram.canEdit) {<span>@editor.stringify</span><br/>}
+                            </p>
+                        }
+                        @if(diagram.canView.nonEmpty) {
+                            <p class="card-text">Editor:
+                                @for(viewer <- diagram.canView) {<span>@viewer.stringify</span><br/>}
+                            </p>
+                        }
+
+                        <!-- controls -->
                         <a href="@routes.BPMNDiagramController.loadModeller(diagram.id)" class="btn btn-primary">
                             Open
                         </a>
@@ -14,8 +50,29 @@
                             <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
                             Download
                         </a>
+                        <a href="@routes.BPMNDiagramController.delete(diagram.id)" class="btn btn-danger process-delete">
+                            Delete
+                        </a>
+                        <!-- -->
                     </div>
                 </div>
+
+
             }
+
+            <script type='text/javascript'>
+                    var repository = (function(){
+                        xhttp = new XMLHttpRequest();
+                        deleteLinks = document.querySelectorAll('.process-delete');
+                        Array.from(deleteLinks).forEach(link => {
+                            link.addEventListener('click',function(event){
+                            event.preventDefault();
+                            console.log(event);
+                            xhttp.open('DELETE',event.currentTarget.valueOf('href'),true);
+                            xhttp.send();
+                            event.currentTarget.parentNode.parentNode.remove();
+                            console.log(event.currentTarget.valueOf('href'));
+                        })})})();
+            </script>
         }
     }

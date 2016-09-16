@@ -3,29 +3,25 @@ package forms
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
+import util.Types.Email
 
 /**
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/5/2016
   */
-object SignUpForm {
+object PermissionForm {
 
   val form = Form(
     mapping(
-      "firstName" -> nonEmptyText,
-      "lastName" -> nonEmptyText,
-      "email" -> email,
-      "password" -> nonEmptyText
+      "emails" -> list(text),
+      "permission" -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 
-  case class Data(firstName: String,
-                  lastName: String,
-                  email: String,
-                  password: String)
+  case class Data(emails: List[Email], permission: String)
 
   object Data {
 
     implicit val jsonFormat = Json.format[Data]
   }
-}
 
+}

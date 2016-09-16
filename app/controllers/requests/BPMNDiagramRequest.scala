@@ -1,8 +1,8 @@
 package controllers.requests
 
 import com.mohiva.play.silhouette.api.actions.SecuredRequest
-import models.{BPMNDiagram, User}
-import play.api.mvc.{Request, WrappedRequest}
+import models.BPMNDiagram
+import play.api.mvc.WrappedRequest
 import util.DefaultEnv
 
 /**

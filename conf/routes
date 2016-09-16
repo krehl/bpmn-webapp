@@ -1,34 +1,62 @@
+#GET           /bpmn/:id/edit                     ???
+#GET           /bpmn/:id/view                     ???
+
+GET           /bpmn/:id/history              controllers.BPMNDiagramController.getHistory(id: reactivemongo.bson.BSONObjectID)
+PUT           /bpmn/:id/addEditors/          controllers.BPMNDiagramController.addEditors(id: reactivemongo.bson.BSONObjectID)
+PUT           /bpmn/:id/removeEditors        controllers.BPMNDiagramController.removeEditors(id: reactivemongo.bson.BSONObjectID)
+#make this post ..get just temp
+#GET           /bpmn/:id/edit/:version            ???
+#GET           /bpmn/:id/view/:version            ???
+#
+#
+#
+#GET           /bpmn/download/:id                 ???
+#GET           /bpmn/download/:id/:version        controllers.BPMNDiagramController.download(id: reactivemongo.bson.BSONObjectID)
+#
+#
+#POST          /bpmn/:id                          ???
+#DELETE        /bpmn/:id                          ???
+#DELETE        /bpmn/:id/:version                 ???
+#
+#
+#
+#
+#GET           /bpmn/new                          controllers.BPMNDiagramController.newBPMNDiagram
+
+
+
+
 # Routes
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
 # Home page
-GET           /                        controllers.ApplicationController.index
-GET           /repository              controllers.RepositoryController.repository
+GET           /                              controllers.ApplicationController.index
+GET           /repository                    controllers.RepositoryController.repository
 
 
 #
 # BPMN Diagram Endpoints
 #
-GET           /bpmn/new                controllers.BPMNDiagramController.newBPMNDiagram
-POST          /bpmn                    controllers.BPMNDiagramController.create
-GET           /bpmn/d/:id              controllers.BPMNDiagramController.loadModeller(id: reactivemongo.bson.BSONObjectID)
-GET           /bpmn/:id                controllers.BPMNDiagramController.retrieve(id: reactivemongo.bson.BSONObjectID)
-GET           /download/:id            controllers.BPMNDiagramController.download(id: reactivemongo.bson.BSONObjectID)
+GET           /bpmn/new                      controllers.BPMNDiagramController.newBPMNDiagram
+POST          /bpmn                          controllers.BPMNDiagramController.create
+GET           /bpmn/d/:id                    controllers.BPMNDiagramController.loadModeller(id: reactivemongo.bson.BSONObjectID)
+GET           /bpmn/:id                      controllers.BPMNDiagramController.retrieve(id: reactivemongo.bson.BSONObjectID)
+GET           /download/:id                  controllers.BPMNDiagramController.download(id: reactivemongo.bson.BSONObjectID)
 
-PUT           /bpmn/:id                controllers.BPMNDiagramController.update(id: reactivemongo.bson.BSONObjectID)
-DELETE        /bpmn/:id                controllers.BPMNDiagramController.delete(id: reactivemongo.bson.BSONObjectID)
+PUT           /bpmn/:id                      controllers.BPMNDiagramController.update(id: reactivemongo.bson.BSONObjectID)
+DELETE        /bpmn/:id                      controllers.BPMNDiagramController.delete(id: reactivemongo.bson.BSONObjectID)
 
-GET           /signUp                  controllers.SignUpController.view
-POST          /signUp                  controllers.SignUpController.submit
+GET           /signUp                        controllers.SignUpController.view
+POST          /signUp                        controllers.SignUpController.submit
 
-GET           /signIn                  controllers.SignInController.view
-POST          /signIn                  controllers.SignInController.submit
+GET           /signIn                        controllers.SignInController.view
+POST          /signIn                        controllers.SignInController.submit
 
-GET           /signOut                 controllers.SignOutController.signOut
+GET           /signOut                       controllers.SignOutController.signOut
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET           /assets/*file            controllers.Assets.at(path="/public", file)
-GET           /webjars/*file           controllers.WebJarAssets.at(file)
-GET           /javascriptRoutes        controllers.ApplicationController.javascriptRoutes
+GET           /assets/*file                  controllers.Assets.at(path="/public", file)
+GET           /webjars/*file                 controllers.WebJarAssets.at(file)
+GET           /javascriptRoutes              controllers.ApplicationController.javascriptRoutes

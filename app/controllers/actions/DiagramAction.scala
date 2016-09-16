@@ -2,6 +2,7 @@ package controllers.actions
 
 import com.mohiva.play.silhouette.api.actions.SecuredRequest
 import controllers.requests.BPMNDiagramRequest
+import models.BPMNDiagram
 import models.daos.BPMNDiagramDAO
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
@@ -12,7 +13,6 @@ import scaldi.{Injectable, Injector}
 import util.DefaultEnv
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 /**
   * An ActionRefiner that takes a SecuredRequest and returns, in case of success, a BPMNDiagramRequest which contains
@@ -37,17 +37,23 @@ case class DiagramAction(id: BSONObjectID)
     *
     * @param input request
     * @tparam A content type
-    *
     * @return Either a Result or a BPMNDiagramRequest
     */
   override def refine[A](input: SecuredRequest[DefaultEnv, A]): Future[Either[Result, BPMNDiagramRequest[A]]] = {
-//    BSONObjectID.parse(id) match {
-//      case Success(identifier) =>
-        diagramDAO.find(id).map({
-          case Some(diagram) => Right(BPMNDiagramRequest(diagram, input))
-          case None => Left(BadRequest(Json.obj("message" -> Messages("bpmn.id.not.found"))))
-        })
-//      case Failure(ex) => Future.successful(Left(BadRequest(Json.obj("message" -> Messages("bpmn.id.invalid.format")))))
-//    }
+    //    BSONObjectID.parse(id) match {
+    //      case Success(identifier) =>
+    //    id: BPMNDiagramID = BSONObjectID.generate,
+    //    name: String,
+    //    timeStamp: Instant,
+    //    xmlContent: NodeSeq,
+    //    owner: UserID,
+    //    canView: Set[UserID],
+    //    canEdit: Set[UserID])
+    diagramDAO.find(id).map({
+      case Some(diagram) => Right(BPMNDiagramRequest(diagram, input))
+      case None => Left(BadRequest(Json.obj("message" -> Messages("bpmn.id.not.found"))))
+    })
+    //      case Failure(ex) => Future.successful(Left(BadRequest(Json.obj("message" -> Messages("bpmn.id.invalid.format")))))
+    //    }
   }
 }

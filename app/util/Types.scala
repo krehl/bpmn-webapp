@@ -10,4 +10,6 @@ import reactivemongo.bson.BSONObjectID
 object Types {
   type UserID = BSONObjectID
   type BPMNDiagramID = BSONObjectID
+  type BPMNDiagramVersionID = BSONObjectID
+  type Email = String
 }

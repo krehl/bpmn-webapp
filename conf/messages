@@ -31,6 +31,9 @@ not.a.member = Not a member?
 
 remember.me = Remember my login on this computer
 
+bpmn.default.title = Untitled diagram
+bpmn.default.description = Process description
+
 #bpmn
 bpmn.modeler.title = BPMN Modeler
 bpmn.diagram.delete.not.authorized = You are not authorized to delete this diagram!

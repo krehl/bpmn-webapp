@@ -1,8 +1,7 @@
 @import forms.SignInForm
-@(signInForm: Form[SignInForm.Data], user: Option[User])(implicit request: RequestHeader, messages: Messages)
-
 @import b3.vertical.fieldConstructor
 
+@(signInForm: Form[SignInForm.Data], user: Option[User])(implicit request: RequestHeader, messages: Messages)
 @main(Messages("sign.in.title"), user) {
     @request.flash.get("error").map { msg =>
         <div class="col-md-6 col-md-offset-3 alert alert-danger alert-error">
@@ -10,6 +9,31 @@
             <strong>@Messages("error")</strong> @msg
         </div>
     }
+
+    <style>
+    header{
+        border-radius: 5px;
+        background: #333;
+        color: white;
+        padding-bottom: 20px;
+        padding-top: 25px;
+        margin-top: -5px;
+    }
+
+    footer{
+        padding-top: 50px;
+        font-style: italic;
+    }
+    </style>
+
+        <!-- header -->
+    <div class="col-md-6 col-md-offset-3">
+        <header>
+            <h1>Welcome back to @Messages("app.name")</h1>
+            <p>The free process modeller in the cloud</p>
+        </header>
+    </div>
+
     <fieldset class="col-md-6 col-md-offset-3">
         <legend>@Messages("sign.in.credentials")</legend>
         @b3.form(action = routes.SignInController.submit()) {
@@ -39,4 +63,11 @@
             <p class="not-a-member">@Messages("not.a.member") <a href="@routes.SignUpController.view">@Messages("sign.up.now")</a></p>
         </div>
     </fieldset>
+
+    <!-- footer -->
+    <div class="col-md-6 col-md-offset-3">
+        <footer>
+            <p class="text-muted">Process Modeller 2016 powered by BPMN.io</p>
+        </footer>
+    </div>
 }

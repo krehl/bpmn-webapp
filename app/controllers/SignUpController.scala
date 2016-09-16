@@ -79,13 +79,13 @@ class SignUpController(implicit inj: Injector) extends ApplicationController {
   private[this] def createUser(loginInfo: LoginInfo, data: SignUpForm.Data)
                               (implicit request: Request[AnyContent]): Future[AuthenticatorResult] = {
     val authInfo = passwordHash.hash(data.password)
-    val user = User(
+    val user = User(User.Data(
       loginInfo = loginInfo,
       firstName = data.firstName,
       lastName = data.lastName,
       email = data.email,
       roles = Set(Customer)
-    )
+    ))
     for {
       saveSuccessful <- userService.save(user)
       if saveSuccessful
