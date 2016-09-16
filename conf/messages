@@ -11,6 +11,10 @@ welcome.signed.in = Welcome, you are now signed in!
 
 #application
 app.name = Process Modeller
+landing.title = Welcome
+landing.benefit.first = The free process modeller in the cloud
+landing.benefit.second = Super benefit
+landing.benefit.third = This is a demo version. Feel free to play around with it. Try modelling your processes using BPMN 2.0. and share them with your colleagues. When you are ready to try the real thing, click Sign up!
 
 sign.up.account = Sign up for a new account
 sign.in.credentials = Sign in with your credentials
