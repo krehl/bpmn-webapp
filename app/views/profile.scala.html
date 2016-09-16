@@ -2,7 +2,6 @@
 
 @head("profile") @* nie leeren string übergeben *@
 
-    <div id="navigation">@navigation()</div>
 
     <style>
         header {
@@ -20,6 +19,7 @@
             margin-bottom: 5%;
         }
         #profile-head {
+            /* profile page custom header */
             background: #333;
             color: #333;
             border-top: 1px darkgrey solid; /* solid darkgrey */
@@ -34,7 +34,15 @@
         }
     </style>
 
-        <!-- header -->
+    <!-- header above navbar -->
+    <div id="app">
+        <div>
+            <h1 style="margin: 10px;">BPMN Process Modeller</h1>
+        </div>
+        <div id="navigation">@navigation()</div>
+    </div>
+
+    <!-- header -->
     <div>
         <div id="profile-head" class="col-md-3">
             <h1>A</h1>
@@ -50,7 +58,7 @@
         </div>
     </div>
 
-        <!-- profile main -->
+    <!-- profile main -->
     <div id="userInfo" class="col-md-6 col-md-offset-3">
         <div class="col-md-3">
             <p>
@@ -77,21 +85,14 @@
         </div>
     </div>
 
-    <script>
-            function openInNewTab(url) {
-                var win = window.open(url, '_blank');
-                win.focus();
-            };
-    </script>
-
+    <!-- link to virus.exe for scientific purpose -->
     <div class="col-md-6 col-md-offset-3">
         <b>Do you like what you see? Give us feedback!</b>
         <p>Please click on the button below and take part in a short survey.</p>
-        <a onclick="openInNewTab('https://goo.gl/forms/NYYt1VUYu4jyWEJZ2')" class="btn btn-primary">Survey</a>
+        <a target="_blank" href="https://goo.gl/forms/NYYt1VUYu4jyWEJZ2" class="btn btn-primary">Survey</a>
     </div>
 
-
-        <!-- footer -->
+    <!-- footer -->
     <div class="col-md-6 col-md-offset-3">
         <footer>
             <p class="text-muted">Process Modeller 2016 powered by BPMN.io</p>
