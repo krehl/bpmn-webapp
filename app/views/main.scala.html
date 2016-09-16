@@ -7,13 +7,11 @@
     <body>
         <div id="wrapper">
 
+
             <!--
                 Main content + sidebar
             -->
 
-            @if(user.isDefined) {
-                <div id="navigation">@navigation()</div>
-            }
             <div id="content" class="container-fluid">@content</div>
 
             <!-- Sidebar -->
