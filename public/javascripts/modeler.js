@@ -12,8 +12,16 @@ var bpmnModeler = (function (BpmnModeler, $) {
 
     var initDiagram = true;
     var initHistory = true;
+    changed = false;
 
     if (!$('#canvas')[0]) return;
+
+    window.onbeforeunload = function () {
+        if (changed) {
+            return "Are you sure?";
+        }
+
+    };
 
     console.log("bpmnModeller loading");
 
@@ -186,7 +194,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
         });
     }
 
-    var changed = false;
+    changed = false;
 
     var eventBus = bpmnModeler.get('eventBus');
     window.eventBus = eventBus;
