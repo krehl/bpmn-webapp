@@ -104,7 +104,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
             cache: false,
             success: function (response) {
                 window.bpmn_id = response.id;
-                importXML(response.xml);
+                importXML(response.xmlContent);
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.log(xhr.status);

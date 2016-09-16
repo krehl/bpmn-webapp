@@ -1,0 +1,64 @@
+@(user: User)(implicit request: RequestHeader, messages: Messages)
+
+    <style>
+    header {
+        border-radius: 5px;
+        background: #333;
+        color: white;
+        padding-bottom: 20px;
+        padding-top: 25px;
+        margin-top: -5px;
+    }
+
+    footer {
+        padding-top: 50px;
+        font-style: italic;
+    }
+    #userInfo {
+        margin-top: 5%;
+        margin-bottom: 5%;
+    }
+    </style>
+
+        <!-- header -->
+    <div class="col-md-6 col-md-offset-3">
+        <header>
+            <h1>Hello @user.firstName,</h1>
+            <p>This is your profile page!</p>
+        </header>
+    </div>
+
+        <!-- profile main -->
+    <div id="userInfo" class="col-md-6 col-md-offset-3">
+        <div class="col-md-3">
+            <p>
+                <strong>First name</strong>
+            </p>
+            <p>
+                <strong>Last name</strong>
+            </p>
+            <p>
+                <strong>E-Mail</strong>
+            </p>
+        </div>
+
+        <div class="col-md-3 col-md-offset-3">
+            <p>
+                <span>@user.firstName</span>
+            </p>
+            <p>
+                <span>@user.lastName</span>
+            </p>
+            <p>
+                <span>@user.email</span>
+            </p>
+        </div>
+    </div>
+
+        <!-- footer -->
+    <div class="col-md-6 col-md-offset-3">
+        <footer>
+            <p class="text-muted">Process Modeller 2016 powered by BPMN.io</p>
+        </footer>
+    </div>
+
