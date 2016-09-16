@@ -3,32 +3,26 @@
 
         <!-- navbar -->
         @if(user.isDefined) {
-            <div id="navigation">@navigation()</div>
+
         }
+
+        <div id="app">
+            <div>
+                <h1 style="margin: 10px;">BPMN Process Modeller</h1>
+            </div>
+            <div id="navigation">@navigation()</div>
+        </div>
 
         @if(diagrams.nonEmpty) {
 
             <style>
-                .nav-item.dropdown {
-                    /* hide useless navbar elements */
-                    display: none !important;
-                    width:0px !important;
-                    height:0px !important;
-                }
-                #save-button {
-                     /* hide useless navbar elements */
-                     display: none !important;
-                     width:0px !important;
-                     height:0px !important;
-                     overflow: hidden !important;
-                 }
-                #history {
-                    /* hide useless navbar elements */
-                    display: none !important;
-                    width:0px !important;
-                    height:0px !important;
-                    overflow: hidden !important;
-                }
+            .btn-repo {
+                /* hide useless navbar elements */
+                display: none !important;
+                width:0px !important;
+                height:0px !important;
+                overflow: hidden !important;
+            }
             </style>
 
             @for(diagram <- diagrams) {
@@ -44,7 +38,7 @@
                         <h3 class="card-title">@diagram.name</h3>
                         <!-- description of file -->
                         <p class="card-text">@diagram.description</p>
-                        <p class="card-text">@diagram.id</p>
+                        <p class="card-text">@diagram.id.stringify</p>
 
                         <p class="card-text">Owner: @diagram.owner.stringify</p>
                         @if(diagram.canEdit.nonEmpty) {
@@ -53,7 +47,7 @@
                             </p>
                         }
                         @if(diagram.canView.nonEmpty) {
-                            <p class="card-text">Editor:
+                            <p class="card-text">Viewer:
                                 @for(viewer <- diagram.canView) {<span>@viewer.stringify</span><br/>}
                             </p>
                         }

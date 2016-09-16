@@ -25,21 +25,7 @@
             border-top: 1px darkgrey solid; /* solid darkgrey */
             border-bottom: 1px darkgrey solid; /* solid darkgrey */
         }
-        .nav-item.dropdown {
-            /* hide useless navbar elements */
-            display: none !important;
-            width:0px !important;
-            height:0px !important;
-            overflow: hidden !important;
-        }
-        #save-button {
-            /* hide useless navbar elements */
-            display: none !important;
-            width:0px !important;
-            height:0px !important;
-            overflow: hidden !important;
-        }
-        #history {
+        .btn-profile {
             /* hide useless navbar elements */
             display: none !important;
             width:0px !important;
@@ -90,6 +76,20 @@
             </p>
         </div>
     </div>
+
+    <script>
+            function openInNewTab(url) {
+                var win = window.open(url, '_blank');
+                win.focus();
+            };
+    </script>
+
+    <div class="col-md-6 col-md-offset-3">
+        <b>Do you like what you see? Give us feedback!</b>
+        <p>Please click on the button below and take part in a short survey.</p>
+        <a onclick="openInNewTab('https://goo.gl/forms/NYYt1VUYu4jyWEJZ2')" class="btn btn-primary">Survey</a>
+    </div>
+
 
         <!-- footer -->
     <div class="col-md-6 col-md-offset-3">
