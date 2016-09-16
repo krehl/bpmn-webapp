@@ -29,6 +29,8 @@ class User(private val data: User.Data)(implicit inj: Injector) extends Identity
 
   def roles = data.roles
 
+  def ownedDiagrams = bpmnDiagramDAO.listOwns(id)
+
   lazy val listCanView = bpmnDiagramDAO.listCanView(id)
   lazy val listCanEdit = bpmnDiagramDAO.listCanEdit(id)
 }

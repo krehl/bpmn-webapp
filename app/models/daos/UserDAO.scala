@@ -21,65 +21,6 @@ sealed trait UserDAO extends DAO[LoginInfo, User] {
 
   def exists(key: Email): Future[Boolean]
 }
-
-
-//class InMemoryUserDAO extends UserDAO {
-//
-//  import InMemoryUserDAO._
-//
-//  override def findByEmail(key: Email): Future[Option[User]] = ???
-//
-//  override def exists(key: Email): Future[Boolean] = ???
-//
-//  override def save(user: User): Future[Boolean] = {
-//    Future.successful({
-//      if (users.contains(user.data.loginInfo)) {
-//        false
-//      } else {
-//        users.put(user.data.loginInfo, user)
-//        true
-//      }
-//    })
-//  }
-//
-//  override def update(user: User): Future[Boolean] = {
-//    Future.successful({
-//      if (users.contains(user.data.loginInfo)) {
-//        users.put(user.data.loginInfo, user)
-//        true
-//      } else {
-//        false
-//      }
-//    })
-//  }
-//
-//  override def remove(loginInfo: LoginInfo): Future[Boolean] = {
-//    Future.successful({
-//      if (users.contains(loginInfo)) {
-//        users.remove(loginInfo)
-//        true
-//      } else {
-//        false
-//      }
-//    })
-//  }
-//
-//  override def find(loginInfo: LoginInfo): Future[Option[User]] = {
-//    Future.successful(users.get(loginInfo))
-//  }
-//}
-//
-//object InMemoryUserDAO {
-//  val users: mutable.HashMap[LoginInfo, User] = mutable.HashMap()
-//  val dummyUser = User(
-//    loginInfo = LoginInfo("credentials", "1@1"),
-//    firstName = "1",
-//    lastName = "1",
-//    email = "1@1",
-//    roles = Set[Role](Customer))
-//  users.put(dummyUser.loginInfo, dummyUser)
-//}
-
 class MongoUserDAO(implicit inj: Injector) extends UserDAO
   with Injectable {
   val mongoApi = inject[ReactiveMongoApi]

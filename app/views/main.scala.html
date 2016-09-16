@@ -1,4 +1,4 @@
-@(title: String, user: Option[User])(content: Html)
+@(title: String, user: Option[User])(content: Html)(implicit messages: Messages)
 
 <!DOCTYPE html>
 
@@ -14,33 +14,33 @@
 
             <div id="content" class="container-fluid">@content</div>
 
-            <!-- Sidebar -->
-            <!--
-            <div id="sidebar-wrapper">
-                <ul class="sidebar-nav">
-                    <li class="sidebar-brand">
-                        <a href="@routes.ApplicationController.index()">Process Modeller</a>
-                    </li>
-                    <li>
-                        <a href="#" id="xml-button"><span class="glyphicon glyphicon-download"></span>
-                            Download XML</a>
-                    </li>
-                    <li>
-                        <a href="#">2</a>
-                    </li>
-                    <li>
-                        <a href="#">3</a>
-                    </li>
-                    <li>
-                        <a href="#">4</a>
-                    </li>
-                    <li>
-                        <a href="#">5</a>
-                    </li>
-                </ul>
-            </div>
-            -->
-            <!-- /#sidebar-wrapper -->
+            @*<!-- Sidebar -->*@
+            @*<!--*@
+            @*<div id="sidebar-wrapper">*@
+                @*<ul class="sidebar-nav">*@
+                    @*<li class="sidebar-brand">*@
+                        @*<a href="@routes.ApplicationController.index()">Process Modeller</a>*@
+                    @*</li>*@
+                    @*<li>*@
+                        @*<a href="#" id="xml-button"><span class="glyphicon glyphicon-download"></span>*@
+                            @*Download XML</a>*@
+                    @*</li>*@
+                    @*<li>*@
+                        @*<a href="#">2</a>*@
+                    @*</li>*@
+                    @*<li>*@
+                        @*<a href="#">3</a>*@
+                    @*</li>*@
+                    @*<li>*@
+                        @*<a href="#">4</a>*@
+                    @*</li>*@
+                    @*<li>*@
+                        @*<a href="#">5</a>*@
+                    @*</li>*@
+                @*</ul>*@
+            @*</div>*@
+            @*-->*@
+            @*<!-- /#sidebar-wrapper -->*@
 
         </div>
     </body>

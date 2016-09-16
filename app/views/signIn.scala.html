@@ -1,8 +1,7 @@
 @import forms.SignInForm
-@(signInForm: Form[SignInForm.Data], user: Option[User])(implicit request: RequestHeader, messages: Messages)
-
 @import b3.vertical.fieldConstructor
 
+@(signInForm: Form[SignInForm.Data], user: Option[User])(implicit request: RequestHeader, messages: Messages)
 @main(Messages("sign.in.title"), user) {
     @request.flash.get("error").map { msg =>
         <div class="col-md-6 col-md-offset-3 alert alert-danger alert-error">

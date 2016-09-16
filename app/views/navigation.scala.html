@@ -1,24 +1,31 @@
-@()
-<nav class="navbar navbar-inverse bg-solid">
-    <!-- navbar main home
-    <a class="navbar-brand" href="@routes.ApplicationController.index()">Home</a>
-    -->
+@import forms.PermissionForm
+@import util.Types.BPMNDiagramID
+@import b3.vertical.fieldConstructor
 
-    <!-- Navbar start -->
+@(diagramId: Option[BPMNDiagramID] = None,
+        permissionForm: Form[PermissionForm.Data] = PermissionForm.form)(implicit messages: Messages)
+@*TODO use message API*@
+@*TODO upgrade to bootstrap4 helpers*@
+<nav class="navbar navbar-inverse bg-solid">
+        <!-- navbar main home
+    @*<a class="navbar-brand" href="@routes.ApplicationController.index()">Home</a>*@
+        @*-->*@
+
+        <!-- Navbar start -->
 
     <ul class="nav navbar-nav">
 
-        <!-- LEFT SIDE -->
+            <!-- LEFT SIDE -->
 
-        <!-- File (export/import) -->
+            <!-- File (export/import) -->
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                 File</a>
 
-            <!-- Dropdown File -->
+                <!-- Dropdown File -->
             <ul class="dropdown-menu" aria-labelledby="Export">
 
-                <!-- Export TODO: dropdown II XML/SVG -->
+                    <!-- Export TODO: dropdown II XML/SVG -->
                 <li><a class="dropdown-item" href="#" id="xml-button"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>
                     Download XML</a>
                 </li>
@@ -26,7 +33,7 @@
                     Download SVG</a>
                 </li>
 
-                <!-- Import -->
+                    <!-- Import -->
                 <li role="separator" class="divider"></li>
                 <li><a class="dropdown-item" href="#" id="xml-upload"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>
                     Upload XML</a> <form id="xml-upload-form" name="xml-upload-form"><input name="xml-file" type="file" id="xml-file" style="display: none;" /></form>
@@ -34,13 +41,13 @@
             </ul>
         </li>
 
-        <!-- Edit -->
+            <!-- Edit -->
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                 Edit
             </a>
 
-            <!-- Edit options -->
+                <!-- Edit options -->
             <div class="dropdown-menu" aria-labelledby="Export">
                 <a class="dropdown-item" href="#"><span class="glyphicon" aria-hidden="true"></span>
                     Delete</a>
@@ -51,41 +58,79 @@
             </div>
         </li>
 
-        <!-- Save / Quicksave -->
+            <!-- Save / Quicksave -->
         <li class="nav-item">
             <a class="nav-link" id="save-button" href="#">Save</a>
         </li>
 
-        <!-- New diagramm -->
+            <!-- New diagramm -->
         <li class="nav-item">
             <a class="nav-link" href="@routes.BPMNDiagramController.newBPMNDiagram()">New</a>
         </li>
 
-        <!-- RIGHT SIDE -->
+            <!-- RIGHT SIDE -->
 
-        <!-- Logout -->
+            <!-- Logout -->
         <li class="nav-item pull-xs-right">
             <a class="nav-link" href="@routes.SignOutController.signOut()">Logout</a>
         </li>
 
-        <!-- Profile -->
+            <!-- Profile -->
         <li class="nav-item pull-xs-right">
             <a class="nav-link" href="#">Profile</a>
         </li>
 
-        <!-- Repository -->
+            <!-- Repository -->
         <li class="nav-item  pull-xs-right">
             <a class="nav-link" href="@routes.RepositoryController.repository()">Repository</a>
         </li>
 
+        @if(diagramId.isDefined) {
+            @*TODO && user == owner*@
+            <li class="nav-item  pull-xs-right">
+                <button type="button" class="btn btn-primary" data-toggle="modal"
+                data-target="#permissionModal">
+                    Share
+                </button>
+                @*TODO*@
+                <div class="modal fade" id="permissionModal" tabindex="-1" role="dialog" aria-labelledby="permissionModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h4 class="modal-title" id="permissionModalLabel">Share with others</h4>
+                            </div>
+                            <div class="modal-body">
+
+                            @b3.inline.form(
+                                action = routes.BPMNDiagramController.addEditors(diagramId.get)
+                            ) { implicit hfc =>
+                                @b3.email(
+                                    permissionForm("emails"),
+                                    'placeholder -> "Email"
+                                    )
+                                @b3.select(permissionForm("permission"), Seq("view" -> "view", "edit" -> "edit"))
+                            }
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        }
 
     </ul>
 
-    <!-- Navbar end -->
+        <!-- Navbar end -->
 
 
-    @*<form id="load-form" class="form-inline">*@
-    @*<input id="diagram-id" class="form-control" type="text" placeholder="Diagram ID">*@
-    @*</form>*@
+        @*<form id="load-form" class="form-inline">*@
+        @*<input id="diagram-id" class="form-control" type="text" placeholder="Diagram ID">*@
+        @*</form>*@
 
+        <!-- Modal -->
 </nav>
