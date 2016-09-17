@@ -175,6 +175,24 @@ body {
     color: #fff;
     background: none;
 }
+
+[v-cloak] {
+    display: none;
+}
+
+/* draggable */
+.modal-draggable .modal-backdrop {
+    position: fixed;
+}
+
+.modal.modal-draggable {
+    overflow: overflow-y;
+}
+
+.modal-draggable .modal-header:hover {
+    cursor: move;
+}
+
 /* @media */
 @media(min-width:768px) {
     #wrapper {
@@ -203,18 +221,6 @@ body {
         margin-right: 0;
     }
 
-    /* draggable */
-    .modal-draggable .modal-backdrop {
-        position: fixed;
-    }
-
-    .modal.modal-draggable {
-        overflow: overflow-y;
-    }
-
-    .modal-draggable .modal-header:hover {
-        cursor: move;
-    }
 
 }
 
