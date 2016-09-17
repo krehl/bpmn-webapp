@@ -1,7 +1,7 @@
 package models.daos
 
 import com.mohiva.play.silhouette.api.LoginInfo
-import models.{BPMNDiagram, User}
+import models.User
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.{JsArray, Json}
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -21,7 +21,10 @@ sealed trait UserDAO extends DAO[LoginInfo, User] {
 
   def exists(key: Email): Future[Boolean]
 
-  def getAll(list: List[UserID]): Future[List[User]]
+  def findAll(list: List[UserID]): Future[List[User]]
+
+  def findAllByEmail(list: List[Email]): Future[List[User]]
+
 }
 
 class MongoUserDAO(implicit inj: Injector) extends UserDAO
@@ -51,8 +54,21 @@ class MongoUserDAO(implicit inj: Injector) extends UserDAO
   }
 
 
-  def getAll(list: List[UserID]): Future[List[User]] = {
+  def findAll(list: List[UserID]): Future[List[User]] = {
     val query = Json.obj("id" -> Json.obj("$in" -> JsArray(list.map(BSONObjectIDFormat.writes))))
+
+    for {
+      collection <- collection
+      data <- collection
+        .find(query)
+        .cursor[User.Data]()
+        .collect[List]()
+    } yield data.map(User(_))
+  }
+
+
+  override def findAllByEmail(list: List[Email]): Future[List[User]] = {
+    val query = Json.obj("email" -> Json.obj("$in" -> JsArray(list.map(Json.toJson(_)))))
 
     for {
       collection <- collection
