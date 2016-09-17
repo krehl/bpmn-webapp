@@ -5,14 +5,19 @@
 
 var repository = (function ($) {
 
-    $('.process-delete').addEventListener('click',function (event) {
+    if(undefined === $('#repository')[0]) return;
+
+    $('.process-delete').on('click',function (event) {
         event.preventDefault();
         if (window.confirm("Are you sure that you want to delete the diagram?")) {
+            var $this = $(this);
+            var router = jsRoutes.controllers.BPMNDiagramController.delete($(this).attr('data-diagram-id'));
             $.ajax({
-                url: jsRoutes.controllers.BPMNDiagramController.delete(event.target.getAttributeValue('data-diagram-id')),
+                url: router.url,
                 method: 'DELETE',
                 success: function () {
                     console.log('deleted');
+                    $this.parent().parent().fadeOut();
                 }
             })
         }
