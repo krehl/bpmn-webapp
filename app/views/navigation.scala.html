@@ -1,9 +1,7 @@
-@import forms.PermissionForm
 @import util.Types.BPMNDiagramID
 @import b3.vertical.fieldConstructor
 
-@(diagramId: Option[BPMNDiagramID] = None,
-        permissionForm: Form[PermissionForm.Data] = PermissionForm.form)(implicit messages: Messages)
+@(diagramId: Option[BPMNDiagramID] = None)(implicit messages: Messages)
 @*TODO use message API*@
 @*TODO upgrade to bootstrap4 helpers*@
 <nav class="navbar navbar-inverse bg-solid">
