@@ -397,4 +397,8 @@ var bpmnModeler = (function (BpmnModeler, $) {
         handle: ".modal-header"
     });
 
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
 })(window.BpmnJS, window.jQuery);

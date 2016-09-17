@@ -19,7 +19,7 @@
     <!-- diagram title above navbar -->
     <div id="app">
         <div v-cloak>
-            <h1 style="margin: 10px;">{{name}}</h1>
+            <h1 style="margin: 10px; display: inline-block;" data-toggle="tooltip" data-placement="right" title="Click to edit">{{name}} <i class="fa fa-pencil" aria-hidden="true"></i></h1>
         </div>
         @if(user.isDefined) {
             <div id="navigation">@navigation(diagramId = Some(id))</div>
