@@ -43,71 +43,26 @@ var bpmnModeler = (function (BpmnModeler, $) {
                 app = new Vue({
                     el: '#app',
                     data: {
-                        name: response.name,
-                        description: response.description,
-                        xmlContent: response.xmlContent,
-                    }
-                });
-                permissionVue = new Vue({
-                    el: '#permissionModal',
-                    data: {
-                        user: "",
-                        canEdit: response.canEdit,
-                        canView: response.canView
+                        process: {
+                            name: response.name,
+                            description: response.description,
+                            xmlContent: response.xmlContent,
+                        },
+                        old: {
+                            name: response.name,
+                            description: response.description,
+                            xmlContent: response.xmlContent,
+                        }
+
                     },
                     methods: {
-                        popEdit: function (index) {
-                            this.canEdit.splice(index,1);
-                        },
-                        popView: function (index) {
-                            this.canView.splice(index,1);
-                        },
-                        refresh: function () {
-                            var router = jsRoutes.controllers.BPMNDiagramController.listPermissions(window.bpmn_id.toString());
-                            $.ajax({
-                                url: router.url,
-                                method: 'GET',
-                                success: function (response) {
-                                    console.log(response);
-                                    permissionVue.canEdit = response.canEdit;
-                                    permissionVue.canView = response.canView;
-                                }
-                            });
-                        },
-                        addViewer: function () {
-                            if (this.user != "") {
-                                this.canView.push(this.user);
-                                this.user = "";}
-                        },
-                        addEditor: function () {
-                            if (this.user != "") {
-                                this.canEdit.push(this.user);
-                                this.user = "";
-                            }
-                        },
-                        submit: function () {
-                            var router = jsRoutes.controllers.BPMNDiagramController.addPermissions(window.bpmn_id.toString());
-                            $.ajax({
-                                url: router.url,
-                                method : 'PUT',
-                                data: JSON.stringify(permissionVue.$data),
-                                type: router.type,
-                                cache: false,
-                                contentType: "application/json",
-                                success: function (response) {
-                                    console.log("permissions updated")
-                                    console.log(response);
-                                    changed = false;
-                                },
-                                error: function (xhr, ajaxOptions, thrownError) {
-                                    console.log(xhr.status);
-                                    console.log(thrownError);
-                                }
-                            });
+                        done: function () {
+                            if (this.process.name !== this.old.name
+                                || this.process.description !== this.old.description ) {
+                                changed = true;}
                         }
                     }
                 });
-
                 initDiagram = false;
             } else {
                 app.name = response.name;
@@ -124,7 +79,8 @@ var bpmnModeler = (function (BpmnModeler, $) {
             console.log(thrownError);
         }
     });
-    $('#app h1, #rename-btn').on('click', function (event) {
+
+   /* $('#app h1, #rename-btn').on('click', function (event) {
         var name = prompt('Process Title:', app.name);
         if (!name=="") {
             if (!(name == app.name)) {
@@ -132,7 +88,108 @@ var bpmnModeler = (function (BpmnModeler, $) {
                 changed = true;
             }
         }
-    })
+    })*/
+
+   $('#rename-btn').on('click',function () {
+       $('#title-modal').modal('show');
+   });
+
+    permissionVue = new Vue({
+        el: '#permissionModal',
+        data: {
+            user: "",
+            remove: [],
+            load: {
+                canEdit: [],
+                canView: []
+            }
+        },
+
+        created: function () {
+            var router = jsRoutes.controllers.BPMNDiagramController.listPermissions(window.bpmn_id.toString());
+            $.ajax({
+                url: router.url,
+                method: 'GET',
+                success: function (response) {
+                    console.log(response);
+                    permissionVue.load.canEdit = response.canEdit;
+                    permissionVue.load.canView = response.canView;
+                }
+            });
+        },
+
+        methods: {
+            refresh: function () {
+                var router = jsRoutes.controllers.BPMNDiagramController.listPermissions(window.bpmn_id.toString());
+                $.ajax({
+                    url: router.url,
+                    method: 'GET',
+                    success: function (response) {
+                        console.log(response);
+                        permissionVue.remove = [];
+                        permissionVue.load.canEdit = response.canEdit;
+                        permissionVue.load.canView = response.canView;
+                    }
+                });
+            },
+            popEdit: function (index) {
+                this.remove.push(this.load.canEdit[index]);
+                this.load.canEdit.splice(index,1);
+            },
+            popView: function (index) {
+                this.remove.push(this.load.canView[index]);
+                this.load.canView.splice(index,1);
+            },
+            addViewer: function () {
+                if (this.user != "") {
+                    this.load.canView.push(this.user);
+                    this.user = "";}
+            },
+            addEditor: function () {
+                if (this.user != "") {
+                    this.load.canEdit.push(this.user);
+                    this.user = "";
+                }
+            },
+            submit: function () {
+                var router = jsRoutes.controllers.BPMNDiagramController.addPermissions(window.bpmn_id.toString());
+                $.ajax({
+                    url: router.url,
+                    method : 'PUT',
+                    data: JSON.stringify(permissionVue.$data.load),
+                    type: router.type,
+                    cache: false,
+                    contentType: "application/json",
+                    success: function (response) {
+                        console.log("permissions updated")
+                        console.log(response);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        console.log(xhr.status);
+                        console.log(thrownError);
+                    }
+                });
+                var remove = jsRoutes.controllers.BPMNDiagramController.removePermissions(window.bpmn_id.toString());
+                $.ajax({
+                    url: remove.url,
+                    method : 'PUT',
+                    data: JSON.stringify(permissionVue.$data.remove),
+                    type: router.type,
+                    cache: false,
+                    contentType: "application/json",
+                    success: function (response) {
+                        console.log("permissions removed")
+                        console.log(response);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        console.log(xhr.status);
+                        console.log(thrownError);
+                    }
+                });
+            }
+        }
+    });
+
 
     // $.ajax({
     //     url: "/bpmn/" + window.bpmn_id,
@@ -252,6 +309,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
         }
     });
 
+
     historyButton.addEventListener('click', function () {
        var router = jsRoutes.controllers.BPMNDiagramController.getHistory(window.bpmn_id.toString());
         $.ajax({
@@ -306,7 +364,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
                     var router = jsRoutes.controllers.BPMNDiagramController.update(window.bpmn_id.toString());
                     $.ajax({
                         url: router.url,
-                        data: JSON.stringify(app.$data),
+                        data: JSON.stringify(app.$data.process),
                         type: router.type,
                         cache: false,
                         contentType: "application/json",
