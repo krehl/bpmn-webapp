@@ -16,7 +16,7 @@ html, body, #canvas, #content {
 #canvas {
     /* underline top bar 1 */
     /*border: solid black;*/
-    border-top: 1px darkgrey solid; /* solid darkgrey */
+    /* border-top: 1px darkgrey solid; */ /* solid darkgrey */
 }
 .card {
     /* repository file entry */
@@ -25,49 +25,6 @@ html, body, #canvas, #content {
     min-width: 444px;
     width: 32%;
 }
-
-
-/* NAVBAR */
-a.navbar-brand {
-    /* logo */
-    font-variant: small-caps;
-    color: lightgrey;
-}
-.nav-link {
-    /* nav text main */
-    color: white;
-}
-.nav-link:hover {
-    color: #0275d8;
-}
-a.nav-link.dropdown-toggle {
-    color: white;
-}
-a.nav-link.dropdown-toggle:hover {
-    color: #0275d8;
-}
-nav-link a:hover {
-    color: red;
-    background: red;
-}
-.navbar {
-    /* underline top bar 2 */
-    border-bottom: 1px darkgrey solid; /* solid darkgrey */
-    border-radius: 0;
-    background: #333;
-}
-.dropdown-menu {
-    background: #0275d8;
-    color: white;
-}
-.dropdown-item {
-    color: white;
-}
-.dropdown-item:hover {
-    background: #5BC0DE;
-    color: white;
-}
-
 
 /* pallete + item style OPTIONAL  */
 /*
@@ -84,14 +41,13 @@ nav-link a:hover {
 }
 .djs-palette-toggle {
     background: #0275d8;
-}
-*/
+}*/
 
 
-/* SIDEBAR */
-body {
-    overflow-x: hidden;
+nav.navbar.navbar-dark.bg-inverse {
+    margin: 10px;
 }
+
 /* Toggle Styles */
 #wrapper {
     padding-left: 0;
@@ -104,20 +60,7 @@ body {
     padding-left: 250px;
 }
 /* sidebar panel options */
-#sidebar-wrapper {
-    z-index: 1000;
-    position: fixed;
-    left: 250px;
-    width: 0;
-    height: 100%;
-    margin-left: -250px;
-    overflow-y: auto;
-    background: #333;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-}
+
 #wrapper.toggled #sidebar-wrapper {
     width: 250px;
 }
@@ -129,51 +72,6 @@ body {
 #wrapper.toggled #page-content-wrapper {
     position: absolute;
     margin-right: -250px;
-}
-/* Sidebar Styles */
-.sidebar-nav {
-    position: absolute;
-    top: 0%;
-    width: 250px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-/* sidebar-nav li */
-.sidebar-nav li {
-    text-indent: 20px;
-    line-height: 40px;
-}
-/* sidebar-nav element idle -> title + bg */
-.sidebar-nav li a {
-    display: block;
-    text-decoration: none;
-    color: #999999;
-}
-/* sidebar-nav element hover -> title + bg */
-.sidebar-nav li a:hover {
-    text-decoration: none;
-    color: #fff;
-    background: rgba(255,255,255,0.2);
-}
-.sidebar-nav li a:active,
-.sidebar-nav li a:focus {
-    text-decoration: none;
-}
-/* sidebar-nav brand */
-.sidebar-nav > .sidebar-brand {
-    height: 65px;
-    font-size: 18px;
-    line-height: 60px;
-}
-/* sidebar-nav brand idle */
-.sidebar-nav > .sidebar-brand a {
-    color: #999999;
-}
-/* sidebar-nav brand hover */
-.sidebar-nav > .sidebar-brand a:hover {
-    color: #fff;
-    background: none;
 }
 
 [v-cloak] {
