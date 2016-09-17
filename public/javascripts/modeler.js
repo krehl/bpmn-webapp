@@ -391,6 +391,10 @@ var bpmnModeler = (function (BpmnModeler, $) {
         xmlFile.click();
         console.log();
         e.preventDefault();
-    })
+    });
+
+    $(".modal-draggable .modal-dialog").draggable({
+        handle: ".modal-header"
+    });
 
 })(window.BpmnJS, window.jQuery);
