@@ -72,9 +72,8 @@
                 <div id="app-repo">
                     <div class="card" v-cloak v-for="diagram in diagrams">
                         <div class="card-block">
-                            <h3 class="card-title">{{diagram.name}}</h3>
+                            <h3 class="card-title" data-toggle="tooltip" data-placement="right" title="ID: {{diagram.id.$oid}}" style="display: inline-block">{{diagram.name}}</h3>
                             <p class="card-text">{{diagram.description}}</p>
-                            <p class="card-text">{{diagram.id.$oid}}</p>
                             <p class="card-text">Owner:
                                 <profile :oid="diagram.owner.$oid"></profile>
                             </p>

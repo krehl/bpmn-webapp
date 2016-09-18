@@ -23,9 +23,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
 
     };
 
-    console.log("bpmnModeller loading");
-
-    var MyComponent = Vue.extend({
+    var profileComponent = Vue.extend({
         data: function () {
             return {
                 imageurl: "",
@@ -52,10 +50,12 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
             })
         },
         props: ['oid'],
-        template: '<span><a href="{{profileurl}}"><image style="border-radius: 50%;" v-bind:src="imageurl"/> {{name}}</a></span>'
+        template: '<span><a href="{{profileurl}}"><image style="border-radius: 50%;" v-bind:src="imageurl"/></a> <a href="{{profileurl}}">{{name}}</a></span>'
     });
 
-    Vue.component('profile', MyComponent)
+    Vue.component('profile', profileComponent);
+
+    console.log("bpmnModeller loading");
 
     bpmnModeler = new BpmnModeler({
         container: '#canvas'
@@ -85,7 +85,6 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                             description: response.description,
                             xmlContent: response.xmlContent,
                         }
-
                     },
                     methods: {
                         done: function () {
@@ -102,8 +101,8 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                 permissionVue.canEdit = response.canEdit;
                 permissionVue.canEdit = response.canView;
             };
-            const offsetHeight = document.getElementById('app').offsetHeight;
-            document.getElementById('content').setAttribute("style", "height:" + (window.innerHeight - offsetHeight - 10) + "px");
+            const offsetHeight = document.getElementById('header').offsetHeight;
+            document.getElementById('canvas').setAttribute("style", "height:" + (window.innerHeight - offsetHeight - 10) + "px");
 
         },
         error: function (xhr, ajaxOptions, thrownError) {

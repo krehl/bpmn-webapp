@@ -23,7 +23,7 @@ var repository = (function ($) {
         }
     });*/
 
-    var MyComponent = Vue.extend({
+    var profileComponent = Vue.extend({
         data: function () {
             return {
                 imageurl: "",
@@ -50,10 +50,10 @@ var repository = (function ($) {
             })
         },
         props: ['oid'],
-        template: '<span><a href="{{profileurl}}"><image style="border-radius: 50%;" v-bind:src="imageurl"/> {{name}}</a></span>'
+        template: '<span><a href="{{profileurl}}" target="_blank"><image style="border-radius: 50%;" v-bind:src="imageurl"/></a> <a href="{{profileurl}}" target="_blank">{{name}}</a></span>'
     });
 
-    Vue.component('profile', MyComponent)
+    Vue.component('profile', profileComponent);
 
     repoVue = new Vue({
         el: '#app-repo',
@@ -98,5 +98,8 @@ var repository = (function ($) {
         }
     });
 
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
 
 })(window.jQuery);
