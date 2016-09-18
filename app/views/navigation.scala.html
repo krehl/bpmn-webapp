@@ -72,6 +72,7 @@
             <a class="nav-link btn-repo btn-profile" href="#" id="history" data-toggle="modal" data-target="#history-modal">History</a>
         </li>
 
+            <!-- Logout -->
         <li class="nav-item pull-xs-right">
             <a class="nav-link" href="@routes.SignOutController.signOut()">Logout</a>
         </li>
@@ -85,6 +86,13 @@
         <li class="nav-item  pull-xs-right">
             <a class="nav-link" href="@routes.RepositoryController.repository()">Repository</a>
         </li>
+
+            <!-- Help/Wiki -->
+        @*
+        <li class="nav-item  pull-xs-right">
+            <a class="nav-link" href="@routes.HelpController.help()">Help</a>
+        </li>
+            *@
 
         @if(diagramId.isDefined) {
             @*TODO && user == owner*@

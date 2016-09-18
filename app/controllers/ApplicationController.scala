@@ -48,9 +48,6 @@ class ApplicationController(implicit inj: Injector) extends Controller
       JavaScriptReverseRouter("jsRoutes")(
         controllers.routes.javascript.BPMNDiagramController.retrieve,
         controllers.routes.javascript.BPMNDiagramController.update,
-/*
-        controllers.routes.javascript.BPMNDiagramController.addViewers,
-*/
         controllers.routes.javascript.BPMNDiagramController.getHistory,
         controllers.routes.javascript.BPMNDiagramController.addPermissions,
         controllers.routes.javascript.BPMNDiagramController.listPermissions,

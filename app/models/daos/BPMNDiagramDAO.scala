@@ -9,6 +9,7 @@ import play.api.libs.json.Json._
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoApi
 import play.modules.reactivemongo.json._
+import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
 import reactivemongo.play.json.collection.JSONCollection
 import scaldi.{Injectable, Injector}
@@ -45,37 +46,60 @@ class MongoBPMNDiagramDAO(implicit inj: Injector) extends BPMNDiagramDAO
     mongoApi.database.map(_.collection[JSONCollection]("diagram"))
   }
 
+  def bsonCollection: Future[BSONCollection] = {
+    mongoApi.database.map(_.collection[BSONCollection]("diagram"))
+  }
+
   override def listCanEdit(userId: UserID): Future[List[BPMNDiagram]] = {
     val query = Json.obj("canEdit" -> Json.obj("$in" -> Json.arr(Json.obj("$oid" -> userId.stringify))))
-    for {
-      collection <- collection
-      data <- collection
-        .find(query)
-        .cursor[BPMNDiagram.Data]()
-        .collect[List]()
-    } yield data.map(BPMNDiagram(_)).groupBy(_.id).map(_._2.sorted.head).toList
+    aggregateByIdAndGetNewestDiagram(query)
+
+    //    for {
+    //      collection <- collection
+    //      data <- collection
+    //        .find(query)
+    //        .sort(Json.obj("timeStamp" -> -1))
+    //        .cursor[BPMNDiagram.Data]()
+    //        .collect[List]()
+    //    } yield data.map(BPMNDiagram(_)).groupBy(_.id).map(_._2.head).toList
   }
 
   override def listCanView(userId: UserID): Future[List[BPMNDiagram]] = {
     val query = Json.obj("canView" -> Json.obj("$in" -> Json.arr(Json.obj("$oid" -> userId.stringify))))
-    for {
-      collection <- collection
-      data <- collection.
-        find(query)
-        .cursor[BPMNDiagram.Data]()
-        .collect[List]()
-    } yield data.map(BPMNDiagram(_)).groupBy(_.id).map(_._2.sorted.head).toList
+    aggregateByIdAndGetNewestDiagram(query)
+    //    for {
+    //      collection <- collection
+    //      data <- collection
+    //        .find(query)
+    //        .sort(Json.obj("timeStamp" -> -1))
+    //        .cursor[BPMNDiagram.Data]()
+    //        .collect[List]()
+    //    } yield data.map(BPMNDiagram(_)).groupBy(_.id).map(_._2.head).toList
   }
 
   override def listOwns(userId: UserID): Future[List[BPMNDiagram]] = {
-    val query = Json.obj("owner" -> Json.obj("$oid" -> userId.stringify))
+    val query = Json.obj("owner" -> BSONObjectIDFormat.writes(userId))
+
+    aggregateByIdAndGetNewestDiagram(query)
+  }
+
+  private[this] def aggregateByIdAndGetNewestDiagram(query: JsObject) = {
+    //  QUERY
+    //    db.diagram.aggregate( [{$match: query}},
+    //      {$sort: {timeStamp: -1}},
+    //      { $group : { _id : "$id", diagrams: { $first: "$$ROOT" } } } ] )
     for {
       collection <- collection
-      data <- collection
-        .find(query)
-        .cursor[BPMNDiagram.Data]()
-        .collect[List]()
-    } yield data.map(BPMNDiagram(_)).groupBy(_.id).map(_._2.sorted.head).toList
+      dbResult <- {
+        import collection.BatchCommands.AggregationFramework._
+        collection.aggregate(
+          Match(query),
+          List(Sort(Descending("timeStamp")),
+            Group(JsString("$id"))("diagram" -> First("$ROOT"))
+          )
+        )
+      }
+    } yield dbResult.firstBatch.map(json => BPMNDiagram((json \ "diagram").as[BPMNDiagram.Data]))
   }
 
   override def addPermissions(key: BPMNDiagramID,
