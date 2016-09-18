@@ -24,7 +24,6 @@ import scala.concurrent.Future
   */
 case class DiagramAction(id: BSONObjectID)
                         (implicit inj: Injector)
-//  extends ActionBuilder[BPMNDiagramRequest]
   extends ActionRefiner[({type R[A] = SecuredRequest[DefaultEnv, A]})#R, BPMNDiagramRequest] //abstract type
     with Injectable
     with Results
@@ -40,20 +39,9 @@ case class DiagramAction(id: BSONObjectID)
     * @return Either a Result or a BPMNDiagramRequest
     */
   override def refine[A](input: SecuredRequest[DefaultEnv, A]): Future[Either[Result, BPMNDiagramRequest[A]]] = {
-    //    BSONObjectID.parse(id) match {
-    //      case Success(identifier) =>
-    //    id: BPMNDiagramID = BSONObjectID.generate,
-    //    name: String,
-    //    timeStamp: Instant,
-    //    xmlContent: NodeSeq,
-    //    owner: UserID,
-    //    canView: Set[UserID],
-    //    canEdit: Set[UserID])
     diagramDAO.find(id).map({
       case Some(diagram) => Right(BPMNDiagramRequest(diagram, input))
       case None => Left(BadRequest(Json.obj("message" -> Messages("bpmn.id.not.found"))))
     })
-    //      case Failure(ex) => Future.successful(Left(BadRequest(Json.obj("message" -> Messages("bpmn.id.invalid.format")))))
-    //    }
   }
 }

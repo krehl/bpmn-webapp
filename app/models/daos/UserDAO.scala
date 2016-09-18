@@ -19,9 +19,11 @@ import scala.concurrent.Future
 sealed trait UserDAO extends DAO[LoginInfo, User] {
   def findByEmail(key: Email): Future[Option[User]]
 
+  def findById(key: UserID): Future[Option[User]]
+
   def exists(key: Email): Future[Boolean]
 
-  def findAll(list: List[UserID]): Future[List[User]]
+  def findAllById(list: List[UserID]): Future[List[User]]
 
   def findAllByEmail(list: List[Email]): Future[List[User]]
 
@@ -45,6 +47,16 @@ class MongoUserDAO(implicit inj: Injector) extends UserDAO
     } yield dataOption.map(User(_))
   }
 
+
+  override def findById(key: UserID): Future[Option[User]] = {
+    for {
+      collection <- collection
+      dataOption <- collection
+        .find(Json.obj("id" -> BSONObjectIDFormat.writes(key)))
+        .one[User.Data]
+    } yield dataOption.map(User(_))
+  }
+
   override def exists(key: Email): Future[Boolean] = {
     for {
       collection <- collection
@@ -54,7 +66,7 @@ class MongoUserDAO(implicit inj: Injector) extends UserDAO
   }
 
 
-  def findAll(list: List[UserID]): Future[List[User]] = {
+  def findAllById(list: List[UserID]): Future[List[User]] = {
     val query = Json.obj("id" -> Json.obj("$in" -> JsArray(list.map(BSONObjectIDFormat.writes))))
 
     for {

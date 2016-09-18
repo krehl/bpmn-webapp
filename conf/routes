@@ -4,7 +4,7 @@
 GET           /bpmn/:id/history                  controllers.BPMNDiagramController.getHistory(id: reactivemongo.bson.BSONObjectID)
 PUT           /bpmn/:id/addPermissions           controllers.BPMNDiagramController.addPermissions(id: reactivemongo.bson.BSONObjectID)
 PUT           /bpmn/:id/removePermissions        controllers.BPMNDiagramController.removePermissions(id: reactivemongo.bson.BSONObjectID)
-GET           /bpmn/:id/listPermissions          controllers.BPMNDiagramController.listPermissions(id: reactivemongo.bson.BSONObjectID)
+GET           /bpmn/:id/permissions              controllers.BPMNDiagramController.listPermissions(id: reactivemongo.bson.BSONObjectID)
 #make this post ..get just temp
 #GET           /bpmn/:id/edit/:version            ???
 #GET           /bpmn/:id/view/:version            ???
@@ -35,11 +35,13 @@ GET           /bpmn/:id/listPermissions          controllers.BPMNDiagramControll
 GET           /                                  controllers.ApplicationController.index
 GET           /repository                        controllers.RepositoryController.repository
 GET           /profile                           controllers.ProfileController.getProfile
+GET           /profile/:id                       controllers.ProfileController.profile(id: reactivemongo.bson.BSONObjectID)
+GET           /profiles                          controllers.ProfileController.getProfiles
 
 # Help page
 #GET           /                                  controllers.ApplicationController.index
 #GET           /repository                        controllers.RepositoryController.repository
-#GET           /help                              controllers.HelpController.getHelp
+GET           /help                              controllers.HelpController.getHelp
 
 #
 # BPMN Diagram Endpoints
