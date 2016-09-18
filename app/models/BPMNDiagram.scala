@@ -31,7 +31,7 @@ class BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) ex
 
   def xmlContent = data.xmlContent
 
-  def lastEditor = data.lastEditor
+  def lastEditor = data.editor
 
   def owner = data.owner
 
@@ -77,7 +77,7 @@ object BPMNDiagram {
                   description: String,
                   timeStamp: Instant,
                   xmlContent: NodeSeq = default,
-                  lastEditor: UserID,
+                  editor: UserID,
                   owner: UserID,
                   canView: Set[UserID],
                   canEdit: Set[UserID])

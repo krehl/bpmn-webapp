@@ -33,7 +33,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
           description = Messages("bpmn.default.description"),
           timeStamp = Instant.now(),
           owner = request.identity.id,
-          lastEditor = request.identity.id,
+          editor = request.identity.id,
           canView = Set.empty[UserID],
           canEdit = Set.empty[UserID]
         )
@@ -161,7 +161,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
           description = Messages("bpmn.default.description"),
           timeStamp = Instant.now(),
           owner = request.identity.id,
-          lastEditor = request.identity.id,
+          editor = request.identity.id,
           canView = Set.empty[UserID],
           canEdit = Set.empty[UserID]
         )
@@ -209,7 +209,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
           name = name,
           description = description,
           xmlContent = xmlContent,
-          lastEditor = request.user.id)
+          editor = request.user.id)
       )
 
       diagramDAO.save(diagram).map({
