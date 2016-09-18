@@ -1,10 +1,7 @@
-/*
-Controller für Help page
 
 package controllers
 
 import models.daos.BPMNDiagramDAO
-import play.api.libs.json.Json
 import scaldi.Injector
 
 import scala.concurrent.Future
@@ -23,4 +20,3 @@ class HelpController(implicit inj: Injector) extends ApplicationController {
     )
   }
 }
-*/
