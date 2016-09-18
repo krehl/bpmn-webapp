@@ -77,10 +77,10 @@
                             <p class="card-text">{{diagram.id.$oid}}</p>
                             <p class="card-text">Owner: {{diagram.owner.$oid}}</p>
                                 <p class="card-text">Editor:
-                                    <span>{{diagram.canEdit}}</span><br/>
+                                    <span v-for="editor in diagram.canEdit">{{editor.$oid}}</span><br/>
                                 </p>
                                 <p class="card-text">Viewer:
-                                   <span>{{diagram.canView}}</span><br/>
+                                   <span v-for="viewer in diagram.canView">{{viewer.$oid}}</span><br/>
                                 </p>
                             <a href="{{loadModeller($index)}}" class="btn btn-primary">
                                 Open
