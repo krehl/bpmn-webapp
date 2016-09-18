@@ -15,6 +15,8 @@
 
             <!-- LEFT SIDE -->
 
+        @if(diagramId.isDefined) {
+
             <!-- File (export/import) -->
         <li class="nav-item dropdown btn-repo btn-profile">
             <a class="nav-link dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
@@ -61,6 +63,7 @@
             <a class="nav-link" id="save-button" href="#">Save</a>
         </li>
 
+    }
             <!-- New diagramm -->
         <li class="nav-item">
             <a class="nav-link" href="@routes.BPMNDiagramController.newBPMNDiagram()">New</a>
@@ -68,9 +71,7 @@
 
             <!-- RIGHT SIDE -->
 
-        <li class="nav-item pull-xs-right">
-            <a class="nav-link btn-repo btn-profile" href="#" id="history" data-toggle="modal" data-target="#history-modal">History</a>
-        </li>
+
 
             <!-- Logout -->
         <li class="nav-item pull-xs-right">
@@ -102,7 +103,12 @@
                     Share
                 </button>
             </li>
+
+            <li class="nav-item pull-xs-right">
+                <a class="nav-link btn-repo btn-profile" href="#" id="history" data-toggle="modal" data-target="#history-modal">History</a>
+            </li>
         }
+
 
     </ul>
 

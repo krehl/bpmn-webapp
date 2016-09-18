@@ -18,13 +18,11 @@
 
     <!-- diagram title above navbar -->
     <div id="app">
-        <div id="header">
-            <div v-cloak>
-                <h1 style="margin: 10px; display: inline-block;" data-toggle="tooltip" data-placement="right" title="Click to edit"><span data-toggle="modal" data-target="#title-modal">{{process.name}}</span></h1>
-            </div>
+        <div id="header" v-cloak>
+            <h1 style="margin: 10px; display: inline-block;" data-toggle="tooltip" data-placement="right" title="Click to edit"><span data-toggle="modal" data-target="#title-modal">{{process.name}}</span></h1>
 
             @if(user.isDefined) {
-                <div id="navigation" v-cloak>@navigation(diagramId = Some(id))</div>
+                @navigation(diagramId = Some(id))
             }
         </div>
         <div id="canvas" class="container-fluid"></div>
