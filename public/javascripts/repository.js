@@ -7,7 +7,7 @@ var repository = (function ($) {
 
     if(undefined === $('#repository')[0]) return;
 
-    $('.process-delete').on('click',function (event) {
+/*    $('.process-delete').on('click',function (event) {
         event.preventDefault();
         if (window.confirm("Are you sure that you want to delete the diagram?")) {
             var $this = $(this);
@@ -21,12 +21,44 @@ var repository = (function ($) {
                 }
             })
         }
+    });*/
+
+    var MyComponent = Vue.extend({
+        data: function () {
+            return {
+                imageurl: "",
+                name: "",
+                profileurl: ""
+            }
+        },
+        activate: function (done) {
+            var self = this;
+            $.ajax({
+                url: jsRoutes.controllers.ProfileController.profile(self.oid).url,
+                headers: {
+                    Accept: "application/json"
+                },
+                success: function (response) {
+                    console.log(response);
+                    self.imageurl = "https://www.gravatar.com/avatar/" + md5(response.email) + "?s=20";
+                    self.name = response.firstName +" "+ response.lastName;
+                    self.profileurl = jsRoutes.controllers.ProfileController.profile(self.oid).url;
+                    console.log(self);
+                    done();
+                }
+
+            })
+        },
+        props: ['oid'],
+        template: '<span><a href="{{profileurl}}"><image style="border-radius: 50%;" v-bind:src="imageurl"/> {{name}}</a></span>'
     });
+
+    Vue.component('profile', MyComponent)
 
     repoVue = new Vue({
         el: '#app-repo',
         data: {
-            diagrams: []
+            diagrams: [],
         },
         created: function(){
             $this = this;
@@ -60,8 +92,8 @@ var repository = (function ($) {
             loadModeller: function (index) {
                 return jsRoutes.controllers.BPMNDiagramController.loadModeller($this.diagrams[index].id.$oid).url;
             },
-            gravatar: function (oid) {
-                return "https://www.gravatar.com/avatar/"+md5(oid)+"?s=25"
+            profile : function (oid) {
+                return jsRoutes.controllers.ProfileController.profile(oid).url;
             }
         }
     });
