@@ -51,20 +51,22 @@ class MongoBPMNDiagramDAO(implicit inj: Injector) extends BPMNDiagramDAO
       collection <- collection
       data <- collection
         .find(query)
+        .sort(Json.obj("timeStamp" -> -1))
         .cursor[BPMNDiagram.Data]()
         .collect[List]()
-    } yield data.map(BPMNDiagram(_)).groupBy(_.id).map(_._2.sorted.head).toList
+    } yield data.map(BPMNDiagram(_)).groupBy(_.id).map(_._2.head).toList
   }
 
   override def listCanView(userId: UserID): Future[List[BPMNDiagram]] = {
     val query = Json.obj("canView" -> Json.obj("$in" -> Json.arr(Json.obj("$oid" -> userId.stringify))))
     for {
       collection <- collection
-      data <- collection.
-        find(query)
+      data <- collection
+        .find(query)
+        .sort(Json.obj("timeStamp" -> -1))
         .cursor[BPMNDiagram.Data]()
         .collect[List]()
-    } yield data.map(BPMNDiagram(_)).groupBy(_.id).map(_._2.sorted.head).toList
+    } yield data.map(BPMNDiagram(_)).groupBy(_.id).map(_._2.head).toList
   }
 
   override def listOwns(userId: UserID): Future[List[BPMNDiagram]] = {
@@ -73,9 +75,10 @@ class MongoBPMNDiagramDAO(implicit inj: Injector) extends BPMNDiagramDAO
       collection <- collection
       data <- collection
         .find(query)
+        .sort(Json.obj("timeStamp" -> -1))
         .cursor[BPMNDiagram.Data]()
         .collect[List]()
-    } yield data.map(BPMNDiagram(_)).groupBy(_.id).map(_._2.sorted.head).toList
+    } yield data.map(BPMNDiagram(_)).groupBy(_.id).map(_._2.head).toList
   }
 
   override def addPermissions(key: BPMNDiagramID,
