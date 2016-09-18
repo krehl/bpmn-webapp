@@ -36,6 +36,10 @@ GET           /                                  controllers.ApplicationControll
 GET           /repository                        controllers.RepositoryController.repository
 GET           /profile                           controllers.ProfileController.getProfile
 
+# Help page
+#GET           /                                  controllers.ApplicationController.index
+#GET           /repository                        controllers.RepositoryController.repository
+#GET           /help                              controllers.HelpController.getHelp
 
 #
 # BPMN Diagram Endpoints
