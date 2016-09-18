@@ -53,7 +53,11 @@ class ApplicationController(implicit inj: Injector) extends Controller
         controllers.routes.javascript.BPMNDiagramController.listPermissions,
         controllers.routes.javascript.BPMNDiagramController.removePermissions,
         controllers.routes.javascript.BPMNDiagramController.delete,
-        controllers.routes.javascript.RepositoryController.repository
+        controllers.routes.javascript.RepositoryController.repository,
+        controllers.routes.javascript.ProfileController.getProfile,
+        controllers.routes.javascript.RepositoryController.repositoryJson,
+        controllers.routes.javascript.BPMNDiagramController.download,
+        controllers.routes.javascript.BPMNDiagramController.loadModeller
       )
     ).as("text/javascript")
   }

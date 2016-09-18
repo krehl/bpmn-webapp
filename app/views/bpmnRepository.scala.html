@@ -2,11 +2,6 @@
 
 @(message: String, user: Option[User], diagrams: List[BPMNDiagram])(implicit request: RequestHeader, messages: Messages)
     @main(Messages("bpmn.modeler.title"), user) {
-
-        <!-- navbar -->
-        @if(user.isDefined) {
-
-        }
         
         <div id="repository" style="display: none;"></div>
 
@@ -16,10 +11,6 @@
             </div>
             <div id="navigation">@navigation()</div>
         </div>
-
-    <script type="text/javascript">
-            console.log(@{Html(Json.obj("diagrams" -> Json.toJson(diagrams.map(BPMNDiagram.toData))).toString())});
-    </script>
 
         @if(diagrams.nonEmpty) {
 
@@ -33,6 +24,7 @@
             }
             </style>
 
+@*
             @for(diagram <- diagrams) {
 
                 <!--
@@ -74,9 +66,38 @@
                         <!-- -->
                     </div>
                 </div>
+*@
+
+
+                <div id="app-repo">
+                    <div class="card" v-cloak v-for="diagram in diagrams">
+                        <div class="card-block">
+                            <h3 class="card-title">{{diagram.name}}</h3>
+                            <p class="card-text">{{diagram.description}}</p>
+                            <p class="card-text">{{diagram.id.$oid}}</p>
+                            <p class="card-text">Owner: {{diagram.owner.$oid}}</p>
+                                <p class="card-text">Editor:
+                                    <span>{{diagram.canEdit}}</span><br/>
+                                </p>
+                                <p class="card-text">Viewer:
+                                   <span>{{diagram.canView}}</span><br/>
+                                </p>
+                            <a href="{{loadModeller($index)}}" class="btn btn-primary">
+                                Open
+                            </a>
+                            <a href="{{download($index)}}" class="btn btn-info">
+                                <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                                Download
+                            </a>
+                            <a href="#" v-on:click="removeprocess($index)" class="btn btn-danger process-delete">
+                                Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
 
 
             }
-        }
+
     }

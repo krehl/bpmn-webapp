@@ -22,4 +22,46 @@ var repository = (function ($) {
             })
         }
     });
+
+    repoVue = new Vue({
+        el: '#app-repo',
+        data: {
+            diagrams: []
+        },
+        created: function(){
+            $this = this;
+            var router = jsRoutes.controllers.RepositoryController.repositoryJson();
+            $.ajax({
+                url: router.url,
+                success: function (response) {
+                    console.log('success', response.diagrams);
+                    $this.diagrams = response.diagrams;
+                }
+            })
+        },
+        methods: {
+            removeprocess: function (index) {
+                console.log('delete',index);
+                if (window.confirm("Are you sure that you want to delete the diagram?")) {
+                    var router = jsRoutes.controllers.BPMNDiagramController.delete($this.diagrams[index].id.$oid);
+                    $.ajax({
+                        url: router.url,
+                        method: 'DELETE',
+                        success: function () {
+                            console.log('deleted');
+                            $this.diagrams.splice(index,1);
+                        }
+                    })
+                }
+            },
+            download: function(index) {
+                return jsRoutes.controllers.BPMNDiagramController.download($this.diagrams[index].id.$oid).url;
+            },
+            loadModeller: function (index) {
+                return jsRoutes.controllers.BPMNDiagramController.loadModeller($this.diagrams[index].id.$oid).url;
+            }
+        }
+    });
+
+
 })(window.jQuery);

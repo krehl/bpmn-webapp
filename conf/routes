@@ -34,6 +34,7 @@ GET           /bpmn/:id/listPermissions          controllers.BPMNDiagramControll
 # Home page
 GET           /                                  controllers.ApplicationController.index
 GET           /repository                        controllers.RepositoryController.repository
+GET           /repository.json                   controllers.RepositoryController.repositoryJson
 GET           /profile                           controllers.ProfileController.getProfile
 
 # Help page
