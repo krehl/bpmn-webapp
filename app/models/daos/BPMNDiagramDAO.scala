@@ -51,30 +51,13 @@ class MongoBPMNDiagramDAO(implicit inj: Injector) extends BPMNDiagramDAO
   }
 
   override def listCanEdit(userId: UserID): Future[List[BPMNDiagram]] = {
-    val query = Json.obj("canEdit" -> Json.obj("$in" -> Json.arr(Json.obj("$oid" -> userId.stringify))))
+    val query = Json.obj("canEdit" -> Json.obj("$in" -> Json.arr(BSONObjectIDFormat.writes(userId))))
     aggregateByIdAndGetNewestDiagram(query)
-
-    //    for {
-    //      collection <- collection
-    //      data <- collection
-    //        .find(query)
-    //        .sort(Json.obj("timeStamp" -> -1))
-    //        .cursor[BPMNDiagram.Data]()
-    //        .collect[List]()
-    //    } yield data.map(BPMNDiagram(_)).groupBy(_.id).map(_._2.head).toList
   }
 
   override def listCanView(userId: UserID): Future[List[BPMNDiagram]] = {
-    val query = Json.obj("canView" -> Json.obj("$in" -> Json.arr(Json.obj("$oid" -> userId.stringify))))
+    val query = Json.obj("canView" -> Json.obj("$in" -> Json.arr(BSONObjectIDFormat.writes(userId))))
     aggregateByIdAndGetNewestDiagram(query)
-    //    for {
-    //      collection <- collection
-    //      data <- collection
-    //        .find(query)
-    //        .sort(Json.obj("timeStamp" -> -1))
-    //        .cursor[BPMNDiagram.Data]()
-    //        .collect[List]()
-    //    } yield data.map(BPMNDiagram(_)).groupBy(_.id).map(_._2.head).toList
   }
 
   override def listOwns(userId: UserID): Future[List[BPMNDiagram]] = {

@@ -31,6 +31,8 @@ class BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) ex
 
   def xmlContent = data.xmlContent
 
+  def lastEditor = data.editor
+
   def owner = data.owner
 
   def canView = data.canView
@@ -39,9 +41,9 @@ class BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) ex
 
   def history = bpmnDiagramDAO.findHistory(id)
 
-  def listUserThatCanView = userDAO.findAll(canView.toList)
+  def listUserThatCanView = userDAO.findAllById(canView.toList)
 
-  def listUserThatCanEdit = userDAO.findAll(canEdit.toList)
+  def listUserThatCanEdit = userDAO.findAllById(canEdit.toList)
 
   def addPermissions(viewers: List[UserID], editors: List[UserID]) = {
     bpmnDiagramDAO.addPermissions(id, viewers, editors)
@@ -50,6 +52,7 @@ class BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) ex
   def removePermissions(viewers: List[UserID], editors: List[UserID]) = {
     bpmnDiagramDAO.removePermissions(id, viewers, editors)
   }
+
   /*
 
     def removeEditors(editors: List[UserID]) = bpmnDiagramDAO.removeEditors(id, editors)
@@ -74,6 +77,7 @@ object BPMNDiagram {
                   description: String,
                   timeStamp: Instant,
                   xmlContent: NodeSeq = default,
+                  editor: UserID,
                   owner: UserID,
                   canView: Set[UserID],
                   canEdit: Set[UserID])
