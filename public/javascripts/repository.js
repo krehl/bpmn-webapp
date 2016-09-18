@@ -59,6 +59,9 @@ var repository = (function ($) {
             },
             loadModeller: function (index) {
                 return jsRoutes.controllers.BPMNDiagramController.loadModeller($this.diagrams[index].id.$oid).url;
+            },
+            gravatar: function (oid) {
+                return "https://www.gravatar.com/avatar/"+md5(oid)+"?s=25"
             }
         }
     });

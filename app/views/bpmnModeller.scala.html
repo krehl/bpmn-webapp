@@ -63,7 +63,7 @@
                 </div>
                 <div class="modal-body">
                     <ul class="list-group" v-cloak>
-                        <li class="list-group-item" v-for="item in items">{{item.name}} - {{fromNow(item.timeStamp.$date)}} <button class="pull-xs-right" v-on:click="loadVersion($index)">Load</button></li>
+                        <li class="list-group-item" v-for="item in items">{{item.name}} - {{fromNow(item.timeStamp.$date)}} - {{item.editor.$oid}}<button class="pull-xs-right" v-on:click="loadVersion($index)">Load</button></li>
                     </ul>
                 </div>
                 <div class="modal-footer">

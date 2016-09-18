@@ -75,12 +75,15 @@
                             <h3 class="card-title">{{diagram.name}}</h3>
                             <p class="card-text">{{diagram.description}}</p>
                             <p class="card-text">{{diagram.id.$oid}}</p>
-                            <p class="card-text">Owner: {{diagram.owner.$oid}}</p>
+                            <p class="card-text">Owner: <image style="border-radius: 50%;" v-bind:src="gravatar(diagram.owner.$oid)"/>{{diagram.owner.$oid}}</p>
                                 <p class="card-text">Editor:
-                                    <span v-for="editor in diagram.canEdit">{{editor.$oid}}</span><br/>
+                                    <span v-for="editor in diagram.canEdit"><image style="border-radius: 50%;" v-bind:src="gravatar(editor.$oid)"/>{{editor.$oid}}</span><br/>
                                 </p>
                                 <p class="card-text">Viewer:
-                                   <span v-for="viewer in diagram.canView">{{viewer.$oid}}</span><br/>
+                                   <span v-for="viewer in diagram.canView"><image style="border-radius: 50%;" v-bind:src="gravatar(viewer.$oid)"/>{{viewer.$oid}}</span><br/>
+                                </p>
+                                <p class="card-text">Last Editor:
+                                    <span><image style="border-radius: 50%;" v-bind:src="gravatar(diagram.editor.$oid)"/> {{diagram.editor.$oid}}</span><br/>
                                 </p>
                             <a href="{{loadModeller($index)}}" class="btn btn-primary">
                                 Open
