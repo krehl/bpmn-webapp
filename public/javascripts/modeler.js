@@ -6,7 +6,7 @@
  */
 
 
-var bpmnModeler = (function (BpmnModeler, $) {
+var bpmnModelerModule = (function (BpmnModeler, $) {
 
     // create modeler
 
@@ -25,7 +25,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
 
     console.log("bpmnModeller loading");
 
-    const bpmnModeler = new BpmnModeler({
+    bpmnModeler = new BpmnModeler({
         container: '#canvas'
     });
 
@@ -362,7 +362,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
                 if (err) {
                     console.error('diagram save failed', err);
                 } else {
-                    app.xmlContent = xml;
+                    app.process.xmlContent = xml;
                     var router = jsRoutes.controllers.BPMNDiagramController.update(window.bpmn_id.toString());
                     $.ajax({
                         url: router.url,
