@@ -169,23 +169,25 @@ var bpmnModeler = (function (BpmnModeler, $) {
                         console.log(thrownError);
                     }
                 });
-                var remove = jsRoutes.controllers.BPMNDiagramController.removePermissions(window.bpmn_id.toString());
-                $.ajax({
-                    url: remove.url,
-                    method : 'PUT',
-                    data: JSON.stringify(permissionVue.$data.remove),
-                    type: router.type,
-                    cache: false,
-                    contentType: "application/json",
-                    success: function (response) {
-                        console.log("permissions removed")
-                        console.log(response);
-                    },
-                    error: function (xhr, ajaxOptions, thrownError) {
-                        console.log(xhr.status);
-                        console.log(thrownError);
-                    }
-                });
+                if (this.remove.length > 0) {
+                    var remove = jsRoutes.controllers.BPMNDiagramController.removePermissions(window.bpmn_id.toString());
+                    $.ajax({
+                        url: remove.url,
+                        method : 'PUT',
+                        data: JSON.stringify(permissionVue.$data.remove),
+                        type: router.type,
+                        cache: false,
+                        contentType: "application/json",
+                        success: function (response) {
+                            console.log("permissions removed")
+                            console.log(response);
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            console.log(xhr.status);
+                            console.log(thrownError);
+                        }
+                    });
+                }
             }
         }
     });
