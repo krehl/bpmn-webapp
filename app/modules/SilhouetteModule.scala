@@ -17,7 +17,6 @@ import com.mohiva.play.silhouette.password.BCryptPasswordHasher
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import com.mohiva.play.silhouette.persistence.repositories.DelegableAuthInfoRepository
 import models.daos._
-import play.api.Configuration
 import play.api.cache.CacheApi
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.ws.WSClient
@@ -78,7 +77,7 @@ class SilhouetteModule extends Module {
   bind[JcaCookieSignerSettings] to JcaCookieSignerSettings("[changeme]")
   bind[CookieSigner] to new JcaCookieSigner(inject[JcaCookieSignerSettings])
 
-//  bind[CookieAuthenticatorSettings] to inject[Configuration].underlying.as[CookieAuthenticatorSettings]("silhouette.authenticator")
+  //  bind[CookieAuthenticatorSettings] to inject[Configuration].underlying.as[CookieAuthenticatorSettings]("silhouette.authenticator")
   bind[CookieAuthenticatorSettings] to CookieAuthenticatorSettings(
     authenticatorIdleTimeout = Some(30 minutes)
   )
