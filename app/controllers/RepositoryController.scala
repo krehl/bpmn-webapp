@@ -2,9 +2,9 @@ package controllers
 
 import models.BPMNDiagram
 import models.daos.BPMNDiagramDAO
-import scaldi.Injector
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
+import scaldi.Injector
 
 import scala.concurrent.Future
 
@@ -15,12 +15,10 @@ class RepositoryController(implicit inj: Injector) extends ApplicationController
   val diagramDAO = inject[BPMNDiagramDAO]
 
   //TODO infinity scroll; fetch only first x diagrams
-  def repository = silhouette.UserAwareAction.async { implicit request =>
+  def repository = silhouette.SecuredAction.async { implicit request =>
     Future.successful(
-      request.identity match {
-        case Some(identity) => Ok(views.html.bpmnRepository("Welcome", Some(identity)))
-        case None => Ok(views.html.landing(""))
-      })
+      Ok(views.html.bpmnRepository("Welcome", Some(request.identity)))
+    )
   }
 
   def repositoryJson = silhouette.SecuredAction.async { implicit request =>

@@ -9,7 +9,6 @@ import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.SignInForm
 import models.User
-import net.ceedubs.ficus.Ficus._
 import play.api.Configuration
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.{AnyContent, Request}
@@ -17,7 +16,8 @@ import scaldi.Injector
 import services.UserService
 
 import scala.concurrent.Future
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/5/2016
@@ -101,8 +101,8 @@ class SignInController(implicit inj: Injector) extends ApplicationController {
       case authenticator if data.rememberMe =>
         val config = configuration.underlying
         authenticator.copy(
-          expirationDateTime = clock.now + config.as[FiniteDuration]("silhouette.authenticator.rememberMe.authenticatorExpiry"),
-          idleTimeout = config.getAs[FiniteDuration]("silhouette.authenticator.rememberMe.authenticatorIdleTimeout")
+          expirationDateTime = clock.now + (30 days),
+          idleTimeout = Some(5 days)
         )
       case authenticator => authenticator
     }
