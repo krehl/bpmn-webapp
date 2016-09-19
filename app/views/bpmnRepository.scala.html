@@ -25,7 +25,7 @@
                 <div id="app-repo">
                     <div class="card process card-inverse bg-inverse" v-cloak v-for="diagram in diagrams">
                         <div class="card-block">
-                            <h3 class="card-title process-name" data-toggle="tooltip" data-placement="right" title="ID: {{diagram.id.$oid}}" style="display: inline-block">{{diagram.name}}</h3>
+                            <a href="{{loadModeller($index)}}"><h3 class="card-title process-name" data-toggle="tooltip" data-placement="right" title="ID: {{diagram.id.$oid}}" style="display: inline-block">{{diagram.name}}</h3></a>
                             <p class="card-text process-description">{{diagram.description}}</p>
                             <p class="card-text process-owner">Owner:
                                 <profile :oid="diagram.owner.$oid"></profile>
