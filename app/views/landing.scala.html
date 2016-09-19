@@ -1,0 +1,143 @@
+@(message: String)(implicit request: RequestHeader, messages: Messages)
+<!DOCTYPE html>
+
+<!-- Startseite -->
+
+<html>
+    <head>
+        <title>@Messages("landing.title")</title>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.3.1/js/tether.min.js" defer></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css"
+        integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js"
+        integrity="sha384-VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU" crossorigin="anonymous" defer></script>
+    </head>
+
+    <body>
+
+        <style class="custom-css">
+            #jumbo {
+                background-color: #333;
+                color: #eee;
+            }
+            #jumbo p {
+                font-size: 16px;
+            }
+
+            #try-header {
+                margin: 30px 0px;
+            }
+
+            #try-more {
+                margin: 30px 0px;
+                font-style: italic;
+            }
+
+            footer{
+                padding-top: 50px;
+                font-style: italic;
+            }
+        </style>
+
+        <!-- top -->
+        <div id="jumbo" class="jumbotron">
+            <div class="container">
+                <h1>
+                    @Messages("welcome") @Messages("app.name")
+                </h1>
+                <p>
+                    @Messages("landing.benefit.first")
+                </p>
+                <p>
+                    @Messages("landing.benefit.second")
+                </p>
+                <p>
+                    @Messages("landing.benefit.third")
+                </p>
+
+                <!-- sign.up link -->
+                <a href="@routes.SignUpController.view()" class="btn btn-primary pull-left"><b>@Messages("sign.up")</b></a>
+                <!-- sign in link -->
+                <a href="@routes.SignInController.view()" class="btn btn-default pull-right"><b>@Messages("sign.in")</b></a>
+
+            </div>
+        </div>
+
+        <!-- bottom -->
+        <div class="container">
+            <h2 id="try-header">
+                Try the full version to get
+            </h2>
+
+            <!-- description -->
+            <div class="row">
+                <!-- left col -->
+                <div class="col-md-4">
+                    <h3>
+                        Cloud Saving
+                    </h3>
+                    <p>
+                        We save all your processes in the cloud, so you can work on them from
+                        anywhere, at any time.
+                    </p>
+                    <p>
+                        No software to install means we are fast and easy to use!
+                    </p>
+                </div>
+
+                <!-- mid col -->
+                <div class="col-md-4">
+                    <h3>
+                        Sharing and Linking
+                    </h3>
+                    <p>
+                        You can &nbsp;share your work with anyone in the world!
+                    </p>
+                    <p>
+                        Quickly show clients and co-workers your work, and let them collaborate
+                        on your process models.
+                    </p>
+                </div>
+
+                <!-- right col -->
+                <div class="col-md-4">
+                    <h3>
+                        Full BPMN capabilities
+                    </h3>
+                    <p>
+                        Lorem Ipsum ....
+                    </p>
+                    <p>
+                        <!-- -->
+                    </p>
+                </div>
+
+            </div>
+
+            <h2 id="try-more">
+                And more!
+            </h2>
+        </div>
+
+        <!-- footer -->
+        <footer class="footer">
+            <div class="container">
+                <p class="text-muted">@Messages("app.name") 2016</p>
+            </div>
+        </footer>
+
+    </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

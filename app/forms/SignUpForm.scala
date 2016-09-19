@@ -27,6 +27,5 @@ object SignUpForm {
 
     implicit val jsonFormat = Json.format[Data]
   }
-
 }
 

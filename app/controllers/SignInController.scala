@@ -1,18 +1,18 @@
 package controllers
 
-import _root_.util.DefaultEnv
 import com.mohiva.play.silhouette.api.Authenticator.Implicits._
-import com.mohiva.play.silhouette.api.exceptions.ProviderException
+import com.mohiva.play.silhouette.api.services.AuthenticatorResult
 import com.mohiva.play.silhouette.api.util.{Clock, Credentials}
-import com.mohiva.play.silhouette.api.{LoginEvent, Silhouette}
+import com.mohiva.play.silhouette.api.{LoginEvent, LoginInfo}
+import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.SignInForm
+import models.User
 import net.ceedubs.ficus.Ficus._
 import play.api.Configuration
-import play.api.i18n.Messages
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.libs.json._
+import play.api.mvc.{AnyContent, Request}
 import scaldi.Injector
 import services.UserService
 
@@ -21,79 +21,90 @@ import scala.concurrent.duration.FiniteDuration
 
 /**
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/5/2016
+  *         loosely based on:
+  *         https://github.com/mohiva/play-silhouette-angular-seed/blob/master/app/controllers/SignInController.scala
   */
 class SignInController(implicit inj: Injector) extends ApplicationController {
-//  val silhouette = inject[Silhouette[DefaultEnv]]
   val userService = inject[UserService]
   val credentialsProvider = inject[CredentialsProvider]
   val clock = inject[Clock]
   val configuration = inject[Configuration]
 
-
-  def submit = silhouette.UserAwareAction.async { implicit request =>
-    SignInForm.form.bindFromRequest.fold(
-      form => Future.successful(BadRequest(views.html.signIn(form))),
-      data => credentialsProvider.authenticate(Credentials(data.email, data.password)).flatMap { loginInfo =>
-        userService.retrieve(loginInfo).flatMap {
-          case Some(user) => silhouette.env.authenticatorService.create(loginInfo).map {
-            case authenticator if data.rememberMe =>
-              val config = configuration.underlying
-              authenticator.copy(
-                expirationDateTime = clock.now + config.as[FiniteDuration]("silhouette.authenticator.rememberMe.authenticatorExpiry"),
-                idleTimeout = config.getAs[FiniteDuration]("silhouette.authenticator.rememberMe.authenticatorIdleTimeout")
-              )
-            case authenticator => authenticator
-          }.flatMap { authenticator =>
-            silhouette.env.eventBus.publish(LoginEvent(user, request))
-            silhouette.env.authenticatorService.init(authenticator).map { token =>
-              Ok(Json.obj("token" -> token))
-            }
-          }
-          case None => Future.failed(new IdentityNotFoundException("Couldn't find user"))
-        }
-      }.recover {
-        case e: ProviderException =>
-          Redirect(routes.SignInController.view()).flashing("error" -> Messages("invalid.credentials"))
-      })
-  }
-
-  //  implicit val dataReads = (
-  //    (__ \ 'email).read[String] and
-  //      (__ \ 'password).read[String] and
-  //      (__ \ 'rememberMe).read[Boolean]
-  //    ) (SignInForm.Data.apply _)
-
-  //  def submit = silhouette.UnsecuredAction.async(parse.json) { implicit request =>
-  //    request.body.validate[SignInForm.Data].map { data =>
-  //      credentialsProvider.authenticate(Credentials(data.email, data.password)).flatMap { loginInfo =>
-  //        userService.retrieve(loginInfo).flatMap {
-  //          case Some(user) => silhouette.env.authenticatorService.create(loginInfo).map {
-  //            case authenticator if data.rememberMe =>
-  //              val config = configuration.underlying
-  //              authenticator.copy(
-  //                expirationDateTime = clock.now + config.as[FiniteDuration]("silhouette.authenticator.rememberMe.authenticatorExpiry"),
-  //                idleTimeout = config.getAs[FiniteDuration]("silhouette.authenticator.rememberMe.authenticatorIdleTimeout")
-  //              )
-  //            case authenticator => authenticator
-  //          }.flatMap { authenticator =>
-  //            silhouette.env.eventBus.publish(LoginEvent(user, request))
-  //            silhouette.env.authenticatorService.init(authenticator).map { token =>
-  //              Ok(Json.obj("token" -> token))
-  //            }
-  //          }
-  //          case None => Future.failed(new IdentityNotFoundException("Couldn't find user"))
-  //        }
-  //      }.recover {
-  //        case e: ProviderException => Unauthorized(Json.obj("message" -> Messages("invalid.credentials")))
-  //      }
-  //    }.recoverTotal {
-  //      case error => Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.credentials"))))
-  //    }
-  //  }
-
-
+  /**
+    * HTTP GET endpoint, requires a logged out user
+    *
+    * @return HTTP OK status with HTML of the sign in form page if the user is not already signed in
+    */
+  //TODO define fallback for unauthorized request => just do nothing
   def view = silhouette.UnsecuredAction.async {
     implicit request =>
-      Future.successful(Ok(views.html.signIn(SignInForm.form)))
+      Future.successful(Ok(views.html.signIn(SignInForm.form, None)))
+  }
+
+  /**
+    * HTTP POST endpoint, requires a logged out user
+    *
+    * @return Redirect or HTTP BAD_REQUEST depending on authentication success
+    */
+  def submit = silhouette.UnsecuredAction.async { implicit request =>
+    SignInForm.form.bindFromRequest.fold(
+      invalidForm => Future.successful(BadRequest(views.html.signIn(invalidForm, None))),
+      validData =>
+        for {
+          loginInfo <- credentialsProvider.authenticate(Credentials(validData.email, validData.password))
+          userOption <- userService.retrieve(loginInfo)
+          futureResult <- userOption match {
+            case Some(user) => grantAuthentication(validData, loginInfo, user)
+            case None => Future.failed(new IdentityNotFoundException("Couldn't find user"))
+            //TODO dont use excep, redirect to error page instead
+          }
+        } yield futureResult
+    )
+  }
+
+  /**
+    * Creates a new authenticator, initializes a new authentication cookie and embeds it into the
+    * result
+    *
+    * @param data      form data, only required for remember me functionality
+    * @param loginInfo user key (e-mail) & provider id
+    * @param user      user that will be authenticated
+    * @param request   user request
+    * @return redirects to application main page, but with authentication
+    */
+  private[this] def grantAuthentication(data: SignInForm.Data,
+                                        loginInfo: LoginInfo,
+                                        user: User)
+                                       (implicit request: Request[AnyContent]): Future[AuthenticatorResult] = {
+    for {
+      authenticator <- createAuthenticator(data, loginInfo)
+      cookie <- silhouette.env.authenticatorService.init(authenticator)
+      result <- silhouette.env.authenticatorService.embed(cookie, Redirect(routes.ApplicationController.index()))
+    } yield {
+      silhouette.env.eventBus.publish(LoginEvent(user, request))
+      result
+    }
+  }
+
+  /**
+    * Creates a new cookie authenticator
+    *
+    * @param data      form data, only remember me functionality is required
+    * @param loginInfo user key (e-mail) & provider id
+    * @param request   user request
+    * @return cookie authenticator that authenticates the user
+    */
+  private[this] def createAuthenticator(data: SignInForm.Data,
+                                        loginInfo: LoginInfo)
+                                       (implicit request: Request[AnyContent]): Future[CookieAuthenticator] = {
+    silhouette.env.authenticatorService.create(loginInfo).map {
+      case authenticator if data.rememberMe =>
+        val config = configuration.underlying
+        authenticator.copy(
+          expirationDateTime = clock.now + config.as[FiniteDuration]("silhouette.authenticator.rememberMe.authenticatorExpiry"),
+          idleTimeout = config.getAs[FiniteDuration]("silhouette.authenticator.rememberMe.authenticatorIdleTimeout")
+        )
+      case authenticator => authenticator
+    }
   }
 }

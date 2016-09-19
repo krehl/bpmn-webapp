@@ -1,0 +1,154 @@
+@(user: User)(implicit request: RequestHeader, messages: Messages)
+
+@head("help") @* nie leeren string übergeben *@
+
+@*
+TODO
+
+>controller
+>routes
+>etc.
+
+>bootstrap layout
+>css
+>inpage links
+>content
+
+>navigation buttons display
+
+*@
+
+
+    <style>
+        header {
+            background: #333;
+            color: white;
+        }
+        footer {
+            padding-top: 50px;
+            font-style: italic;
+        }
+        #userInfo {
+            margin-top: 5%;
+            margin-bottom: 5%;
+        }
+        .btn-help {
+            /* hide useless navbar elements */
+            display: none !important;
+            width:0px !important;
+            height:0px !important;
+            overflow: hidden !important;
+        }
+        #head-bg {
+            background: #333;
+            position: absolute;
+            left: 10px;
+            right: 10px;
+            border-radius: 5px;
+        }
+    </style>
+
+    <!-- header above navbar -->
+    <div id="app">
+        <div>
+            <h1 style="margin: 10px;">BPMN Process Modeller</h1>
+        </div>
+        <div id="navigation">@navigation()</div>
+    </div>
+
+    <!-- header -->
+    <div id="head-bg">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <header>
+                <h1>BPMN Documentation</h1>
+            </header>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+
+    <!-- Index -->
+    <div id="index">
+        <h2>Index</h2>
+        <ul>
+            <li><a href="#">What is BPMN?</a></li>
+            <li>
+                <a href="#">About Process Modeller</a>
+                <ul>
+                    <li><a href="#">The Repository</a></li>
+                    <li><a href="#">History & version controll</a></li>
+                    <li><a href="#">Import a BPMN project</a></li>
+                    <li><a href="#">Export a diagramm</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Feedback & survey</a></li>
+        </ul>
+    </div>
+
+
+    <!-- main content -->
+    <div id="content-main">
+
+        <!-- what is bpmn -->
+        <div id="what-bpmn">
+            <h3>What is BPMN</h3>
+            <p>
+                BPMN is a standard Business Process Model and Notation, which provides businesses with the capability of understanding their internal business procedures in a graphical
+                notation and gives organizations the ability to communicate these procedures in a standard manner. Furthermore, the graphical notation facilitates the understanding
+                of the performance collaborations and business transactions between the organizations. This ensures that businesses will understand themselves and participants in their
+                business and will enable organizations to adjust to new internal and B2B business circumstances quickly.
+            </p>
+            <div id="img-bpmn">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/BPMN-AProcesswithNormalFlow.svg">Examlpe of a BPMN diagramm</img>
+            </div>
+            <p>
+                For further readings, see <a target="_blank" href="https://en.wikipedia.org/wiki/Business_Process_Model_and_Notation">Business Process Model and Notation (Wikipedia)</a>
+                or <a target="_blank" href="http://www.bpmn.org/">Object Management Group Business Process Model and Notation</a>.
+            </p>
+        </div>
+
+        <!-- about process modeller -->
+        <div>
+            <h3 id="about-pm">About Process Modeller</h3>
+                <p>
+                    Process Modeller is a free-to-use webapp to visualize BPMN diagramms. This webapp uses the <a target="_blank" href="https://www.BPMN.io">BPMN.io</a>
+                        framework as it's core.
+                </p>
+            <h4 id="about-repo">The Repository</h4>
+                <p>
+                    In the Repository you can view and access your stored BPMN project, displayed on project cards. Your options are to open, export and delete the BPMN project file.
+                </p>
+            <h4 id="about-hist">History & version controll</h4>
+                <p>
+                    This feature, only available trough the modeller page, allows you to view the changes you did to your project and if necessary, revert to an older state.
+                </p>
+            <h4 id="about-im">Import a BPM project</h4>
+                <p>
+                    Here you can import a BPMN project file to your Process Modeller workspace.
+                </p>
+            <h4 id="about-ex">Export a diagramm</h4>
+                <p>
+                    The process Modeller allows you to export your BPMN project as project XML file, a SVG or PNG picture.
+                </p>
+        </div>
+
+        <!-- survey link -->
+        <div id="feedback">
+            <b>Do you like what you see? Give us feedback!</b>
+            <p>Please click on the button below and take part in a short survey.</p>
+            <a target="_blank" href="https://goo.gl/forms/NYYt1VUYu4jyWEJZ2" class="btn btn-primary">Survey</a>
+        </div>
+
+        <!-- back to top -->
+        <div id="back-top">
+            <a href="#index">Go back to top</a>
+        </div>
+
+        <!-- footer -->
+        <div>
+            <footer>
+                <p class="text-muted">Process Modeller 2016 powered by BPMN.io</p>
+            </footer>
+        </div>
+
+    </div>

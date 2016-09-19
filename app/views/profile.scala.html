@@ -1,0 +1,94 @@
+@(user: User)(implicit request: RequestHeader, messages: Messages)
+
+@head("profile") @* nie leeren string übergeben *@
+
+
+    <style>
+        header {
+            background: #333;
+            color: white;
+        }
+        footer {
+            padding-top: 50px;
+            font-style: italic;
+        }
+        #userInfo {
+            margin-top: 5%;
+            margin-bottom: 5%;
+        }
+        .btn-profile {
+            /* hide useless navbar elements */
+            display: none !important;
+            width:0px !important;
+            height:0px !important;
+            overflow: hidden !important;
+        }
+        #head-bg {
+            background: #333;
+            position: absolute;
+            left: 10px;
+            right: 10px;
+            border-radius: 5px;
+        }
+    </style>
+
+    <!-- header above navbar -->
+    <div id="app">
+        <div>
+            <h1 style="margin: 10px;">BPMN Process Modeller</h1>
+        </div>
+        <div id="navigation">@navigation()</div>
+    </div>
+
+    <!-- header -->
+    <div id="head-bg">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <header>
+                <h1>Your profile</h1>
+            </header>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+
+    <!-- profile main -->
+    <div id="userInfo" class="col-md-6 col-md-offset-3">
+        <div class="col-md-3">
+            <p>
+                <strong>First name</strong>
+            </p>
+            <p>
+                <strong>Last name</strong>
+            </p>
+            <p>
+                <strong>E-Mail</strong>
+            </p>
+        </div>
+
+        <div class="col-md-3 col-md-offset-3">
+            <p>
+                <span>@user.firstName</span>
+            </p>
+            <p>
+                <span>@user.lastName</span>
+            </p>
+            <p>
+                <span>@user.email</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- survey link -->
+    <div class="col-md-6 col-md-offset-3">
+        <b>Do you like what you see? Give us feedback!</b>
+        <p>Please click on the button below and take part in a short survey.</p>
+        <a target="_blank" href="https://goo.gl/forms/NYYt1VUYu4jyWEJZ2" class="btn btn-primary">Survey</a>
+    </div>
+
+    <!-- footer -->
+    <div class="col-md-6 col-md-offset-3">
+        <footer>
+            <p class="text-muted">Process Modeller 2016 powered by BPMN.io</p>
+        </footer>
+    </div>
+

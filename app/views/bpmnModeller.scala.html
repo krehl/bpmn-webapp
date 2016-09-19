@@ -1,0 +1,123 @@
+@import util.Types.BPMNDiagramID
+@(message: String, user: Option[User], id: BPMNDiagramID)(implicit request: RequestHeader,
+        messages: Messages)
+@main(Messages("bpmn.modeler.title"), user) {
+
+    <!--
+        Modellierfunktion in BPMN zum Zeichnen der Graphen.
+        Hauptfläche mit Elementen.
+        CSS = canvas in main.css
+    -->
+
+
+    <style>
+    [v-cloak] {
+        display: none;
+    }
+    </style>
+
+
+
+    <!-- diagram title above navbar -->
+    <div id="app">
+
+
+        <div id="header" v-cloak>
+            <h1 style="margin: 10px; display: inline-block;" data-toggle="tooltip" data-placement="right" title="Click to edit"><span data-toggle="modal" data-target="#title-modal">{{process.name}}</span></h1>
+
+            @if(user.isDefined) {
+                @navigation(diagramId = Some(id))
+            }
+        </div>
+        <div id="canvas" class="container-fluid"></div>
+        <script>
+                bpmn_id = "@id.stringify";
+                console.log("bpmn_id:" +bpmn_id);
+        </script>
+
+    </div>
+
+    <div class="modal modal-draggable fade" tabindex="-1" role="dialog" id="title-modal" v-cloak>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Meta data</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Process Title</label>
+                        <input type="text" class="form-control" v-model="process.name" placeholder="Process Title" aria-describedby="basic-addon1" value="{{process.name}}">
+                    </div>
+                    <div class="form-group">
+                        <label>Process Description</label>
+                        <textarea type="text" class="form-control" v-model="process.description" placeholder="Description" aria-describedby="basic-addon1" rows="3">{{process.description}}</textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="done">Done</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    <div class="modal modal-draggable fade" tabindex="-1" role="dialog" id="history-modal" v-cloak>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">History</h4>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group" v-cloak>
+                        <li class="list-group-item" v-for="item in items">{{item.name}} - {{fromNow(item.timeStamp.$date)}} - <profile :oid="item.editor.$oid"></profile><button class="pull-xs-right" v-on:click="loadVersion($index)">Load</button></li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div class="modal modal-draggable fade" id="permissionModal" tabindex="-1" role="dialog" v-cloak>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="permissionModalLabel">Share with others</h4>
+                </div>
+                <div class="modal-body" v-cloak>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">email:</span>
+                            <input type="text" v-model="user" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li><a class="dropdown-item" href="#" v-on:click="addViewer">View</a></li>
+                                <li><a class="dropdown-item" href="#" v-on:click="addEditor">Edit</a></li>
+                            </ul>
+                        </div><!-- /btn-group -->
+                    </div>
+
+
+                    <ul class="list-group" v-cloak>
+                        <li class="list-group-item" v-for="item in load.canView">{{item}} (View)<button class="pull-xs-right" v-on:click="popView($index)">X</button></li>
+                        <li class="list-group-item" v-for="item in load.canEdit">{{item}} (Edit)<button class="pull-xs-right" v-on:click="popEdit($index)">X</button></li>
+                    </ul>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="submit">Save changes</button>
+                    <button type="button" class="btn btn-default" v-on:click="refresh">Refresh</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}

@@ -1,0 +1,128 @@
+/* GENERAL */
+#wrapper {
+    display: flex;
+    flex-direction: column;
+    padding-left: 0px !important; /* 0px !important = hide sidebar */
+}
+html, body, #canvas, #content {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+#jumbo {
+    /* Jumbotron */
+    border-radius: 0;
+}
+#canvas {
+    /* underline top bar 1 */
+    /*border: solid black;*/
+    /* border-top: 1px darkgrey solid; */ /* solid darkgrey */
+}
+.card {
+    /* repository file entry */
+    float: left;
+    margin: 9px;
+    min-width: 444px;
+    width: 32%;
+}
+
+/* pallete + item style OPTIONAL  */
+/*
+.entry:before {
+    color: white;
+    background: transparent;
+}
+.entry:hover {
+    color: #0275d8;
+    background: transparent;
+}
+.djs-palette-entries {
+    background: #333;
+}
+.djs-palette-toggle {
+    background: #0275d8;
+}*/
+
+
+nav.navbar.navbar-dark.bg-inverse {
+    margin: 10px;
+}
+
+/* Toggle Styles */
+#wrapper {
+    padding-left: 0;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+#wrapper.toggled {
+    padding-left: 250px;
+}
+/* sidebar panel options */
+
+#wrapper.toggled #sidebar-wrapper {
+    width: 250px;
+}
+#page-content-wrapper {
+    width: 100%;
+    position: absolute;
+    padding: 15px;
+}
+#wrapper.toggled #page-content-wrapper {
+    position: absolute;
+    margin-right: -250px;
+}
+
+[v-cloak] {
+    display: none;
+}
+
+/* draggable */
+.modal-draggable .modal-backdrop {
+    position: fixed;
+}
+
+.modal.modal-draggable {
+    overflow: overflow-y;
+}
+
+.modal-draggable .modal-header:hover {
+    cursor: move;
+}
+
+/* @media */
+@media(min-width:768px) {
+    #wrapper {
+        padding-left: 250px;
+    }
+
+    #wrapper.toggled {
+        padding-left: 0;
+    }
+
+    #sidebar-wrapper {
+        width: 250px;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        width: 0;
+    }
+
+    #page-content-wrapper {
+        padding: 20px;
+        position: relative;
+    }
+
+    #wrapper.toggled #page-content-wrapper {
+        position: relative;
+        margin-right: 0;
+    }
+
+
+}
+
+
+/* COLORS */
+/* #0275d8 blue */
+/* #5BC0DE light blueish */
