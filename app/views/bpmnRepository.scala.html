@@ -20,9 +20,23 @@
                 height:0px !important;
                 overflow: hidden !important;
             }
+            .center {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+            }
             </style>
 
                 <div id="app-repo">
+
+                    <div class="center" v-if="diagrams.length==0" style="height: 300px;">
+                        <div>
+                            <p>Nothing there yet :(</p>
+                            <img style="max-width: 100%" src="@routes.Assets.at("images/empty_repo.png")"/>
+                        </div>
+                    </div>
+
                     <div class="card process card-inverse bg-inverse" v-cloak v-for="diagram in diagrams">
                         <div class="card-block">
                             <a href="{{loadModeller($index)}}"><h3 class="card-title process-name" data-toggle="tooltip" data-placement="right" title="ID: {{diagram.id.$oid}}" style="display: inline-block">{{diagram.name}}</h3></a>
