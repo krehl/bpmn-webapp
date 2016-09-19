@@ -79,7 +79,13 @@ class SilhouetteModule extends Module {
 
   //  bind[CookieAuthenticatorSettings] to inject[Configuration].underlying.as[CookieAuthenticatorSettings]("silhouette.authenticator")
   bind[CookieAuthenticatorSettings] to CookieAuthenticatorSettings(
-    authenticatorIdleTimeout = Some(30 minutes)
+    cookieName = "authenticator",
+    cookiePath = "/",
+    secureCookie = false,
+    httpOnlyCookie = true,
+    useFingerprinting = true,
+    authenticatorIdleTimeout = Some(30 minutes),
+    authenticatorExpiry = 12 hours
   )
   bind[AuthenticatorService[CookieAuthenticator]] to new CookieAuthenticatorService(
     inject[CookieAuthenticatorSettings],

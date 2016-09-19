@@ -1,6 +1,6 @@
 @import play.api.libs.json.Json
 
-@(message: String, user: Option[User], diagrams: List[BPMNDiagram])(implicit request: RequestHeader, messages: Messages)
+@(message: String, user: Option[User])(implicit request: RequestHeader, messages: Messages)
     @main(Messages("bpmn.modeler.title"), user) {
         
         <div id="repository" style="display: none;"></div>
@@ -11,8 +11,6 @@
             </div>
             <div id="navigation">@navigation()</div>
         </div>
-
-        @if(diagrams.nonEmpty) {
 
             <style>
             .btn-repo {
@@ -99,9 +97,4 @@
                         </div>
                     </div>
                 </div>
-
-
-
-            }
-
     }
