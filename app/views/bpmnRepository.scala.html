@@ -22,78 +22,35 @@
             }
             </style>
 
-@*
-            @for(diagram <- diagrams) {
-
-                <!--
-                    Dateielement im Repository mit Name, Beschreibung und Optionen
-                -->
-
-                <div class="card card-inverse id-@diagram.id.stringify" style="background-color: #333;
-                    border-color: #333; ">
-                    <div class="card-block">
-                        <!-- repository file name -->
-                        <h3 class="card-title">@diagram.name</h3>
-                        <!-- description of file -->
-                        <p class="card-text">@diagram.description</p>
-                        <p class="card-text">@diagram.id.stringify</p>
-
-                        <p class="card-text">Owner: @diagram.owner.stringify</p>
-                        @if(diagram.canEdit.nonEmpty) {
-                            <p class="card-text">Editor:
-                                @for(editor <- diagram.canEdit) {<span>@editor.stringify</span><br/>}
-                            </p>
-                        }
-                        @if(diagram.canView.nonEmpty) {
-                            <p class="card-text">Viewer:
-                                @for(viewer <- diagram.canView) {<span>@viewer.stringify</span><br/>}
-                            </p>
-                        }
-
-                        <!-- controls -->
-                        <a href="@routes.BPMNDiagramController.loadModeller(diagram.id)" class="btn btn-primary">
-                            Open
-                        </a>
-                        <a href="@routes.BPMNDiagramController.download(diagram.id)" class="btn btn-info">
-                            <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
-                            Download
-                        </a>
-                        <a href="@routes.BPMNDiagramController.delete(diagram.id)" class="btn btn-danger process-delete" data-diagram-id="@diagram.id.stringify">
-                            Delete
-                        </a>
-                        <!-- -->
-                    </div>
-                </div>
-*@
-
-
                 <div id="app-repo">
-                    <div class="card" v-cloak v-for="diagram in diagrams">
+                    <div class="card process card-inverse bg-inverse" v-cloak v-for="diagram in diagrams">
                         <div class="card-block">
-                            <h3 class="card-title" data-toggle="tooltip" data-placement="right" title="ID: {{diagram.id.$oid}}" style="display: inline-block">{{diagram.name}}</h3>
-                            <p class="card-text">{{diagram.description}}</p>
-                            <p class="card-text">Owner:
+                            <h3 class="card-title process-name" data-toggle="tooltip" data-placement="right" title="ID: {{diagram.id.$oid}}" style="display: inline-block">{{diagram.name}}</h3>
+                            <p class="card-text process-description">{{diagram.description}}</p>
+                            <p class="card-text process-owner">Owner:
                                 <profile :oid="diagram.owner.$oid"></profile>
                             </p>
-                                <p v-if="diagram.canEdit[0]" class="card-text">Editor:
+                                <p v-if="diagram.canEdit[0]" class="card-text process-editor">Editor:
                                     <profile v-for="editor in diagram.canEdit" :oid="editor.$oid"></profile>
                                 </p>
-                                <p v-if="diagram.canView[0]" class="card-text">Viewer:
+                                <p v-if="diagram.canView[0]" class="card-text process-viewer">Viewer:
                                     <profile v-for="viewer in diagram.canView" :oid="viewer.$oid"></profile>
                                 </p>
-                                <p v-if="diagram.editor.$oid" class="card-text">Last Editor:
+                                <p v-if="diagram.editor.$oid" class="card-text process-editor">Last Editor:
                                     <profile :oid="diagram.editor.$oid"></profile>
                                 </p>
-                            <a href="{{loadModeller($index)}}" class="btn btn-primary">
-                                Open
-                            </a>
-                            <a href="{{download($index)}}" class="btn btn-info">
-                                <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
-                                Download
-                            </a>
-                            <a href="#" v-on:click="removeprocess($index)" class="btn btn-danger">
-                                Delete
-                            </a>
+                            <div class="process-actions">
+                                <a href="{{loadModeller($index)}}" class="btn btn-primary">
+                                    Open
+                                </a>
+                                <a href="{{download($index)}}" class="btn btn-info">
+                                    <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                                    Download
+                                </a>
+                                <a href="#" v-on:click="removeprocess($index)" class="btn btn-danger">
+                                    Delete
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
