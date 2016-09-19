@@ -32,7 +32,7 @@
                 <li><a class="dropdown-item" href="#" id="svg-button"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>
                     Download SVG</a>
                 </li>
-
+                <div class="dropdown-divider"></div>
                     <!-- Import -->
                 <li role="separator" class="divider"></li>
                 <li><a class="dropdown-item" href="#" id="xml-upload"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>
@@ -53,8 +53,8 @@
                     Delete</a>
                 <a class="dropdown-item" href="#" id="rename-btn"><span class="glyphicon" aria-hidden="true"></span>
                     Rename</a>
-                <a class="dropdown-item" href="#"><span class="glyphicon" aria-hidden="true"></span>
-                    Copy</a>
+                @*<a class="dropdown-item" href="#"><span class="glyphicon" aria-hidden="true"></span>
+                    Copy</a>*@
             </div>
         </li>
 
@@ -66,7 +66,7 @@
     }
             <!-- New diagramm -->
         <li class="nav-item">
-            <a class="nav-link" href="@routes.BPMNDiagramController.newBPMNDiagram()">New</a>
+            <a class="nav-link" id="new-diagram-btn" href="@routes.BPMNDiagramController.newBPMNDiagram()">New</a>
         </li>
 
             <!-- RIGHT SIDE -->
