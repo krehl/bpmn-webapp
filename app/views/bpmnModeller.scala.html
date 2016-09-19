@@ -96,28 +96,24 @@
                 </div>
                 <div class="modal-body" v-cloak>
                     <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">email:</span>
-                            <input type="text" v-model="user" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
-                        <div class="input-group-btn">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
-                            <ul class="dropdown-menu dropdown-menu-right">
-                                <li><a class="dropdown-item" href="#" v-on:click="addViewer">View</a></li>
-                                <li><a class="dropdown-item" href="#" v-on:click="addEditor">Edit</a></li>
-                            </ul>
-                        </div><!-- /btn-group -->
-                    </div>
-
-
-                    <ul class="list-group" v-cloak>
+                        <span class="input-group-addon" id="basic-addon1">Email:</span>
+                            <input type="text" v-model="user" class="form-control" placeholder="Add collaborator" aria-describedby="basic-addon1">
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" v-on:click="addViewer">View</button>
+                        </span>
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button" v-on:click="addEditor">Edit</button>
+                        </span>
+                    </div><!-- /btn-group -->
+                <ul class="list-group" v-cloak>
                         <li class="list-group-item" v-for="item in load.canView">{{item}} (View)<button class="pull-xs-right" v-on:click="popView($index)">X</button></li>
                         <li class="list-group-item" v-for="item in load.canEdit">{{item}} (Edit)<button class="pull-xs-right" v-on:click="popEdit($index)">X</button></li>
                     </ul>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="submit">Save changes</button>
-                    <button type="button" class="btn btn-default" v-on:click="refresh">Refresh</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="submit">Save changes</button>
+                <button type="button" class="btn btn-default" v-on:click="refresh">Refresh</button>
+            </div>
             </div>
         </div>
     </div>
