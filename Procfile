@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/play-getting-started -Dhttp.port=${PORT}
+web: target/universal/stage/bin/bpmn-webapp -Dhttp.port=${PORT}
