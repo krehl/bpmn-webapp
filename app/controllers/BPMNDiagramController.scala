@@ -50,14 +50,12 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     * @param id id
     * @return HTML
     */
-  def loadModeller(id: BPMNDiagramID) = silhouette.SecuredAction.async {
-    implicit request =>
-      Future.successful {
-        Ok(views.html.bpmnModeller(s"Hello ${request.identity.firstName}!",
-          Some(request.identity),
-          id)
-        )
-      }
+  def loadModeller(id: BPMNDiagramID) = silhouette.UserAwareAction.async { implicit request =>
+    Future.successful(
+      request.identity match {
+        case Some(identity) => Ok(views.html.bpmnModeller(s"Hello ${identity.firstName}!", request.identity, id))
+        case None => Redirect(routes.SignInController.view())
+      })
   }
 
   /**

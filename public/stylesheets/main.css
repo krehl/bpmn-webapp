@@ -22,8 +22,14 @@ html, body, #canvas, #content {
     /* repository file entry */
     float: left;
     margin: 9px;
-    min-width: 444px;
-    width: 32%;
+    min-width: 333px;
+    width: 31%;
+    /* max-width: 444px; */
+}
+
+div.process a {
+    text-decoration: none;
+    color: white;
 }
 
 /* pallete + item style OPTIONAL  */
@@ -90,6 +96,39 @@ nav.navbar.navbar-dark.bg-inverse {
 .modal-draggable .modal-header:hover {
     cursor: move;
 }
+
+
+@media only screen and (max-width: 800px) {
+    
+    div.process p.process-description {
+        display: none;
+    }
+
+}
+
+@media only screen and (max-width: 1070px) {
+    
+    div.card {
+        width: 48%;
+    }
+
+}
+
+@media only screen and (max-width: 920px) {
+    
+    div.card {
+        min-width: 280px;
+        width: 45%;
+    }
+
+    div.process .btn {
+    font-size: 90%;
+    padding: 0.3rem .8rem;
+}
+}
+
+
+
 
 /* @media */
 @media(min-width:768px) {
