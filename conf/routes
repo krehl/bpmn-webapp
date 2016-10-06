@@ -37,6 +37,7 @@ GET           /repository                        controllers.RepositoryControlle
 GET           /repository.json                   controllers.RepositoryController.repositoryJson
 GET           /profile                           controllers.ProfileController.getProfile
 GET           /profile/:id                       controllers.ProfileController.profile(id: reactivemongo.bson.BSONObjectID)
+GET           /profile/:email                    controllers.ProfileController.profileByEmail(email: String)
 GET           /profiles                          controllers.ProfileController.getProfiles
 
 # Help page

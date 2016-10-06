@@ -37,6 +37,13 @@ class ProfileController(implicit inj: Injector) extends ApplicationController {
     })
   }
 
+  def profileByEmail(email: String) = silhouette.SecuredAction.async { implicit request =>
+    userDAO.findByEmail(email).map({
+      case Some(user: User) => Ok(Json.toJson(User.toData(user)))
+      case None => BadRequest("User not found!")
+    })
+  }
+
   def getProfiles = silhouette.SecuredAction.async(parse.json) { implicit request =>
     val json = request.body
     val ids = (json \ "ids").as[List[UserID]]
