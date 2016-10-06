@@ -29,7 +29,7 @@ var profileComponent = Vue.extend({
         })
     },
     props: ['oid'],
-    template: '<span><a href="{{profileurl}}"><image style="border-radius: 50%;" v-bind:src="imageurl"/> {{name}}</a></span>'
+    template: '<span><a v-bind:href="profileurl"><image style="border-radius: 50%;" v-bind:src="imageurl"/> {{name}}</a></span>'
 });
 
 Vue.component('profile', profileComponent);

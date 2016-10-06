@@ -31,7 +31,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                 profileurl: ""
             }
         },
-        activate: function (done) {
+        mounted: function (done) {
             var self = this;
             $.ajax({
                 url: jsRoutes.controllers.ProfileController.profile(self.oid).url,
@@ -50,7 +50,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
             })
         },
         props: ['oid'],
-        template: '<span><a href="{{profileurl}}"><image style="border-radius: 50%;" v-bind:src="imageurl"/></a> <a href="{{profileurl}}">{{name}}</a></span>'
+        template: '<span><a v-bind:href=profileurl"><image style="border-radius: 50%;" v-bind:src="imageurl"/></a> <a v-bind:href=profileurl">{{name}}</a></span>'
     });
 
     Vue.component('profile', profileComponent);
@@ -87,10 +87,13 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                         }
                     },
                     methods: {
-                        done: function () {
+                        checkforchanges: function () {
                             if (this.process.name !== this.old.name
                                 || this.process.description !== this.old.description ) {
-                                changed = true;}
+                                changed = true;
+                                this.old.name = this.process.name;
+                                this.old.description =  this.process.description;
+                            }
                         }
                     }
                 });
@@ -121,9 +124,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
         }
     })*/
 
-   $('#rename-btn').on('click',function () {
-       $('#title-modal').modal('show');
-   });
+
 
     permissionVue = new Vue({
         el: '#permissionModal',
@@ -345,6 +346,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
 
     historyButton.addEventListener('click', function () {
        var router = jsRoutes.controllers.BPMNDiagramController.getHistory(window.bpmn_id.toString());
+        console.log("History Button clicked.")
         $.ajax({
             url: router.url,
             success: function(response) {
@@ -386,7 +388,9 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
 
 
     saveButton.addEventListener('click', function () {
+        console.log("Save Button clicked.")
         if (changed) {
+            console.log("Changed = true.")
             // get the diagram contents
             bpmnModeler.saveXML({format: true}, function (err, xml) {
 

@@ -50,7 +50,7 @@ var repository = (function ($) {
             })
         },
         props: ['oid'],
-        template: '<span><a href="{{profileurl}}" target="_blank"><image style="border-radius: 50%;" v-bind:src="imageurl"/></a> <a href="{{profileurl}}" target="_blank">{{name}}</a></span>'
+        template: '<span><a v-bind:href="profileurl" target="_blank"><image style="border-radius: 50%;" v-bind:src="imageurl"/></a> <a v-bind:href="profileurl" target="_blank">{{name}}</a></span>'
     });
 
     Vue.component('profile', profileComponent);
