@@ -31,7 +31,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                 profileurl: ""
             }
         },
-        mounted: function (done) {
+        activate: function (done) {
             var self = this;
             $.ajax({
                 url: jsRoutes.controllers.ProfileController.profile(self.oid).url,
@@ -70,7 +70,6 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
             console.log(response);
             //window.bpmn_id = response.id;
             importXML(response.xmlContent);
-
             if (initDiagram) {
                 app = new Vue({
                     el: '#app',
@@ -91,8 +90,6 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                             if (this.process.name !== this.old.name
                                 || this.process.description !== this.old.description ) {
                                 changed = true;
-                                this.old.name = this.process.name;
-                                this.old.description =  this.process.description;
                             }
                         }
                     }

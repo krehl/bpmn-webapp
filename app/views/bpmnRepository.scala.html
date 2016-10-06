@@ -37,7 +37,7 @@
                         </div>
                     </div>
 
-                    <div class="card process card-inverse bg-inverse" v-cloak v-for="(diagram,index) in diagrams">
+                    <div class="card process card-inverse bg-inverse" v-cloak v-for="(index,diagram) in diagrams">
                         <div class="card-block">
                             <a v-bind:href="loadModeller(index)"><h3 class="card-title process-name" data-toggle="tooltip" data-placement="right" v-bind:title="'ID: '+diagram.id.$oid" style="display: inline-block">{{diagram.name}}</h3></a>
                             <p class="card-text process-description">{{diagram.description}}</p>
@@ -45,10 +45,10 @@
                                 <profile :oid="diagram.owner.$oid"></profile>
                             </p>
                                 <p v-if="diagram.canEdit[0]" class="card-text process-editor">Editor:
-                                    <profile v-for="(editor,viewer) in diagram.canEdit" :oid="editor.$oid"></profile>
+                                    <profile v-for="(index,editor) in diagram.canEdit" :oid="editor.$oid"></profile>
                                 </p>
                                 <p v-if="diagram.canView[0]" class="card-text process-viewer">Viewer:
-                                    <profile v-for="(viewer,index) in diagram.canView" :oid="viewer.$oid"></profile>
+                                    <profile v-for="(index,viewer) in diagram.canView" :oid="viewer.$oid"></profile>
                                 </p>
                                 <p v-if="diagram.editor.$oid" class="card-text process-editor">Last Editor:
                                     <profile :oid="diagram.editor.$oid"></profile>

@@ -74,7 +74,7 @@
                 </div>
                 <div class="modal-body">
                     <ul class="list-group" v-cloak>
-                        <li class="list-group-item" v-for="item in items">{{item.name}} - {{fromNow(item.timeStamp.$date)}} - <profile :oid="item.editor.$oid"></profile><button class="pull-xs-right" v-on:click="loadVersion($index)">Load</button></li>
+                        <li class="list-group-item" v-for="(index,item) in items">{{item.name}} - {{fromNow(item.timeStamp.$date)}} - <profile :oid="item.editor.$oid"></profile><button class="pull-xs-right" v-on:click="loadVersion(index)">Load</button></li>
                     </ul>
                 </div>
                 <div class="modal-footer">
@@ -105,9 +105,10 @@
                             <button class="btn btn-secondary" type="button" v-on:click="addEditor">Edit</button>
                         </span>
                     </div><!-- /btn-group -->
-                <ul class="list-group" v-cloak>
-                        <li class="list-group-item" v-for="item in load.canView">{{item}} (View)<button class="pull-xs-right" v-on:click="popView($index)">X</button></li>
-                        <li class="list-group-item" v-for="item in load.canEdit">{{item}} (Edit)<button class="pull-xs-right" v-on:click="popEdit($index)">X</button></li>
+                    <p v-if="load.canView.length > 0 || load.canEdit.length > 0">Collaborators:</p>
+                    <ul class="list-group" v-cloak>
+                        <li class="list-group-item" v-for="(index,item) in load.canView">{{item}} (View)<button class="pull-xs-right" v-on:click="popView(index)">X</button></li>
+                        <li class="list-group-item" v-for="(index,item) in load.canEdit">{{item}} (Edit)<button class="pull-xs-right" v-on:click="popEdit(index)">X</button></li>
                     </ul>
             </div>
             <div class="modal-footer">
