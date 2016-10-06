@@ -71,6 +71,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
             //window.bpmn_id = response.id;
             importXML(response.xmlContent);
             if (initDiagram) {
+                console.log("Initiation");
                 app = new Vue({
                     el: '#app',
                     data: {
@@ -90,14 +91,17 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                             if (this.process.name !== this.old.name
                                 || this.process.description !== this.old.description ) {
                                 changed = true;
+                                console.log("Changed");
                             }
                         }
                     }
                 });
+                console.log(app);
                 initDiagram = false;
             } else {
-                app.name = response.name;
-                app.xmlContent = response.xmlContent;
+                console.log("Not initiated.");
+                app.process.name = response.name;
+                app.process.xmlContent = response.xmlContent;
                 permissionVue.canEdit = response.canEdit;
                 permissionVue.canEdit = response.canView;
             };
