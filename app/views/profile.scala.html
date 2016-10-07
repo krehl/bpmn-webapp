@@ -2,14 +2,11 @@
 
 @head("profile") @* nie leeren string übergeben *@
 
-    <div id="navigation">@navigation()</div>
 
     <style>
         header {
             background: #333;
             color: white;
-            border-top: 1px darkgrey solid; /* solid darkgrey */
-            border-bottom: 1px darkgrey solid; /* solid darkgrey */
         }
         footer {
             padding-top: 50px;
@@ -19,12 +16,6 @@
             margin-top: 5%;
             margin-bottom: 5%;
         }
-        #profile-head {
-            background: #333;
-            color: #333;
-            border-top: 1px darkgrey solid; /* solid darkgrey */
-            border-bottom: 1px darkgrey solid; /* solid darkgrey */
-        }
         .btn-profile {
             /* hide useless navbar elements */
             display: none !important;
@@ -32,25 +23,35 @@
             height:0px !important;
             overflow: hidden !important;
         }
+        #head-bg {
+            background: #333;
+            position: absolute;
+            left: 10px;
+            right: 10px;
+            border-radius: 5px;
+        }
     </style>
 
-        <!-- header -->
-    <div>
-        <div id="profile-head" class="col-md-3">
-            <h1>A</h1>
-            <p>A</p>
+    <!-- header above navbar -->
+    <div id="app">
+        <div>
+            <h1 style="margin: 10px;">BPMN Process Modeller</h1>
         </div>
-        <header class="col-md-6">
-            <h1>Hello @user.firstName,</h1>
-            <p>This is your profile page!</p>
-        </header>
-        <div id="profile-head" class="col-md-3">
-            <h1>A</h1>
-            <p>A</p>
-        </div>
+        <div id="navigation">@navigation()</div>
     </div>
 
-        <!-- profile main -->
+ @*   <!-- header -->
+    <div id="head-bg">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <header>
+                <h1>Your profile</h1>
+            </header>
+        </div>
+        <div class="col-md-3"></div>
+    </div>*@
+
+    <!-- profile main -->
     <div id="userInfo" class="col-md-6 col-md-offset-3">
         <div class="col-md-3">
             <p>
@@ -77,21 +78,14 @@
         </div>
     </div>
 
-    <script>
-            function openInNewTab(url) {
-                var win = window.open(url, '_blank');
-                win.focus();
-            };
-    </script>
-
+    <!-- survey link -->
     <div class="col-md-6 col-md-offset-3">
         <b>Do you like what you see? Give us feedback!</b>
         <p>Please click on the button below and take part in a short survey.</p>
-        <a onclick="openInNewTab('https://goo.gl/forms/NYYt1VUYu4jyWEJZ2')" class="btn btn-primary">Survey</a>
+        <a target="_blank" href="https://goo.gl/forms/NYYt1VUYu4jyWEJZ2" class="btn btn-primary">Survey</a>
     </div>
 
-
-        <!-- footer -->
+    <!-- footer -->
     <div class="col-md-6 col-md-offset-3">
         <footer>
             <p class="text-muted">Process Modeller 2016 powered by BPMN.io</p>

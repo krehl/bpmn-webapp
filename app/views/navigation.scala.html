@@ -1,21 +1,21 @@
-@import forms.PermissionForm
 @import util.Types.BPMNDiagramID
 @import b3.vertical.fieldConstructor
 
-@(diagramId: Option[BPMNDiagramID] = None,
-        permissionForm: Form[PermissionForm.Data] = PermissionForm.form)(implicit messages: Messages)
+@(diagramId: Option[BPMNDiagramID] = None)(implicit messages: Messages)
 @*TODO use message API*@
 @*TODO upgrade to bootstrap4 helpers*@
-<nav class="navbar navbar-inverse bg-solid">
-        <!-- navbar main home
-    @*<a class="navbar-brand" href="@routes.ApplicationController.index()">Home</a>*@
-        @*-->*@
+<nav class="navbar navbar-dark bg-inverse">
+
+    <a class="navbar-brand" href="@routes.ApplicationController.index()">Home</a>
+
 
         <!-- Navbar start -->
 
     <ul class="nav navbar-nav">
 
             <!-- LEFT SIDE -->
+
+        @if(diagramId.isDefined) {
 
             <!-- File (export/import) -->
         <li class="nav-item dropdown btn-repo btn-profile">
@@ -32,7 +32,7 @@
                 <li><a class="dropdown-item" href="#" id="svg-button"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>
                     Download SVG</a>
                 </li>
-
+                <div class="dropdown-divider"></div>
                     <!-- Import -->
                 <li role="separator" class="divider"></li>
                 <li><a class="dropdown-item" href="#" id="xml-upload"><span class="glyphicon glyphicon-download" aria-hidden="true"></span>
@@ -51,10 +51,10 @@
             <div class="dropdown-menu" aria-labelledby="Export">
                 <a class="dropdown-item" href="#" id="delete-btn"><span class="glyphicon" aria-hidden="true"></span>
                     Delete</a>
-                <a class="dropdown-item" href="#" id="rename-btn"><span class="glyphicon" aria-hidden="true"></span>
+                <a class="dropdown-item" href="#" id="rename-btn" data-toggle="modal" data-target="#title-modal"><span class="glyphicon" aria-hidden="true"></span>
                     Rename</a>
-                <a class="dropdown-item" href="#"><span class="glyphicon" aria-hidden="true"></span>
-                    Copy</a>
+                @*<a class="dropdown-item" href="#"><span class="glyphicon" aria-hidden="true"></span>
+                    Copy</a>*@
             </div>
         </li>
 
@@ -63,17 +63,17 @@
             <a class="nav-link" id="save-button" href="#">Save</a>
         </li>
 
+    }
             <!-- New diagramm -->
         <li class="nav-item">
-            <a class="nav-link" href="@routes.BPMNDiagramController.newBPMNDiagram()">New</a>
+            <a class="nav-link" id="new-diagram-btn" href="@routes.BPMNDiagramController.newBPMNDiagram()">New</a>
         </li>
 
             <!-- RIGHT SIDE -->
 
-        <li class="nav-item pull-xs-right">
-            <a class="nav-link btn-repo btn-profile" href="#" id="history" data-toggle="modal" data-target="#history-modal">History</a>
-        </li>
 
+
+            <!-- Logout -->
         <li class="nav-item pull-xs-right">
             <a class="nav-link" href="@routes.SignOutController.signOut()">Logout</a>
         </li>
@@ -88,6 +88,13 @@
             <a class="nav-link" href="@routes.RepositoryController.repository()">Repository</a>
         </li>
 
+            <!-- Help/Wiki -->
+        @*
+        <li class="nav-item  pull-xs-right">
+            <a class="nav-link" href="@routes.HelpController.help()">Help</a>
+        </li>
+            *@
+
         @if(diagramId.isDefined) {
             @*TODO && user == owner*@
             <li class="nav-item  pull-xs-right">
@@ -96,7 +103,12 @@
                     Share
                 </button>
             </li>
+
+            <li class="nav-item pull-xs-right">
+                <a class="nav-link btn-repo btn-profile" href="#" id="history" data-toggle="modal" data-target="#history-modal">History</a>
+            </li>
         }
+
 
     </ul>
 

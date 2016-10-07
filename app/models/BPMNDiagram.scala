@@ -10,17 +10,23 @@ import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
 import scaldi.{Injectable, Injector}
 
+import scala.concurrent.Future
 import scala.xml.{NodeSeq, XML}
 
 
 /**
+  * This object is a domain level object and represents a BPMNDiagram. It also encapsulates injected
+  * database access methods
+  *
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/11/2016
   */
-
 class BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) extends Injectable {
   val bpmnDiagramDAO = inject[BPMNDiagramDAO]
   val userDAO = inject[UserDAO]
 
+  //------------------------------------------------------------------------------------------//
+  // Accessors
+  //------------------------------------------------------------------------------------------//
   def id = data.id
 
   def name = data.name
@@ -31,25 +37,60 @@ class BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) ex
 
   def xmlContent = data.xmlContent
 
+  def lastEditor = data.editor
+
   def owner = data.owner
 
   def canView = data.canView
 
   def canEdit = data.canEdit
 
-  def history = bpmnDiagramDAO.findHistory(id)
 
-  def listUserThatCanView = userDAO.getAll(canView.toList)
+  //------------------------------------------------------------------------------------------//
+  // Methods with Database interaction
+  //------------------------------------------------------------------------------------------//
+  /**
+    * Accesses the Database and returns the entire change history of this diagram
+    * @return Future which contains all past saves of this diagram
+    */
+  def history: Future[List[BPMNDiagram]] = bpmnDiagramDAO.findHistory(id)
 
-  def listUserThatCanEdit = userDAO.getAll(canEdit.toList)
+  /**
+    * Returns all User objects who can view the diagram
+    *
+    * @return Future which contains a list of viewers
+    */
+  def listUserThatCanView: Future[List[User]] = userDAO.getAll(canView.toList)
 
-  def addPermissions(viewers: List[UserID], editors: List[UserID]) = {
+  /**
+    * Returns all User objects who can edit the diagram
+    *
+    * @return Future which contains a list of editors
+    */
+  def listUserThatCanEdit: Future[List[User]] = userDAO.getAll(canEdit.toList)
+
+  /**
+    * Adds access permissions to this diagram and persits them
+    *
+    * @param viewers list of ids
+    * @param editors list of ids
+    * @return
+    */
+  def addPermissions(viewers: List[UserID], editors: List[UserID]): Future[Boolean] = {
     bpmnDiagramDAO.addPermissions(id, viewers, editors)
   }
 
-  def removePermissions(viewers: List[UserID], editors: List[UserID]) = {
+  /**
+    * Adds access permissions to this diagram and persits them
+    *
+    * @param viewers list of ids
+    * @param editors list of ids
+    * @return
+    */
+  def removePermissions(viewers: List[UserID], editors: List[UserID]): Future[Boolean] = {
     bpmnDiagramDAO.removePermissions(id, viewers, editors)
   }
+
   /*
 
     def removeEditors(editors: List[UserID]) = bpmnDiagramDAO.removeEditors(id, editors)
@@ -61,23 +102,43 @@ class BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) ex
 
 }
 
+/**
+  * Companion object, defines static methods and vars
+  */
 object BPMNDiagram {
 
+  /**
+    * Constructor
+    */
   def apply(data: BPMNDiagram.Data)(implicit inj: Injector): BPMNDiagram = new BPMNDiagram(data)(inj)
 
+  /**
+    * Enables ordering of diagrams by their timestamp
+    * @tparam A can order all subtypes of BPMNDiagram
+    * @return Ordering
+    */
   implicit def orderingByTimeStamp[A <: BPMNDiagram]: Ordering[A] = Ordering.by(_.timeStamp)
 
   def toData(diagram: BPMNDiagram) = diagram.data
 
+  /**
+    * Encapsulates the BPMNDiagram data, this separation of domain object and data may seem
+    * counterintuitive, since it violates basic object oriented programming methodologies. But this
+    * enables automatic transformation from and to JSON.
+    */
   case class Data(id: BPMNDiagramID = BSONObjectID.generate,
                   name: String,
                   description: String,
                   timeStamp: Instant,
                   xmlContent: NodeSeq = default,
+                  editor: UserID,
                   owner: UserID,
                   canView: Set[UserID],
                   canEdit: Set[UserID])
 
+  /**
+    * Empty diagram
+    */
   private[this] val default = XML.loadString("<?xml version=\"1.0\" " +
     "encoding=\"UTF-8\"?>\n<bpmn2:definitions xmlns:xsi=\"http://www" +
     ".w3.org/2001/XMLSchema-instance\" xmlns:bpmn2=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" " +
@@ -94,10 +155,18 @@ object BPMNDiagram {
   //------------------------------------------------------------------------------------------//
   // NodeSeq to JSON
   //------------------------------------------------------------------------------------------//
+
+  /**
+    * Defines how a NodeSeq (scala xml class) is transformed into JSON;
+    * XML is saved as a plain JSON string
+    */
   implicit private[this] object XMLBlobWrites extends Writes[NodeSeq] {
     def writes(xml: NodeSeq) = JsString(xml.toString)
   }
 
+  /**
+    * Defines how JSON is transformed into a NodeSeq
+    */
   implicit private[this] object XMLBlobReads extends Reads[NodeSeq] {
     def reads(json: JsValue) = json match {
       case JsString(s) => JsSuccess(XML.loadString(s))
@@ -105,11 +174,18 @@ object BPMNDiagram {
     }
   }
 
+  /**
+    * Enables implicit conversion from object into JSON and vice versa
+    */
   implicit private[this] val xmlFormat: Format[NodeSeq] = Format(XMLBlobReads, XMLBlobWrites)
 
   //------------------------------------------------------------------------------------------//
   // java.time.Instant to JSON
   //------------------------------------------------------------------------------------------//
+  /**
+    * Defines how a Instant (scala xml class) is transformed into JSON;
+    * the time ius saved as the number of milliseconds since the epoch of 1970-01-01T00:00:00Z
+    */
   implicit private[this] object InstantWrites extends Writes[Instant] {
     def writes(stamp: Instant) = Json.obj("$date" -> stamp.toEpochMilli)
   }

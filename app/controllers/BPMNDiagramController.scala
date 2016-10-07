@@ -33,6 +33,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
           description = Messages("bpmn.default.description"),
           timeStamp = Instant.now(),
           owner = request.identity.id,
+          editor = request.identity.id,
           canView = Set.empty[UserID],
           canEdit = Set.empty[UserID]
         )
@@ -49,20 +50,12 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
     * @param id id
     * @return HTML
     */
-  def loadModeller(id: BPMNDiagramID) = silhouette.SecuredAction.async {
-    implicit request =>
-      //    render {//TODO make content negotiation working
-      //      case Accepts.Html() => Ok(views.html.bpmnModeller(s"Hello ${request.identity.firstName}!", Some(request
-      // .identity), id))
-      //      case Accepts.Json() => retrieve3(id)
-      //    }
-
-      Future.successful {
-        Ok(views.html.bpmnModeller(s"Hello ${request.identity.firstName}!",
-          Some(request.identity),
-          id)
-        )
-      }
+  def loadModeller(id: BPMNDiagramID) = silhouette.UserAwareAction.async { implicit request =>
+    Future.successful(
+      request.identity match {
+        case Some(identity) => Ok(views.html.bpmnModeller(s"Hello ${identity.firstName}!", request.identity, id))
+        case None => Redirect(routes.SignInController.view())
+      })
   }
 
   /**
@@ -95,42 +88,51 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
       )).map(Ok(_))
   }
 
-  def addPermissions(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async(parse.json) {
+  def addPermissions(id: BPMNDiagramID)  = DiagramWithPermissionAction(id, Owns).async(parse.json) {
     implicit request =>
       val json = request.body
       val diagram = request.diagram
-      //transforms List[Future[Option[User]]] into Future[List[Option[User]]] into Future[List[User]]
-      // into Future[List[UserID]]
-      val viewers: Future[List[UserID]] = Future.sequence(
-        (json \ "canView").as[List[Email]].filter(_ != diagram.owner).map(userDAO.findByEmail)
-      ).map(_.flatten.map(_.id))
+      val dbResult = editPermissions(id, json, diagram.owner, dbFunction = diagram.addPermissions)
 
-      val editors: Future[List[UserID]] = Future.sequence(
-        (json \ "canEdit").as[List[Email]].filter(_ != diagram.owner).map(userDAO.findByEmail)
-      ).map(_.flatten.map(_.id))
-
-      //little hacky
-      (for {
-        permissions <- Future.sequence(List(viewers, editors)).map(list => (list.head, list(1)))
-        result <- diagram.addPermissions(permissions._1, permissions._2)
-      } yield result).map({
+      dbResult.map({
         case true => Ok
         case false => BadRequest("Diagram not found!")
       })
-
   }
 
   def removePermissions(id: BPMNDiagramID) = DiagramWithPermissionAction(id, Owns).async(parse.json) {
     implicit request =>
       val json = request.body
       val diagram = request.diagram
-      val viewers = (json \ "canView").as[List[UserID]]
-      val editors = (json \ "canEdit").as[List[UserID]]
+      val dbResult = editPermissions(id, json, diagram.owner, dbFunction = diagram.removePermissions)
 
-      diagram.removePermissions(viewers, editors).map({
+      dbResult.map({
         case true => Ok
         case false => BadRequest("Diagram not found!")
       })
+  }
+
+  private[this] def editPermissions(id: BPMNDiagramID,
+                                    json: JsValue,
+                                    owner: UserID,
+                                    dbFunction: (List[UserID], List[UserID]) => Future[Boolean]) = {
+    def getJsonAsEmailList(key: String): Future[List[UserID]] = {
+      for {
+        users <- {
+          val emails = (json \ key).as[List[Email]]
+          userDAO.findAllByEmail(emails)
+        }
+      } yield users.map(_.id).filter(_ != owner)
+    }
+
+    val viewers= getJsonAsEmailList("canView")
+
+    val editors = getJsonAsEmailList("canEdit")
+
+    for {
+      permissions <- Future.sequence(List(viewers, editors))
+      result <- dbFunction(permissions.head, permissions(1))
+    } yield result
   }
 
   def getHistory(id: BPMNDiagramID) = DiagramWithPermissionAction(id, CanView).async {
@@ -157,6 +159,7 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
           description = Messages("bpmn.default.description"),
           timeStamp = Instant.now(),
           owner = request.identity.id,
+          editor = request.identity.id,
           canView = Set.empty[UserID],
           canEdit = Set.empty[UserID]
         )
@@ -203,7 +206,8 @@ class BPMNDiagramController(implicit inj: Injector) extends ApplicationControlle
         BPMNDiagram.toData(request.diagram).copy(
           name = name,
           description = description,
-          xmlContent = xmlContent)
+          xmlContent = xmlContent,
+          editor = request.user.id)
       )
 
       diagramDAO.save(diagram).map({

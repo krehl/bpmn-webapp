@@ -6,7 +6,7 @@
  */
 
 
-var bpmnModeler = (function (BpmnModeler, $) {
+var bpmnModelerModule = (function (BpmnModeler, $) {
 
     // create modeler
 
@@ -23,9 +23,41 @@ var bpmnModeler = (function (BpmnModeler, $) {
 
     };
 
+    var profileComponent = Vue.extend({
+        data: function () {
+            return {
+                imageurl: "",
+                name: "",
+                profileurl: ""
+            }
+        },
+        activate: function (done) {
+            var self = this;
+            $.ajax({
+                url: jsRoutes.controllers.ProfileController.profile(self.oid).url,
+                headers: {
+                    Accept: "application/json"
+                },
+                success: function (response) {
+                    console.log(response);
+                    self.imageurl = "https://www.gravatar.com/avatar/" + md5(response.email) + "?s=20";
+                    self.name = response.firstName +" "+ response.lastName;
+                    self.profileurl = jsRoutes.controllers.ProfileController.profile(self.oid).url;
+                    console.log(self);
+                    done();
+                }
+
+            })
+        },
+        props: ['oid'],
+        template: '<span><a v-bind:href=profileurl"><image style="border-radius: 50%;" v-bind:src="imageurl"/></a> <a v-bind:href=profileurl">{{name}}</a></span>'
+    });
+
+    Vue.component('profile', profileComponent);
+
     console.log("bpmnModeller loading");
 
-    const bpmnModeler = new BpmnModeler({
+    bpmnModeler = new BpmnModeler({
         container: '#canvas'
     });
 
@@ -38,67 +70,43 @@ var bpmnModeler = (function (BpmnModeler, $) {
             console.log(response);
             //window.bpmn_id = response.id;
             importXML(response.xmlContent);
-
             if (initDiagram) {
+                console.log("Initiation");
                 app = new Vue({
                     el: '#app',
                     data: {
-                        name: response.name,
-                        description: response.description,
-                        xmlContent: response.xmlContent,
-                    }
-                });
-                permissionVue = new Vue({
-                    el: '#permissionModal',
-                    data: {
-                        user: "",
-                        canEdit: response.canEdit,
-                        canView: response.canView
+                        process: {
+                            name: response.name,
+                            description: response.description,
+                            xmlContent: response.xmlContent,
+                        },
+                        old: {
+                            name: response.name,
+                            description: response.description,
+                            xmlContent: response.xmlContent,
+                        }
                     },
                     methods: {
-                        addViewer: function () {
-                            if (this.user != "") {
-                                this.canView.push(this.user);
-                                this.user = "";}
-                        },
-                        addEditor: function () {
-                            if (this.user != "") {
-                                this.canEdit.push(this.user);
-                                this.user = "";
+                        checkforchanges: function () {
+                            if (this.process.name !== this.old.name
+                                || this.process.description !== this.old.description ) {
+                                changed = true;
+                                console.log("Changed");
                             }
-                        },
-                        submit: function () {
-                            var router = jsRoutes.controllers.BPMNDiagramController.addPermissions(window.bpmn_id.toString());
-                            $.ajax({
-                                url: router.url,
-                                method : 'PUT',
-                                data: JSON.stringify(permissionVue.$data),
-                                type: router.type,
-                                cache: false,
-                                contentType: "application/json",
-                                success: function (response) {
-                                    console.log("permissions updated")
-                                    console.log(response);
-                                    changed = false;
-                                },
-                                error: function (xhr, ajaxOptions, thrownError) {
-                                    console.log(xhr.status);
-                                    console.log(thrownError);
-                                }
-                            });
                         }
                     }
                 });
-
+                console.log(app);
                 initDiagram = false;
             } else {
-                app.name = response.name;
-                app.xmlContent = response.xmlContent;
+                console.log("Not initiated.");
+                app.process.name = response.name;
+                app.process.xmlContent = response.xmlContent;
                 permissionVue.canEdit = response.canEdit;
                 permissionVue.canEdit = response.canView;
             };
-            const offsetHeight = document.getElementById('app').offsetHeight;
-            document.getElementById('content').setAttribute("style", "height:" + (window.innerHeight - offsetHeight - 10) + "px");
+            const offsetHeight = document.getElementById('header').offsetHeight;
+            document.getElementById('canvas').setAttribute("style", "height:" + (window.innerHeight - offsetHeight - 10) + "px");
 
         },
         error: function (xhr, ajaxOptions, thrownError) {
@@ -106,10 +114,117 @@ var bpmnModeler = (function (BpmnModeler, $) {
             console.log(thrownError);
         }
     });
-    $('#app h1, #rename-btn').on('click', function (event) {
+
+   /* $('#app h1, #rename-btn').on('click', function (event) {
         var name = prompt('Process Title:', app.name);
-        if (!name=="") app.name = name;
-    })
+        if (!name=="") {
+            if (!(name == app.name)) {
+                app.name = name;
+                changed = true;
+            }
+        }
+    })*/
+
+
+
+    permissionVue = new Vue({
+        el: '#permissionModal',
+        data: {
+            user: "",
+            remove: [],
+            load: {
+                canEdit: [],
+                canView: []
+            }
+        },
+
+        created: function () {
+            var router = jsRoutes.controllers.BPMNDiagramController.listPermissions(window.bpmn_id.toString());
+            $.ajax({
+                url: router.url,
+                method: 'GET',
+                success: function (response) {
+                    console.log(response);
+                    permissionVue.load.canEdit = response.canEdit;
+                    permissionVue.load.canView = response.canView;
+                }
+            });
+        },
+
+        methods: {
+            refresh: function () {
+                var router = jsRoutes.controllers.BPMNDiagramController.listPermissions(window.bpmn_id.toString());
+                $.ajax({
+                    url: router.url,
+                    method: 'GET',
+                    success: function (response) {
+                        console.log(response);
+                        permissionVue.remove = [];
+                        permissionVue.load.canEdit = response.canEdit;
+                        permissionVue.load.canView = response.canView;
+                    }
+                });
+            },
+            popEdit: function (index) {
+                this.remove.push(this.load.canEdit[index]);
+                this.load.canEdit.splice(index,1);
+            },
+            popView: function (index) {
+                this.remove.push(this.load.canView[index]);
+                this.load.canView.splice(index,1);
+            },
+            addViewer: function () {
+                if (this.user != "") {
+                    this.load.canView.push(this.user);
+                    this.user = "";}
+            },
+            addEditor: function () {
+                if (this.user != "") {
+                    this.load.canEdit.push(this.user);
+                    this.user = "";
+                }
+            },
+            submit: function () {
+                var router = jsRoutes.controllers.BPMNDiagramController.addPermissions(window.bpmn_id.toString());
+                $.ajax({
+                    url: router.url,
+                    method : 'PUT',
+                    data: JSON.stringify(permissionVue.$data.load),
+                    type: router.type,
+                    cache: false,
+                    contentType: "application/json",
+                    success: function (response) {
+                        console.log("permissions updated")
+                        console.log(response);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        console.log(xhr.status);
+                        console.log(thrownError);
+                    }
+                });
+                if (this.remove.length > 0) {
+                    var remove = jsRoutes.controllers.BPMNDiagramController.removePermissions(window.bpmn_id.toString());
+                    $.ajax({
+                        url: remove.url,
+                        method : 'PUT',
+                        data: JSON.stringify(permissionVue.$data.remove),
+                        type: router.type,
+                        cache: false,
+                        contentType: "application/json",
+                        success: function (response) {
+                            console.log("permissions removed")
+                            console.log(response);
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            console.log(xhr.status);
+                            console.log(thrownError);
+                        }
+                    });
+                }
+            }
+        }
+    });
+
 
     // $.ajax({
     //     url: "/bpmn/" + window.bpmn_id,
@@ -229,8 +344,10 @@ var bpmnModeler = (function (BpmnModeler, $) {
         }
     });
 
+
     historyButton.addEventListener('click', function () {
        var router = jsRoutes.controllers.BPMNDiagramController.getHistory(window.bpmn_id.toString());
+        console.log("History Button clicked.")
         $.ajax({
             url: router.url,
             success: function(response) {
@@ -272,33 +389,39 @@ var bpmnModeler = (function (BpmnModeler, $) {
 
 
     saveButton.addEventListener('click', function () {
+        console.log("Save Button clicked.")
+        if (changed) {
+            console.log("Changed = true.")
+            // get the diagram contents
+            bpmnModeler.saveXML({format: true}, function (err, xml) {
 
-        // get the diagram contents
-        bpmnModeler.saveXML({format: true}, function (err, xml) {
+                if (err) {
+                    console.error('diagram save failed', err);
+                } else {
+                    app.process.xmlContent = xml;
+                    var router = jsRoutes.controllers.BPMNDiagramController.update(window.bpmn_id.toString());
+                    $.ajax({
+                        url: router.url,
+                        data: JSON.stringify(app.$data.process),
+                        type: router.type,
+                        cache: false,
+                        contentType: "application/json",
+                        success: function (response) {
+                            console.log("update successful")
+                            console.log(response);
+                            changed = false;
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            console.log(xhr.status);
+                            console.log(thrownError);
+                        }
+                    });
+                }
+            });
+        } else {
+            console.log('no changes, save unneccessary');
+        }
 
-            if (err) {
-                console.error('diagram save failed', err);
-            } else {
-                app.xmlContent = xml;
-                var router = jsRoutes.controllers.BPMNDiagramController.update(window.bpmn_id.toString());
-                $.ajax({
-                    url: router.url,
-                    data: JSON.stringify(app.$data),
-                    type: router.type,
-                    cache: false,
-                    contentType: "application/json",
-                    success: function (response) {
-                        console.log("update successful")
-                        console.log(response);
-                        changed = false;
-                    },
-                    error: function (xhr, ajaxOptions, thrownError) {
-                        console.log(xhr.status);
-                        console.log(thrownError);
-                    }
-                });
-            }
-        });
     });
 
     svgDownload.addEventListener('click', function (event) {
@@ -348,6 +471,7 @@ var bpmnModeler = (function (BpmnModeler, $) {
                 if (err) {
                     return console.error('could not import BPMN 2.0 diagram', err);
                 }
+                changed = true;
                 var canvas = bpmnModeler.get('canvas');
                 // zoom to fit full viewport
                 canvas.zoom('fit-viewport');
@@ -363,6 +487,14 @@ var bpmnModeler = (function (BpmnModeler, $) {
         xmlFile.click();
         console.log();
         e.preventDefault();
+    });
+
+    $(".modal-draggable .modal-dialog").draggable({
+        handle: ".modal-header"
+    });
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
     })
 
 })(window.BpmnJS, window.jQuery);
