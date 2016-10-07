@@ -97,7 +97,7 @@
 
         @if(diagramId.isDefined) {
             @*TODO && user == owner*@
-            <li class="nav-item  pull-xs-right">
+            <li class="nav-item  pull-xs-right" v-cloak id="share-button">
                 <button type="button" class="btn btn-primary" data-toggle="modal"
                 data-target="#permissionModal">
                     Share

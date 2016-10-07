@@ -147,6 +147,9 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                     console.log(response);
                     permissionVue.load.canEdit = response.canEdit;
                     permissionVue.load.canView = response.canView;
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $('#share-button').hide();
                 }
             });
         },
