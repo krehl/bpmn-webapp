@@ -226,53 +226,6 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
     });
 
 
-    // $.ajax({
-    //     url: "/bpmn/" + window.bpmn_id,
-    //     type: 'GET',
-    //     success: function (response) {
-    //         window.bpmn_id = response.id;
-    //         importXML(response.xml);
-    //     },
-    //     error: function (xhr, ajaxOptions, thrownError) {
-    //         console.log(xhr.status);
-    //         console.log(thrownError);
-    //     }
-    // });
-
-
-    // $.ajax({
-    //     url: "/bpmn/new",
-    //     type: 'GET',
-    //     success: function (response) {
-    //         window.bpmn_id = response.id;
-    //         console.log(bpmn_id);
-    //         importXML(response.xml);
-    //     },
-    //     error: function (xhr, ajaxOptions, thrownError) {
-    //         console.log(xhr.status);
-    //         console.log(thrownError);
-    //     }
-    // });
-    //
-    // $("#new-button").click(function () {
-    //     window.location.replace("/bpmn/new");
-
-    // $.ajax({
-    //     url: "/bpmn/new",
-    //     type: 'GET',
-    //     success: function (response) {
-    //         window.bpmn_id = response.id;
-    //         console.log(window.bpmn_id);
-    //         importXML(response.xml);
-    //     },
-    //     error: function (xhr, ajaxOptions, thrownError) {
-    //         console.log(xhr.status);
-    //         console.log(thrownError);
-    //     }
-    // });
-    // });
-
-
     $("#load-form").submit(function (e) {
         e.preventDefault();
 
