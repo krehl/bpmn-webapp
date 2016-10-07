@@ -1,61 +1,70 @@
 /**
- * bpmn-js-seed
+ * modeler.js
+ * written by Konstantin Krehl <konstantin.krehl@gmail.com>
  *
- * This is an example script that loads an embedded diagram file <diagramXML>
- * and opens it using the bpmn-js modeler.
+ * This script uses bpmn.js to load a diagram from the server into the canvas. Then it bind different data to views using Vue.js.
+ * Additional all buttons used in the page are initialised with the correct actions.
+ * 
+ * Input: BpmnModeler Instance, JQuery Instance
+ * 
  */
 
 
 var bpmnModelerModule = (function (BpmnModeler, $) {
 
-    // create modeler
-
+    var debug = true;
+    var $debug = function (message) {
+        if (debug) console.log(message);
+    }
     var initDiagram = true;
     var initHistory = true;
     changed = false;
 
-    if (!$('#canvas')[0]) return;
+    if (!$('#canvas')[0]) return; //if the canvas element is not present, something went wrong and we can stop here.
 
+    //to detect unsaved changes we use a global variable and the onbeforeunload event to trigger a prompt by the browser.
     window.onbeforeunload = function () {
         if (changed) {
-            return "Are you sure?";
+            return "Are you sure?"; //The string is normally ignored and replaced by a browser specific message.
         }
 
     };
 
+    //initialize a custom Vue.js component to encapsulate the display of profiles on the page
     var profileComponent = Vue.extend({
-        data: function () {
+        data: function () { //a components data must always be returned by a function
             return {
                 imageurl: "",
                 name: "",
                 profileurl: ""
             }
         },
-        activate: function (done) {
+        //done is the callback function which is injected by the framework
+        activate: function (done) { //the activate lifecycle hook is triggered right before the component is rendered, we use it to load data dynamically
             var self = this;
             $.ajax({
-                url: jsRoutes.controllers.ProfileController.profile(self.oid).url,
+                url: jsRoutes.controllers.ProfileController.profile(self.oid).url, //the url to fetch a single users info
                 headers: {
                     Accept: "application/json"
                 },
                 success: function (response) {
-                    console.log(response);
-                    self.imageurl = "https://www.gravatar.com/avatar/" + md5(response.email) + "?s=20";
+                    $debug(response);
+                    self.imageurl = "https://www.gravatar.com/avatar/" + md5(response.email) + "?s=20"; //calculate the gravatar url
                     self.name = response.firstName +" "+ response.lastName;
                     self.profileurl = jsRoutes.controllers.ProfileController.profile(self.oid).url;
-                    console.log(self);
-                    done();
+                    $debug(self);
+                    done(); //trigger the rendering of the component
                 }
 
             })
         },
-        props: ['oid'],
-        template: '<span><a v-bind:href=profileurl"><image style="border-radius: 50%;" v-bind:src="imageurl"/></a> <a v-bind:href=profileurl">{{name}}</a></span>'
+        props: ['oid'], //this data has to be provided by the function using the component
+        template: '<span><a v-bind:href=profileurl"><image style="border-radius: 50%;" v-bind:src="imageurl"/></a> <a v-bind:href=profileurl">{{name}}</a></span>' //the actual template code
     });
 
-    Vue.component('profile', profileComponent);
+    Vue.component('profile', profileComponent); //registers the component to be used subsequently
 
-    console.log("bpmnModeller loading");
+    $debug("bpmnModeller loading"); //debug informatin
 
     bpmnModeler = new BpmnModeler({
         container: '#canvas'
@@ -67,11 +76,11 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
         type: router.type,
         cache: false,
         success: function (response) {
-            console.log(response);
+            $debug(response);
             //window.bpmn_id = response.id;
             importXML(response.xmlContent);
             if (initDiagram) {
-                console.log("Initiation");
+                $debug("Initiation");
                 app = new Vue({
                     el: '#app',
                     data: {
@@ -91,15 +100,15 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                             if (this.process.name !== this.old.name
                                 || this.process.description !== this.old.description ) {
                                 changed = true;
-                                console.log("Changed");
+                                $debug("Changed");
                             }
                         }
                     }
                 });
-                console.log(app);
+                $debug(app);
                 initDiagram = false;
             } else {
-                console.log("Not initiated.");
+                $debug("Not initiated.");
                 app.process.name = response.name;
                 app.process.xmlContent = response.xmlContent;
                 permissionVue.canEdit = response.canEdit;
@@ -110,8 +119,8 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
 
         },
         error: function (xhr, ajaxOptions, thrownError) {
-            console.log(xhr.status);
-            console.log(thrownError);
+            $debug(xhr.status);
+            $debug(thrownError);
         }
     });
 
@@ -144,7 +153,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                 url: router.url,
                 method: 'GET',
                 success: function (response) {
-                    console.log(response);
+                    $debug(response);
                     permissionVue.load.canEdit = response.canEdit;
                     permissionVue.load.canView = response.canView;
                 },
@@ -161,7 +170,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                     url: router.url,
                     method: 'GET',
                     success: function (response) {
-                        console.log(response);
+                        $debug(response);
                         permissionVue.remove = [];
                         permissionVue.load.canEdit = response.canEdit;
                         permissionVue.load.canView = response.canView;
@@ -197,12 +206,18 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                     cache: false,
                     contentType: "application/json",
                     success: function (response) {
-                        console.log("permissions updated")
-                        console.log(response);
+                        $debug("permissions updated");
+                        $debug(response);
+                        var options =  {
+                            content: "Permissions added", // text of the snackbar
+                            style: "toast", // add a custom class to your snackbar
+                            timeout: 2000 // time in milliseconds after the snackbar autohides, 0 is disabled
+                        }
+                        $.snackbar(options);
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
-                        console.log(xhr.status);
-                        console.log(thrownError);
+                        $debug(xhr.status);
+                        $debug(thrownError);
                     }
                 });
                 if (this.remove.length > 0) {
@@ -215,12 +230,18 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                         cache: false,
                         contentType: "application/json",
                         success: function (response) {
-                            console.log("permissions removed")
-                            console.log(response);
+                            $debug("permissions removed")
+                            $debug(response);
+                            var options =  {
+                                content: "Permissions removed", // text of the snackbar
+                                style: "toast", // add a custom class to your snackbar
+                                timeout: 2000 // time in milliseconds after the snackbar autohides, 0 is disabled
+                            }
+                            $.snackbar(options);
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
-                            console.log(xhr.status);
-                            console.log(thrownError);
+                            $debug(xhr.status);
+                            $debug(thrownError);
                         }
                     });
                 }
@@ -242,8 +263,8 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                 importXML(response.xmlContent);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                console.log(xhr.status);
-                console.log(thrownError);
+                $debug(xhr.status);
+                $debug(thrownError);
             }
         });
     });
@@ -270,7 +291,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
     var eventBus = bpmnModeler.get('eventBus');
     window.eventBus = eventBus;
     eventBus.on('element.changed', function (e) {
-        //console.log(event, 'on', e.element.id);
+        //$debug(event, 'on', e.element.id);
         changed = true;
     });
 
@@ -289,12 +310,12 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                 url: router.url,
                 method: "DELETE",
                 success: function (response) {
-                    console.log('deleted');
+                    $debug('deleted');
                     location.href = jsRoutes.controllers.RepositoryController.repository().url;
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    console.log(xhr.status);
-                    console.log(thrownError);
+                    $debug(xhr.status);
+                    $debug(thrownError);
                 }
             });
         }
@@ -303,11 +324,11 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
 
     historyButton.addEventListener('click', function () {
        var router = jsRoutes.controllers.BPMNDiagramController.getHistory(window.bpmn_id.toString());
-        console.log("History Button clicked.")
+        $debug("History Button clicked.")
         $.ajax({
             url: router.url,
             success: function(response) {
-                console.log(response);
+                $debug(response);
                 if (initHistory) {
                     historyVue = new Vue({
                         el: '#history-modal',
@@ -319,7 +340,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                                 return moment(new Date(string)).fromNow();
                             },
                             loadVersion: function (index) {
-                                console.log(this.items[index].xmlContent);
+                                $debug(this.items[index].xmlContent);
                                 importXML(this.items[index].xmlContent);
                                 var options =  {
                                     content: "diagram loaded", // text of the snackbar
@@ -337,17 +358,17 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
 
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                console.log(xhr.status);
-                console.log(thrownError);
+                $debug(xhr.status);
+                $debug(thrownError);
             }
         })
     });
 
 
     saveButton.addEventListener('click', function () {
-        console.log("Save Button clicked.")
+        $debug("Save Button clicked.")
         if (changed) {
-            console.log("Changed = true.")
+            $debug("Changed = true.")
             // get the diagram contents
             bpmnModeler.saveXML({format: true}, function (err, xml) {
 
@@ -363,19 +384,19 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                         cache: false,
                         contentType: "application/json",
                         success: function (response) {
-                            console.log("update successful")
-                            console.log(response);
+                            $debug("update successful")
+                            $debug(response);
                             changed = false;
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
-                            console.log(xhr.status);
-                            console.log(thrownError);
+                            $debug(xhr.status);
+                            $debug(thrownError);
                         }
                     });
                 }
             });
         } else {
-            console.log('no changes, save unneccessary');
+            $debug('no changes, save unneccessary');
         }
 
     });
@@ -384,7 +405,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
         //event.preventDefault();
         bpmnModeler.saveSVG({},function(err,svg){
             if (err) {
-                console.log(err);
+                $debug(err);
                 return;
             }
             var link = document.createElement('a');
@@ -392,7 +413,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
             link.target = '_blank';
             link.href = 'data:application/bpmn20-xml;charset:UFT-8,'+encodeURIComponent(svg)
             link.click();
-            console.log(svg);
+            $debug(svg);
         });
     });
 
@@ -400,7 +421,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
         //event.preventDefault();
         bpmnModeler.saveXML({format: true},function(err,xml){
             if (err) {
-                console.log(err);
+                $debug(err);
                 return;
             }
             var link = document.createElement('a');
@@ -408,7 +429,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
             link.target = '_blank';
             link.href = 'data:application/bpmn20-xml;charset:UFT-8,'+encodeURIComponent(xml)
             link.click();
-            console.log(xml);
+            $debug(xml);
         });
     });
 
@@ -441,7 +462,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
 
     xmlUpload.addEventListener('click',function (e) {
         xmlFile.click();
-        console.log();
+        $debug();
         e.preventDefault();
     });
 
