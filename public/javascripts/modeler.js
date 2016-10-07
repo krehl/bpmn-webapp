@@ -124,17 +124,6 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
         }
     });
 
-   /* $('#app h1, #rename-btn').on('click', function (event) {
-        var name = prompt('Process Title:', app.name);
-        if (!name=="") {
-            if (!(name == app.name)) {
-                app.name = name;
-                changed = true;
-            }
-        }
-    })*/
-
-
 
     permissionVue = new Vue({
         el: '#permissionModal',
