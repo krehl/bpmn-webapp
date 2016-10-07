@@ -148,6 +148,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     $('#share-button').hide();
+                    $('#delete-btn').hide();
                 }
             });
         },
