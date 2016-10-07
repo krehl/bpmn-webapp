@@ -5,6 +5,11 @@
 
 var repository = (function ($) {
 
+    var debug = true;
+    var $debug = function (message) {
+        if (debug) console.log(message);
+    }
+
     if(undefined === $('#repository')[0]) return;
 
 /*    $('.process-delete').on('click',function (event) {
@@ -16,7 +21,7 @@ var repository = (function ($) {
                 url: router.url,
                 method: 'DELETE',
                 success: function () {
-                    console.log('deleted');
+                    $debug('deleted');
                     $this.parent().parent().fadeOut();
                 }
             })
@@ -39,11 +44,11 @@ var repository = (function ($) {
                     Accept: "application/json"
                 },
                 success: function (response) {
-                    console.log(response);
+                    $debug(response);
                     self.imageurl = "https://www.gravatar.com/avatar/" + md5(response.email) + "?s=20";
                     self.name = response.firstName +" "+ response.lastName;
                     self.profileurl = jsRoutes.controllers.ProfileController.profile(self.oid).url;
-                    console.log(self);
+                    $debug(self);
                     done();
                 }
             })
@@ -65,21 +70,21 @@ var repository = (function ($) {
             $.ajax({
                 url: router.url,
                 success: function (response) {
-                    console.log('success', response.diagrams);
+                    $debug('success', response.diagrams);
                     $this.diagrams = response.diagrams;
                 }
             })
         },
         methods: {
             removeprocess: function (index) {
-                console.log('delete',index);
+                $debug('delete',index);
                 if (window.confirm("Are you sure that you want to delete the diagram?")) {
                     var router = jsRoutes.controllers.BPMNDiagramController.delete($this.diagrams[index].id.$oid);
                     $.ajax({
                         url: router.url,
                         method: 'DELETE',
                         success: function () {
-                            console.log('deleted');
+                            $debug('deleted');
                             $this.diagrams.splice(index,1);
                         }
                     })
