@@ -1,28 +1,25 @@
 /**
  * Created by krehl on 17.09.2016.
+ * Konstantin Krehl <konstantin.krehl@gmail.com>
+ *
+ * Load diagrams from server, initialize vue.js components.
+ *
+ * Input: JQuery instance
+ *
  */
 
 
 var repository = (function ($) {
 
-    if(undefined === $('#repository')[0]) return;
+    //debug function to not fill the entire console in production mode
+    var debug = true;
+    var $debug = function (message) {
+        if (debug) console.log(message);
+    }
 
-/*    $('.process-delete').on('click',function (event) {
-        event.preventDefault();
-        if (window.confirm("Are you sure that you want to delete the diagram?")) {
-            var $this = $(this);
-            var router = jsRoutes.controllers.BPMNDiagramController.delete($(this).attr('data-diagram-id'));
-            $.ajax({
-                url: router.url,
-                method: 'DELETE',
-                success: function () {
-                    console.log('deleted');
-                    $this.parent().parent().fadeOut();
-                }
-            })
-        }
-    });*/
+    if(undefined === $('#repository')[0]) return; //if there is no repository element, stop
 
+    //initialize a custom Vue.js component to encapsulate the display of profiles on the page
     var profileComponent = Vue.extend({
         data: function () {
             return {
@@ -39,21 +36,20 @@ var repository = (function ($) {
                     Accept: "application/json"
                 },
                 success: function (response) {
-                    console.log(response);
+                    $debug(response);
                     self.imageurl = "https://www.gravatar.com/avatar/" + md5(response.email) + "?s=20";
                     self.name = response.firstName +" "+ response.lastName;
                     self.profileurl = jsRoutes.controllers.ProfileController.profile(self.oid).url;
-                    console.log(self);
+                    $debug(self);
                     done();
                 }
-
             })
         },
         props: ['oid'],
-        template: '<span><a href="{{profileurl}}" target="_blank"><image style="border-radius: 50%;" v-bind:src="imageurl"/></a> <a href="{{profileurl}}" target="_blank">{{name}}</a></span>'
+        template: '<span><a v-bind:href="profileurl" target="_blank"><image style="border-radius: 50%;width:20px;height:20px;" src="" v-bind:src="imageurl"></image></a> <a v-bind:href="profileurl" target="_blank">{{name}}</a></span>'
     });
 
-    Vue.component('profile', profileComponent);
+    Vue.component('profile', profileComponent); //registers the component to be used subsequently
 
     repoVue = new Vue({
         el: '#app-repo',
@@ -62,25 +58,25 @@ var repository = (function ($) {
         },
         created: function(){
             $this = this;
-            var router = jsRoutes.controllers.RepositoryController.repositoryJson();
+            var router = jsRoutes.controllers.RepositoryController.repositoryJson(); //fetch all BPMN diagrams for the specific user
             $.ajax({
                 url: router.url,
                 success: function (response) {
-                    console.log('success', response.diagrams);
+                    $debug('success', response.diagrams);
                     $this.diagrams = response.diagrams;
                 }
             })
         },
         methods: {
             removeprocess: function (index) {
-                console.log('delete',index);
+                $debug('delete',index);
                 if (window.confirm("Are you sure that you want to delete the diagram?")) {
                     var router = jsRoutes.controllers.BPMNDiagramController.delete($this.diagrams[index].id.$oid);
                     $.ajax({
                         url: router.url,
                         method: 'DELETE',
                         success: function () {
-                            console.log('deleted');
+                            $debug('deleted');
                             $this.diagrams.splice(index,1);
                         }
                     })
@@ -98,7 +94,7 @@ var repository = (function ($) {
         }
     });
 
-    $(function () {
+    $(function () { //enable tooltips
         $('[data-toggle="tooltip"]').tooltip()
     })
 
