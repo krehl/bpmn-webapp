@@ -16,12 +16,11 @@ import scala.xml.{NodeSeq, XML}
 
 /**
   * This object is a domain level object and represents a BPMNDiagram. It also encapsulates injected
-  * database access methods
+  * database methods
   *
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/11/2016
   */
-class
-BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) extends Injectable {
+class BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) extends Injectable {
   val bpmnDiagramDAO = inject[BPMNDiagramDAO]
   val userDAO = inject[UserDAO]
 
@@ -52,6 +51,7 @@ BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) extends 
   //------------------------------------------------------------------------------------------//
   /**
     * Accesses the Database and returns the entire change history of this diagram
+    *
     * @return Future which contains all past saves of this diagram
     */
   def history: Future[List[BPMNDiagram]] = bpmnDiagramDAO.findHistory(id)
@@ -91,16 +91,6 @@ BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) extends 
   def removePermissions(viewers: List[UserID], editors: List[UserID]): Future[Boolean] = {
     bpmnDiagramDAO.removePermissions(id, viewers, editors)
   }
-
-  /*
-
-    def removeEditors(editors: List[UserID]) = bpmnDiagramDAO.removeEditors(id, editors)
-
-    def addViewers(viewers: List[UserID]) = bpmnDiagramDAO.addEditors(id, viewers)
-
-    def removeViewers(editors: List[UserID]) = bpmnDiagramDAO.removeViewers(id, editors)
-  */
-
 }
 
 /**
@@ -115,6 +105,7 @@ object BPMNDiagram {
 
   /**
     * Enables ordering of diagrams by their timestamp
+    *
     * @tparam A can order all subtypes of BPMNDiagram
     * @return Ordering
     */
@@ -124,7 +115,7 @@ object BPMNDiagram {
 
   /**
     * Encapsulates the BPMNDiagram data, this separation of domain object and data may seem
-    * counterintuitive, since it violates basic object oriented programming methodologies. But this
+    * counter intuitive, since it violates basic object oriented programming methodologies. But this
     * enables automatic transformation from and to JSON.
     */
   case class Data(id: BPMNDiagramID = BSONObjectID.generate,
@@ -185,22 +176,27 @@ object BPMNDiagram {
   //------------------------------------------------------------------------------------------//
   /**
     * Defines how a Instant (scala xml class) is transformed into JSON;
-    * the time ius saved as the number of milliseconds since the epoch of 1970-01-01T00:00:00Z
+    * the time is saved as the number of milliseconds since the epoch of 1970-01-01T00:00:00Z
     */
   implicit private[this] object InstantWrites extends Writes[Instant] {
     def writes(stamp: Instant) = Json.obj("$date" -> stamp.toEpochMilli)
   }
 
+  /**
+    * Defines how a Instant (scala xml class) is transformed from JSON
+    */
   implicit private[this] object InstantReads extends Reads[Instant] {
     def reads(json: JsValue) = json match {
       case DateValue(value) => JsSuccess(Instant.ofEpochMilli(value))
       case _ => JsError(Seq(JsPath() -> Seq(ValidationError("error.expected.jsnumber"))))
     }
 
+    /**
+      * Reads JSON with key $date as Long
+      */
     private object DateValue {
       def unapply(obj: JsObject): Option[Long] = (obj \ "$date").asOpt[Long]
     }
-
   }
 
   implicit private[this] val instantFormat: Format[Instant] = Format(InstantReads, InstantWrites)
