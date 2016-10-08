@@ -10,9 +10,15 @@ import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMo
 import reactivemongo.bson.BSONObjectID
 import scaldi.{Injectable, Injector}
 import util.DefaultEnv
+import util.Types.BPMNDiagramID
 
 import scala.concurrent.Future
 
+/**
+  * Base Controller class
+  *
+  * @param inj scaldi injector
+  */
 class ApplicationController(implicit inj: Injector) extends Controller
   with Injectable
   with I18nSupport
@@ -26,12 +32,22 @@ class ApplicationController(implicit inj: Injector) extends Controller
   //------------------------------------------------------------------------------------------//
   // COMPOSED ACTIONS
   //------------------------------------------------------------------------------------------//
-  def DiagramWithPermissionAction(id: BSONObjectID, permission: Permission) = {
+  /**
+    * Composed action that ensures authenticated and authorized access to a BPMNDiagram
+    * @param id diagram id
+    * @param permission permission that should be ensured (view, edit or owns)
+    * @return Actionbuilder
+    */
+  def DiagramWithPermissionAction(id: BPMNDiagramID, permission: Permission) = {
     silhouette.SecuredAction andThen DiagramAction(id) andThen DiagramPermissionAction(permission)
   }
 
+  //------------------------------------------------------------------------------------------//
+  // BASIC APPLICATION ENDPOINTS
+  //------------------------------------------------------------------------------------------//
   /**
-    * HTTP GET endpoint, presents different content depending on user authentication status
+    * HTTP GET endpoint, presents different content depending on user authentication status;
+    * repository view if logged in, landing page otherwise.
     *
     * @return HTTP OK status with HTML
     */
@@ -43,6 +59,15 @@ class ApplicationController(implicit inj: Injector) extends Controller
       })
   }
 
+  //------------------------------------------------------------------------------------------//
+  // MISC
+  //------------------------------------------------------------------------------------------//
+  /**
+    * Enables routing for client side javascript code e.g.:
+    * $.ajax(jsRoutes.controllers.BPMNDiagramController.update(someId))
+    *
+    * @return
+    */
   def javascriptRoutes = Action { implicit request =>
     Ok(
       JavaScriptReverseRouter("jsRoutes")(

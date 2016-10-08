@@ -7,77 +7,31 @@ import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.modules.reactivemongo.ReactiveMongoApi
 import play.modules.reactivemongo.json._
-import reactivemongo.play.json.BSONFormats._
 import reactivemongo.play.json.collection.JSONCollection
 import scaldi.{Injectable, Injector}
 
-import scala.collection.mutable
 import scala.concurrent.Future
 
 /**
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/6/2016
   */
-
 sealed trait PasswordDAO extends DAO[LoginInfo, PasswordInfo]
 
-class InMemoryPasswordDAO extends DelegableAuthInfoDAO[PasswordInfo] {
-
-  import InMemoryPasswordDAO._
-
-  override def find(loginInfo: LoginInfo): Future[Option[PasswordInfo]] = {
-    Future.successful(passwords.get(loginInfo))
-  }
-
-  override def update(loginInfo: LoginInfo, password: PasswordInfo): Future[PasswordInfo] = {
-    Future.successful({
-      if (passwords.contains(loginInfo)) {
-        passwords.update(loginInfo, password)
-        password
-      } else {
-        password
-      }
-    })
-  }
-
-  override def remove(loginInfo: LoginInfo): Future[Unit] = {
-    Future.successful({
-      passwords.remove(loginInfo)
-      Unit
-    })
-  }
-
-  override def save(loginInfo: LoginInfo, password: PasswordInfo): Future[PasswordInfo] = {
-    if (passwords.contains(loginInfo)) {
-      update(loginInfo, password)
-    } else {
-      add(loginInfo, password)
-    }
-  }
-
-  override def add(loginInfo: LoginInfo, password: PasswordInfo): Future[PasswordInfo] = {
-    Future.successful({
-      if (!passwords.contains(loginInfo)) {
-        passwords.put(loginInfo, password)
-        password
-      } else {
-        password
-      }
-    })
-  }
-}
-
-object InMemoryPasswordDAO {
-  val passwords: mutable.HashMap[LoginInfo, PasswordInfo] = mutable.HashMap()
-  val dummyPassword = PasswordInfo("bcrypt", "$2a$10$WrYi4ugL45Pnaql.JGGH9O65kUBdyFbtwVdTA5/5vV9EnSRkig/Be", None)
-  passwords.put(LoginInfo("credentials", "1@1"), dummyPassword)
-}
-
+/**
+  * DAO that has MongoDB as a backing store
+  *
+  * @param inj scaldi injector
+  */
 class MongoPasswordDAO(implicit inj: Injector) extends DelegableAuthInfoDAO[PasswordInfo]
   with Injectable {
   val mongoApi: ReactiveMongoApi = inject[ReactiveMongoApi]
 
-  //this makes life way easier since case classes can be automatically transformed to json
-  // -> no need for complicated queries with projections that return only a parts of the document (the authInfo part)
+
+  /**
+    * This makes life way easier since case classes can be automatically transformed to json
+    * -> no need for complicated queries with projections that return only parts of the document
+    * (the authInfo part) in order to enable JSON to object transformation.
+    */
   case class PersistenceWrapper(loginInfo: LoginInfo, authInfo: PasswordInfo)
 
   implicit val jsonPasswordFormat = Json.format[PasswordInfo]
@@ -85,6 +39,11 @@ class MongoPasswordDAO(implicit inj: Injector) extends DelegableAuthInfoDAO[Pass
   implicit val jsonPersistenceWrapperFormat = Json.format[PersistenceWrapper]
 
 
+  /**
+    * Calls the reactive mongo driver and retrieves the password collection
+    *
+    * @return Future of the collection
+    */
   def collection: Future[JSONCollection] = {
     mongoApi.database.map(_.collection[JSONCollection]("password"))
   }

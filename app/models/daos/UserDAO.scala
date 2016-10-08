@@ -17,18 +17,50 @@ import scala.concurrent.Future
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/4/2016
   */
 sealed trait UserDAO extends DAO[LoginInfo, User] {
+  /**
+    * Query by email
+    *
+    * @param key email
+    * @return Future of some user or none
+    */
   def findByEmail(key: Email): Future[Option[User]]
 
+  /**
+    * Query by id
+    *
+    * @param key user id
+    * @return Future of some user or none
+    */
   def findById(key: UserID): Future[Option[User]]
 
+  /**
+    * Checks if email does exist
+    *
+    * @param key email
+    * @return Future of boolean true if email exists false otherwise
+    */
   def exists(key: Email): Future[Boolean]
 
+  /**
+    *
+    * @param list List of user ids
+    * @return Future list of users
+    */
   def findAllById(list: List[UserID]): Future[List[User]]
 
+  /**
+    *
+    * @param list List of user emails
+    * @return Future list of users
+    */
   def findAllByEmail(list: List[Email]): Future[List[User]]
 
 }
 
+/**
+  *
+  * @param inj scaldi injector
+  */
 class MongoUserDAO(implicit inj: Injector) extends UserDAO
   with Injectable {
   val mongoApi = inject[ReactiveMongoApi]

@@ -16,14 +16,10 @@
     }
     </style>
 
-
-
     <!-- diagram title above navbar -->
     <div id="app">
-
         <div id="header" v-cloak>
             <h1 style="margin: 10px; display: inline-block; margin-bottom:0px;" data-toggle="tooltip" data-placement="right" title="Click to edit"><span data-toggle="modal" data-target="#title-modal">{{process.name}}</span></h1>
-
             @if(user.isDefined) {
                 @navigation(diagramId = Some(id))
             }
@@ -97,7 +93,7 @@
                 <div class="modal-body" v-cloak>
                     <div class="input-group">
                         <span class="input-group-addon" id="basic-addon1">Email:</span>
-                            <input type="text" v-model="user" class="form-control" placeholder="Add collaborator" aria-describedby="basic-addon1">
+                            <input id="permission-email" type="email" v-model="user" class="form-control" placeholder="Add collaborator" aria-describedby="basic-addon1" required>
                         <span class="input-group-btn">
                             <button class="btn btn-secondary" type="button" v-on:click="addViewer">View</button>
                         </span>
