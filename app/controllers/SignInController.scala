@@ -99,7 +99,6 @@ class SignInController(implicit inj: Injector) extends ApplicationController {
                                        (implicit request: Request[AnyContent]): Future[CookieAuthenticator] = {
     silhouette.env.authenticatorService.create(loginInfo).map {
       case authenticator if data.rememberMe =>
-        val config = configuration.underlying
         authenticator.copy(
           expirationDateTime = clock.now + (30 days),
           idleTimeout = Some(5 days)

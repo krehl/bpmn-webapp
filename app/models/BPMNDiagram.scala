@@ -20,7 +20,8 @@ import scala.xml.{NodeSeq, XML}
   *
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/11/2016
   */
-class BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) extends Injectable {
+class
+BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) extends Injectable {
   val bpmnDiagramDAO = inject[BPMNDiagramDAO]
   val userDAO = inject[UserDAO]
 

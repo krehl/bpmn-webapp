@@ -20,7 +20,6 @@ import scala.concurrent.Future
 
 sealed trait PasswordDAO extends DAO[LoginInfo, PasswordInfo]
 
-//this is not good...but we ve to implement the library interface here :( ... TODO solution
 class InMemoryPasswordDAO extends DelegableAuthInfoDAO[PasswordInfo] {
 
   import InMemoryPasswordDAO._

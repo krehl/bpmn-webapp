@@ -2,6 +2,9 @@
  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/10/2016
  */
 
+/**
+ * Resizes the modeller canvas inorder to fit the display screen
+ */
 resize_snippet = (function($,selector) {
     if (!$(selector)[0]) return;
     $(window).on("load resize", function() {

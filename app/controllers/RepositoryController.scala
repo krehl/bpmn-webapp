@@ -9,11 +9,17 @@ import scaldi.Injector
 import scala.concurrent.Future
 
 /**
+  * Controller that manages the diagram repository
+  *
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/17/2016
   */
 class RepositoryController(implicit inj: Injector) extends ApplicationController {
   val diagramDAO = inject[BPMNDiagramDAO]
 
+  /**
+    * GET endpoint
+    * @return HTML view of the repository, data is loaded separately via AJAX
+    */
   //TODO infinity scroll; fetch only first x diagrams
   def repository = silhouette.SecuredAction.async { implicit request =>
     Future.successful(
@@ -21,7 +27,12 @@ class RepositoryController(implicit inj: Injector) extends ApplicationController
     )
   }
 
+  /**
+    * GET endpoint
+    * @return JSON of diagrams that the user can access (view, edit or owned)
+    */
   def repositoryJson = silhouette.SecuredAction.async { implicit request =>
+    //concat all lists
     val repository = for {
       owns <- diagramDAO.listOwns(request.identity.id)
       edits <- diagramDAO.listCanEdit(request.identity.id)

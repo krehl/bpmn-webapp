@@ -4,6 +4,8 @@ import com.mohiva.play.silhouette.api.LogoutEvent
 import scaldi.Injector
 
 /**
+  * Controller that manages user sing out
+  *
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/7/2016
   */
 class SignOutController(implicit inj: Injector) extends ApplicationController {
