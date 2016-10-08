@@ -61,14 +61,14 @@ BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) extends 
     *
     * @return Future which contains a list of viewers
     */
-  def listUserThatCanView: Future[List[User]] = userDAO.getAll(canView.toList)
+  def listUserThatCanView: Future[List[User]] = userDAO.findAllById(canView.toList)
 
   /**
     * Returns all User objects who can edit the diagram
     *
     * @return Future which contains a list of editors
     */
-  def listUserThatCanEdit: Future[List[User]] = userDAO.getAll(canEdit.toList)
+  def listUserThatCanEdit: Future[List[User]] = userDAO.findAllById(canEdit.toList)
 
   /**
     * Adds access permissions to this diagram and persits them
