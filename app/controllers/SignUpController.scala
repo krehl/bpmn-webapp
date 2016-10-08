@@ -95,7 +95,6 @@ class SignUpController(implicit inj: Injector) extends ApplicationController {
       result <- silhouette.env.authenticatorService.embed(cookie, Redirect(routes.ApplicationController.index()))
     } yield {
       if (saveSuccessful) {
-        //TODO i do not know if its even possible that this is false?
         silhouette.env.eventBus.publish(SignUpEvent(user, request))
         silhouette.env.eventBus.publish(LoginEvent(user, request))
         result

@@ -34,7 +34,6 @@ import scala.language.postfixOps
 class SilhouetteModule extends Module {
   // DATA STORE BINDINGS
   bind[DelegableAuthInfoDAO[PasswordInfo]] to new MongoPasswordDAO
-  bind[UserDAO] to new MongoUserDAO
   bind[CacheLayer] to new PlayCacheLayer(inject[CacheApi])
 
   //OTHER CLIENT SIDE BINDING
@@ -68,16 +67,14 @@ class SilhouetteModule extends Module {
     inject[PasswordHasherRegistry])
 
   bind[Crypter] identifiedBy 'authenticatorCrypter to new JcaCrypter(inject[JcaCrypterSettings])
-  //  bind[JcaCrypterSettings] to inject[Configuration].underlying.as[JcaCrypterSettings]("silhouette.authenticator.crypter")
+  //TODO for production change settings .. just a reminder!
   bind[JcaCrypterSettings] to JcaCrypterSettings("[changeme]")
   bind[CrypterAuthenticatorEncoder] to new CrypterAuthenticatorEncoder(inject[Crypter])
 
-  //Cookie
-  //  bind[JcaCookieSignerSettings] to inject[Configuration].underlying.as[JcaCookieSignerSettings]("silhouette.authenticator.cookie.signer")
+  //TODO for production change settings .. just a reminder!
   bind[JcaCookieSignerSettings] to JcaCookieSignerSettings("[changeme]")
   bind[CookieSigner] to new JcaCookieSigner(inject[JcaCookieSignerSettings])
 
-  //  bind[CookieAuthenticatorSettings] to inject[Configuration].underlying.as[CookieAuthenticatorSettings]("silhouette.authenticator")
   bind[CookieAuthenticatorSettings] to CookieAuthenticatorSettings(
     cookieName = "authenticator",
     cookiePath = "/",
@@ -95,14 +92,4 @@ class SilhouetteModule extends Module {
     inject[FingerprintGenerator],
     inject[IDGenerator],
     inject[Clock])
-
-  //JWT
-  //  bind[JWTAuthenticatorSettings] to inject[Configuration].underlying
-  //    .as[JWTAuthenticatorSettings]("silhouette.authenticator")
-  //  bind[AuthenticatorService[JWTAuthenticator]] to new JWTAuthenticatorService(
-  //    inject[JWTAuthenticatorSettings],
-  //    None,
-  //    inject[CrypterAuthenticatorEncoder],
-  //    inject[IDGenerator],
-  //    inject[Clock])
 }

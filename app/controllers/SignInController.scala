@@ -35,7 +35,6 @@ class SignInController(implicit inj: Injector) extends ApplicationController {
     *
     * @return HTTP OK status with HTML of the sign in form page if the user is not already signed in
     */
-  //TODO define fallback for unauthorized request => just do nothing
   def view = silhouette.UnsecuredAction.async {
     implicit request =>
       Future.successful(Ok(views.html.signIn(SignInForm.form, None)))
@@ -99,7 +98,6 @@ class SignInController(implicit inj: Injector) extends ApplicationController {
                                        (implicit request: Request[AnyContent]): Future[CookieAuthenticator] = {
     silhouette.env.authenticatorService.create(loginInfo).map {
       case authenticator if data.rememberMe =>
-        val config = configuration.underlying
         authenticator.copy(
           expirationDateTime = clock.now + (30 days),
           idleTimeout = Some(5 days)

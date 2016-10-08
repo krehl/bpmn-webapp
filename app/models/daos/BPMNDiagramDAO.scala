@@ -9,7 +9,6 @@ import play.api.libs.json.Json._
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoApi
 import play.modules.reactivemongo.json._
-import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.play.json.BSONFormats.BSONObjectIDFormat
 import reactivemongo.play.json.collection.JSONCollection
 import scaldi.{Injectable, Injector}
@@ -21,33 +20,80 @@ import scala.concurrent.Future
   */
 sealed trait BPMNDiagramDAO extends DAO[BPMNDiagramID, BPMNDiagram] {
 
+  /**
+    * List of latest diagrams (latest version) that can by edited by the specified user
+    *
+    * @param userId user id
+    * @return
+    */
   def listCanEdit(userId: UserID): Future[List[BPMNDiagram]]
 
+  /**
+    * List of latest diagrams (latest version) that can by viewed by the specified user
+    *
+    * @param userId user id
+    * @return
+    */
   def listCanView(userId: UserID): Future[List[BPMNDiagram]]
 
+  /**
+    * List of latest diagrams (latest version) that are owned by the specified user
+    *
+    * @param userId user id
+    * @return
+    */
   def listOwns(userId: UserID): Future[List[BPMNDiagram]]
 
+  /**
+    * Returns entire change history of the specified diagram
+    *
+    * @param key diagram id
+    * @return Future list of all diagram versions
+    */
   def findHistory(key: BPMNDiagramID): Future[List[BPMNDiagram]]
 
+  /**
+    *
+    * @param key     diagram id
+    * @param viewers list of user ids that should be able to view
+    * @param editors ist of user ids that should be able to edit
+    * @return future of boolean true if successful false otherwise
+    */
   def addPermissions(key: BPMNDiagramID,
                      viewers: List[UserID],
                      editors: List[UserID]): Future[Boolean]
 
+  /**
+    *
+    * @param key     diagram id
+    * @param viewers list of user ids that should no longer be able to view
+    * @param editors list of user ids that should no longer be able to edit
+    * @return future of boolean true if successful false otherwise
+    */
   def removePermissions(key: BPMNDiagramID,
                         viewers: List[UserID],
                         editors: List[UserID]): Future[Boolean]
 }
 
+/**
+  * DAO that has MongoDB as a backing store
+  *
+  * Each diagram version is a single document in the database, but different versions of the same
+  * diagram have identical ids. An ordering of versions is established by the timeStamp field.
+  *
+  * @param inj scaldi injector
+  */
 class MongoBPMNDiagramDAO(implicit inj: Injector) extends BPMNDiagramDAO
   with Injectable {
   val mongoApi = inject[ReactiveMongoApi]
 
+  /**
+    * Calls the reactive mongo driver and retrieves the password collection
+    *
+    * @return Future of the collection
+    */
   def collection: Future[JSONCollection] = {
     mongoApi.database.map(_.collection[JSONCollection]("diagram"))
-  }
-
-  def bsonCollection: Future[BSONCollection] = {
-    mongoApi.database.map(_.collection[BSONCollection]("diagram"))
   }
 
   override def listCanEdit(userId: UserID): Future[List[BPMNDiagram]] = {
@@ -66,7 +112,13 @@ class MongoBPMNDiagramDAO(implicit inj: Injector) extends BPMNDiagramDAO
     aggregateByIdAndGetNewestDiagram(query)
   }
 
-  private[this] def aggregateByIdAndGetNewestDiagram(query: JsObject) = {
+  /**
+    * Queries the collection, groups it by the diagram id and returns the latest version
+    *
+    * @param query selector of diagram documents
+    * @return list diagrams (latest version) that match the query
+    */
+  private[this] def aggregateByIdAndGetNewestDiagram(query: JsObject): Future[List[BPMNDiagram]] = {
     //  QUERY
     //    db.diagram.aggregate( [{$match: query}},
     //      {$sort: {timeStamp: -1}},
@@ -130,11 +182,6 @@ class MongoBPMNDiagramDAO(implicit inj: Injector) extends BPMNDiagramDAO
     } yield result.ok
   }
 
-
-  /**
-    * @param value value
-    * @return False if value was already present, true otherwise.
-    */
   override def save(value: BPMNDiagram): Future[Boolean] = {
     for {
       collection <- collection
@@ -144,11 +191,6 @@ class MongoBPMNDiagramDAO(implicit inj: Injector) extends BPMNDiagramDAO
     } yield result.ok
   }
 
-  /**
-    *
-    * @param value value
-    * @return False if value was present, true otherwise.
-    */
   override def update(value: BPMNDiagram): Future[Boolean] = {
     val query = Json.obj("id" -> BSONObjectIDFormat.writes(value.id))
     for {
@@ -159,11 +201,6 @@ class MongoBPMNDiagramDAO(implicit inj: Injector) extends BPMNDiagramDAO
     } yield result.ok
   }
 
-  /**
-    *
-    * @param key key
-    * @return None if value is not present, some search result otherwise.
-    */
   override def find(key: BPMNDiagramID): Future[Option[BPMNDiagram]] = {
     for {
       collection <- collection
@@ -185,11 +222,6 @@ class MongoBPMNDiagramDAO(implicit inj: Injector) extends BPMNDiagramDAO
     } yield data.map(BPMNDiagram(_))
   }
 
-  /**
-    *
-    * @param key key
-    * @return False if value was not present, true otherwise.
-    */
   override def remove(key: BPMNDiagramID): Future[Boolean] = {
     for {
       collection <- collection

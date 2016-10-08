@@ -11,7 +11,6 @@ import util.Types._
 /**
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/4/2016
   */
-
 class User(private val data: User.Data)(implicit inj: Injector) extends Identity with
   Injectable {
   val bpmnDiagramDAO = inject[BPMNDiagramDAO]
