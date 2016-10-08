@@ -87,12 +87,12 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                         process: {
                             name: response.name,
                             description: response.description,
-                            xmlContent: response.xmlContent,
+                            xmlContent: response.xmlContent
                         },
                         old: {
                             name: response.name,
                             description: response.description,
-                            xmlContent: response.xmlContent,
+                            xmlContent: response.xmlContent
                         }
                     },
                     methods: {
@@ -202,7 +202,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                             content: "Permissions added", // text of the snackbar
                             style: "toast", // add a custom class to your snackbar
                             timeout: 2000 // time in milliseconds after the snackbar autohides, 0 is disabled
-                        }
+                        };
                         $.snackbar(options);
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
@@ -220,13 +220,13 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                         cache: false,
                         contentType: "application/json",
                         success: function (response) {
-                            $debug("permissions removed")
+                            $debug("permissions removed");
                             $debug(response);
                             var options =  {
                                 content: "Permissions removed", // text of the snackbar
                                 style: "toast", // add a custom class to your snackbar
                                 timeout: 2000 // time in milliseconds after the snackbar autohides, 0 is disabled
-                            }
+                            };
                             $.snackbar(options);
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
@@ -314,7 +314,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
 
     historyButton.addEventListener('click', function () {
        var router = jsRoutes.controllers.BPMNDiagramController.getHistory(window.bpmn_id.toString());
-        $debug("History Button clicked.")
+        $debug("History Button clicked.");
         $.ajax({
             url: router.url,
             success: function(response) {
@@ -336,7 +336,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                                     content: "diagram loaded", // text of the snackbar
                                     style: "toast", // add a custom class to your snackbar
                                     timeout: 1000 // time in milliseconds after the snackbar autohides, 0 is disabled
-                                }
+                                };
                                 $.snackbar(options);
                             }
                         }
@@ -356,9 +356,9 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
 
 
     saveButton.addEventListener('click', function () {
-        $debug("Save Button clicked.")
+        $debug("Save Button clicked.");
         if (changed) {
-            $debug("Changed = true.")
+            $debug("Changed = true.");
             // get the diagram contents
             bpmnModeler.saveXML({format: true}, function (err, xml) {
 
@@ -374,7 +374,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                         cache: false,
                         contentType: "application/json",
                         success: function (response) {
-                            $debug("update successful")
+                            $debug("update successful");
                             $debug(response);
                             changed = false;
                         },

@@ -96,16 +96,16 @@
             *@
 
         @if(diagramId.isDefined) {
+            <li class="nav-item pull-xs-right">
+                <a class="nav-link btn-repo btn-profile" href="#" id="history" data-toggle="modal" data-target="#history-modal">History</a>
+            </li>
+
             @*TODO && user == owner*@
             <li class="nav-item  pull-xs-right" v-cloak id="share-button">
                 <button type="button" class="btn btn-primary" data-toggle="modal"
                 data-target="#permissionModal">
                     Share
                 </button>
-            </li>
-
-            <li class="nav-item pull-xs-right">
-                <a class="nav-link btn-repo btn-profile" href="#" id="history" data-toggle="modal" data-target="#history-modal">History</a>
             </li>
         }
 
