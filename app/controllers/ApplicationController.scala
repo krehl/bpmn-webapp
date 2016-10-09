@@ -36,7 +36,7 @@ class ApplicationController(implicit inj: Injector) extends Controller
     * Composed action that ensures authenticated and authorized access to a BPMNDiagram
     * @param id diagram id
     * @param permission permission that should be ensured (view, edit or owns)
-    * @return Actionbuilder
+    * @return Action builder
     */
   def DiagramWithPermissionAction(id: BPMNDiagramID, permission: Permission) = {
     silhouette.SecuredAction andThen DiagramAction(id) andThen DiagramPermissionAction(permission)

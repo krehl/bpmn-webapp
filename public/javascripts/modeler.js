@@ -357,16 +357,17 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
 
     saveButton.addEventListener('click', function () {
         $debug("Save Button clicked.");
+        //true if unsaved changes are present
         if (changed) {
             $debug("Changed = true.");
             // get the diagram contents
             bpmnModeler.saveXML({format: true}, function (err, xml) {
-
                 if (err) {
                     console.error('diagram save failed', err);
                 } else {
                     app.process.xmlContent = xml;
                     var router = jsRoutes.controllers.BPMNDiagramController.update(window.bpmn_id.toString());
+                    //AJAX PUT request
                     $.ajax({
                         url: router.url,
                         data: JSON.stringify(app.$data.process),
@@ -388,7 +389,6 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
         } else {
             $debug('no changes, save unneccessary');
         }
-
     });
 
     svgDownload.addEventListener('click', function (event) {

@@ -19,7 +19,7 @@ object Customer extends Role(subSet = Set.empty)
 object Admin extends Role(subSet = Set(Customer))
 
 /**
-  * Implement the silhouette Authorization trait in order to enable easy authorisation managment
+  * Implement the silhouette Authorization trait in order to enable easy authorisation management
   * in actions
   *
   * @param role role

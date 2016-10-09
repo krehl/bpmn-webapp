@@ -30,7 +30,6 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette-persistence" % "4.0.0-RC1",
   "com.mohiva" %% "play-silhouette-testkit" % "4.0.0-RC1" % "test",
   "com.adrianhurt" %% "play-bootstrap" % "1.0-P25-B3",
-  "org.webjars" %% "webjars-play" % "2.4.0-1",
   "org.webjars.bower" % "bpmn-js" % "0.15.1"
 )
 

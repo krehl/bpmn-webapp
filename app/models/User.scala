@@ -33,8 +33,6 @@ class User(private val data: User.Data)(implicit inj: Injector) extends Identity
 
   def lastName = data.lastName
 
-  def roles = data.roles
-
   def ownedDiagrams = bpmnDiagramDAO.listOwns(id)
 
   //------------------------------------------------------------------------------------------//
