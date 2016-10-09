@@ -18,16 +18,16 @@ object Customer extends Role(subSet = Set.empty)
 
 object Admin extends Role(subSet = Set(Customer))
 
-/**
-  * Implement the silhouette Authorization trait in order to enable easy authorisation management
-  * in actions
-  *
-  * @param role role
-  */
-case class WithRole(role: Role) extends Authorization[User, CookieAuthenticator] {
-  override def isAuthorized[B](user: User, authenticator: CookieAuthenticator)
-                              (implicit request: Request[B]) = {
-    Logger.info(s"isAuthorized? role = $role; user = ${user.email}")
-    Future.successful(user.roles.exists(userRole => userRole == role || userRole.subSet.contains(role)))
-  }
-}
+///**
+//  * Implement the silhouette Authorization trait in order to enable easy authorisation management
+//  * in actions
+//  *
+//  * @param role role
+//  */
+//case class WithRole(role: Role) extends Authorization[User, CookieAuthenticator] {
+//  override def isAuthorized[B](user: User, authenticator: CookieAuthenticator)
+//                              (implicit request: Request[B]) = {
+//    Logger.info(s"isAuthorized? role = $role; user = ${user.email}")
+//    Future.successful(user.roles.exists(userRole => userRole == role || userRole.subSet.contains(role)))
+//  }
+//}
