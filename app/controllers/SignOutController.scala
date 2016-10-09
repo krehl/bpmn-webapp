@@ -4,13 +4,15 @@ import com.mohiva.play.silhouette.api.LogoutEvent
 import scaldi.Injector
 
 /**
+  * Controller that manages user sing out
+  *
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/7/2016
   */
 class SignOutController(implicit inj: Injector) extends ApplicationController {
 
   /**
     * HTTP POST endpoint, requires a signed in user
-    * @return Ridirect to the application main page
+    * @return Redirect to the application main page
     */
   def signOut = silhouette.SecuredAction.async { implicit request =>
     silhouette.env.eventBus.publish(LogoutEvent(request.identity, request))

@@ -2,7 +2,6 @@ package controllers.actions
 
 import com.mohiva.play.silhouette.api.actions.SecuredRequest
 import controllers.requests.BPMNDiagramRequest
-import models.BPMNDiagram
 import models.daos.BPMNDiagramDAO
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
@@ -16,9 +15,11 @@ import scala.concurrent.Future
 
 /**
   * An ActionRefiner that takes a SecuredRequest and returns, in case of success, a BPMNDiagramRequest which contains
-  * the
-  * requested BPMNDiagram. In case of failure a corresponding Result is returned. These types are wrapped in a
-  * Future of Either.
+  * the requested BPMNDiagram. In case of failure a corresponding Result is returned. These types
+  * are wrapped in a Future of Either.
+  *
+  * @param id diagram id
+  * @param inj scaldi injector
   *
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/18/2016
   */
@@ -32,7 +33,8 @@ case class DiagramAction(id: BSONObjectID)
   val messagesApi = inject[MessagesApi]
 
   /**
-    * Look at declaration
+    * Intercepts the request and returns a result if no diagram is found, otherwise a BPMNDiagramRequest
+    * is further processed.
     *
     * @param input request
     * @tparam A content type

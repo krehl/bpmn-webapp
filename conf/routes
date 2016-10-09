@@ -1,30 +1,9 @@
-#GET           /bpmn/:id/edit                     ???
-#GET           /bpmn/:id/view                     ???
+
 
 GET           /bpmn/:id/history                  controllers.BPMNDiagramController.getHistory(id: reactivemongo.bson.BSONObjectID)
 PUT           /bpmn/:id/addPermissions           controllers.BPMNDiagramController.addPermissions(id: reactivemongo.bson.BSONObjectID)
 PUT           /bpmn/:id/removePermissions        controllers.BPMNDiagramController.removePermissions(id: reactivemongo.bson.BSONObjectID)
 GET           /bpmn/:id/permissions              controllers.BPMNDiagramController.listPermissions(id: reactivemongo.bson.BSONObjectID)
-#make this post ..get just temp
-#GET           /bpmn/:id/edit/:version            ???
-#GET           /bpmn/:id/view/:version            ???
-#
-#
-#
-#GET           /bpmn/download/:id                 ???
-#GET           /bpmn/download/:id/:version        controllers.BPMNDiagramController.download(id: reactivemongo.bson.BSONObjectID)
-#
-#
-#POST          /bpmn/:id                          ???
-#DELETE        /bpmn/:id                          ???
-#DELETE        /bpmn/:id/:version                 ???
-#
-#
-#
-#
-#GET           /bpmn/new                          controllers.BPMNDiagramController.newBPMNDiagram
-
-
 
 
 # Routes
@@ -37,6 +16,7 @@ GET           /repository                        controllers.RepositoryControlle
 GET           /repository.json                   controllers.RepositoryController.repositoryJson
 GET           /profile                           controllers.ProfileController.getProfile
 GET           /profile/:id                       controllers.ProfileController.profile(id: reactivemongo.bson.BSONObjectID)
+GET           /profile/:email                    controllers.ProfileController.profileByEmail(email: String)
 GET           /profiles                          controllers.ProfileController.getProfiles
 
 # Help page
@@ -67,5 +47,4 @@ GET           /signOut                           controllers.SignOutController.s
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                      controllers.Assets.at(path="/public", file)
-GET           /webjars/*file                     controllers.WebJarAssets.at(file)
 GET           /javascriptRoutes                  controllers.ApplicationController.javascriptRoutes

@@ -17,6 +17,8 @@ import services.UserService
 import scala.concurrent.Future
 
 /**
+  * Controller that manages user sign up
+  *
   * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/5/2016
   *         loosely based on
   *         https://github.com/mohiva/play-silhouette-angular-seed/blob/master/app/controllers/SignUpController.scala
@@ -95,7 +97,6 @@ class SignUpController(implicit inj: Injector) extends ApplicationController {
       result <- silhouette.env.authenticatorService.embed(cookie, Redirect(routes.ApplicationController.index()))
     } yield {
       if (saveSuccessful) {
-        //TODO i do not know if its even possible that this is false?
         silhouette.env.eventBus.publish(SignUpEvent(user, request))
         silhouette.env.eventBus.publish(LoginEvent(user, request))
         result

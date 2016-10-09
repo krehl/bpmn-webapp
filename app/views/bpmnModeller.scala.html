@@ -16,14 +16,10 @@
     }
     </style>
 
-
-
     <!-- diagram title above navbar -->
     <div id="app">
-
         <div id="header" v-cloak>
             <h1 style="margin: 10px; display: inline-block; margin-bottom:0px;" data-toggle="tooltip" data-placement="right" title="Click to edit"><span data-toggle="modal" data-target="#title-modal">{{process.name}}</span></h1>
-
             @if(user.isDefined) {
                 @navigation(diagramId = Some(id))
             }
@@ -44,16 +40,16 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label>Process Title</label>
-                            <input type="text" class="form-control" v-model="process.name" placeholder="Process Title" aria-describedby="basic-addon1" value="{{process.name}}">
+                            <input type="text" class="form-control" v-model="process.name" placeholder="Process Title" aria-describedby="basic-addon1" value="{{proces.name}}">
                         </div>
                         <div class="form-group">
                             <label>Process Description</label>
-                            <textarea type="text" class="form-control" v-model="process.description" placeholder="Description" aria-describedby="basic-addon1" rows="3">{{process.description}}</textarea>
+                            <textarea type="text" class="form-control" v-model="process.description" placeholder="Description" aria-describedby="basic-addon1" rows="3">{{proces.description}}</textarea>
                         </div>
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="done">Done</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="checkforchanges()">Done</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
@@ -74,7 +70,7 @@
                 </div>
                 <div class="modal-body">
                     <ul class="list-group" v-cloak>
-                        <li class="list-group-item" v-for="item in items">{{item.name}} - {{fromNow(item.timeStamp.$date)}} - <profile :oid="item.editor.$oid"></profile><button class="pull-xs-right" v-on:click="loadVersion($index)">Load</button></li>
+                        <li class="list-group-item" v-for="(index,item) in items">{{item.name}} - {{fromNow(item.timeStamp.$date)}} - <profile :oid="item.editor.$oid"></profile><button class="pull-xs-right" v-on:click="loadVersion(index)">Load</button></li>
                     </ul>
                 </div>
                 <div class="modal-footer">
@@ -97,7 +93,7 @@
                 <div class="modal-body" v-cloak>
                     <div class="input-group">
                         <span class="input-group-addon" id="basic-addon1">Email:</span>
-                            <input type="text" v-model="user" class="form-control" placeholder="Add collaborator" aria-describedby="basic-addon1">
+                            <input id="permission-email" type="email" v-model="user" class="form-control" placeholder="Add collaborator" aria-describedby="basic-addon1" required>
                         <span class="input-group-btn">
                             <button class="btn btn-secondary" type="button" v-on:click="addViewer">View</button>
                         </span>
@@ -105,9 +101,10 @@
                             <button class="btn btn-secondary" type="button" v-on:click="addEditor">Edit</button>
                         </span>
                     </div><!-- /btn-group -->
-                <ul class="list-group" v-cloak>
-                        <li class="list-group-item" v-for="item in load.canView">{{item}} (View)<button class="pull-xs-right" v-on:click="popView($index)">X</button></li>
-                        <li class="list-group-item" v-for="item in load.canEdit">{{item}} (Edit)<button class="pull-xs-right" v-on:click="popEdit($index)">X</button></li>
+                    <p v-if="load.canView.length > 0 || load.canEdit.length > 0">Collaborators:</p>
+                    <ul class="list-group" v-cloak>
+                        <li class="list-group-item" v-for="(index,item) in load.canView">{{item}} (View)<button class="pull-xs-right" v-on:click="popView(index)">X</button></li>
+                        <li class="list-group-item" v-for="(index,item) in load.canEdit">{{item}} (Edit)<button class="pull-xs-right" v-on:click="popEdit(index)">X</button></li>
                     </ul>
             </div>
             <div class="modal-footer">
