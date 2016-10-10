@@ -8,14 +8,12 @@
  * Input: BpmnModeler Instance, JQuery Instance
  * 
  */
-
-
 var bpmnModelerModule = (function (BpmnModeler, $) {
 
     var debug = true;
     var $debug = function (message) {
         if (debug) console.log(message);
-    }
+    };
     var initDiagram = true;
     var initHistory = true;
     changed = false;
@@ -113,7 +111,7 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
                 app.process.xmlContent = response.xmlContent;
                 permissionVue.canEdit = response.canEdit;
                 permissionVue.canEdit = response.canView;
-            };
+            }
             const offsetHeight = document.getElementById('header').offsetHeight;
             document.getElementById('canvas').setAttribute("style", "height:" + (window.innerHeight - offsetHeight - 10) + "px");
 

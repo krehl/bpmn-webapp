@@ -7,15 +7,13 @@
  * Input: JQuery instance
  *
  */
-
-
 var repository = (function ($) {
 
     //debug function to not fill the entire console in production mode
     var debug = true;
     var $debug = function (message) {
         if (debug) console.log(message);
-    }
+    };
 
     if(undefined === $('#repository')[0]) return; //if there is no repository element, stop
 
@@ -54,7 +52,7 @@ var repository = (function ($) {
     repoVue = new Vue({
         el: '#app-repo',
         data: {
-            diagrams: [],
+            diagrams: []
         },
         created: function(){
             $this = this;
