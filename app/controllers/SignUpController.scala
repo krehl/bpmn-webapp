@@ -19,7 +19,7 @@ import scala.concurrent.Future
 /**
   * Controller that manages user sign up
   *
-  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/5/2016
+  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 23/7/2016
   *         loosely based on
   *         https://github.com/mohiva/play-silhouette-angular-seed/blob/master/app/controllers/SignUpController.scala
   */
