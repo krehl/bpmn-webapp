@@ -49,6 +49,10 @@ var repository = (function ($) {
 
     Vue.component('profile', profileComponent); //registers the component to be used subsequently
 
+    /**
+     * Vue component that manges the diagram repository
+     * @type {any}
+     */
     repoVue = new Vue({
         el: '#app-repo',
         data: {

@@ -1,7 +1,7 @@
 /**
+ * Vue component for the user profile
  * Created by krehl on 18.09.2016.
  */
-
 var profileComponent = Vue.extend({
     data: function () {
         return {

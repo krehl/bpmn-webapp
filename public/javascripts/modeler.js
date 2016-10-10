@@ -28,7 +28,9 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
 
     };
 
-    //initialize a custom Vue.js component to encapsulate the display of profiles on the page
+    /**
+     * Initialize a custom Vue.js component to encapsulate the display of profiles on the page
+     */
     var profileComponent = Vue.extend({
         data: function () { //a components data must always be returned by a function
             return {
@@ -64,6 +66,9 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
 
     $debug("bpmnModeller loading"); //debug informatin
 
+    /**
+     * Initalize bpmn.io framework
+     */
     bpmnModeler = new BpmnModeler({
         container: '#canvas'
     });
@@ -75,7 +80,6 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
         cache: false,
         success: function (response) {
             $debug(response);
-            //window.bpmn_id = response.id;
             importXML(response.xmlContent);
             if (initDiagram) {
                 $debug("Initiation");
@@ -238,6 +242,9 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
     });
 
 
+    /**
+     * Request the xml data of an diagram from the server
+     */
     $("#load-form").submit(function (e) {
         e.preventDefault();
 
@@ -258,7 +265,11 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
     });
 
 
-// import function
+    /**
+     * Calls the bpmn.io import function and catches errors
+     *
+     * @param xml xml that is loaded into bpmn.io
+     */
     function importXML(xml) {
         // import diagram
         bpmnModeler.importXML(xml, function (err) {
@@ -283,13 +294,19 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
         changed = true;
     });
 
-// save diagram on button click
+    /**
+     * define Button shorthands
+     * @type {Element}
+     */
     const saveButton = document.querySelector('#save-button');
     const svgDownload = document.querySelector('#svg-button');
     const xmlDownload = document.querySelector('#xml-button');
     const historyButton = document.querySelector('#history');
     const deleteButton = document.querySelector('#delete-btn');
 
+    /**
+     * Requests the deletion of an diagram from the server
+     */
     deleteButton.addEventListener('click', function (e) {
         e.preventDefault();
         if (window.confirm("Are you sure that you want to delete the diagram?")) {
@@ -310,6 +327,9 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
     });
 
 
+    /**
+     * Calls the server and requests the change history of an diagram
+     */
     historyButton.addEventListener('click', function () {
        var router = jsRoutes.controllers.BPMNDiagramController.getHistory(window.bpmn_id.toString());
         $debug("History Button clicked.");
@@ -352,7 +372,9 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
         })
     });
 
-
+    /**
+     * Sends a HTTP put request to the server in order to save the diagram version
+     */
     saveButton.addEventListener('click', function () {
         $debug("Save Button clicked.");
         //true if unsaved changes are present
@@ -389,8 +411,10 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
         }
     });
 
+    /**
+     * Calls  the bpmn.io save as svg method and invokes the browser download functionality
+     */
     svgDownload.addEventListener('click', function (event) {
-        //event.preventDefault();
         bpmnModeler.saveSVG({},function(err,svg){
             if (err) {
                 $debug(err);
@@ -399,12 +423,15 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
             var link = document.createElement('a');
             link.download = window.bpmn_id + '.svg';
             link.target = '_blank';
-            link.href = 'data:application/bpmn20-xml;charset:UFT-8,'+encodeURIComponent(svg)
+            link.href = 'data:application/bpmn20-xml;charset:UFT-8,'+encodeURIComponent(svg);
             link.click();
             $debug(svg);
         });
     });
 
+    /**
+     * Calls  the bpmn.io save as xml method and invokes the browser download functionality
+     */
     xmlDownload.addEventListener('click', function (event) {
         //event.preventDefault();
         bpmnModeler.saveXML({format: true},function(err,xml){
@@ -415,12 +442,16 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
             var link = document.createElement('a');
             link.download = window.bpmn_id + '.bpmn';
             link.target = '_blank';
-            link.href = 'data:application/bpmn20-xml;charset:UFT-8,'+encodeURIComponent(xml)
+            link.href = 'data:application/bpmn20-xml;charset:UFT-8,'+encodeURIComponent(xml);
             link.click();
             $debug(xml);
         });
     });
 
+    /**
+     * Selector shorthands
+     * @type {Element}
+     */
     const xmlUpload = document.querySelector('#xml-upload');
     const xmlFile = document.querySelector('#xml-file');
     const xmlUploadForm = document.querySelector('#xml-upload-form');
@@ -448,6 +479,9 @@ var bpmnModelerModule = (function (BpmnModeler, $) {
 
     });
 
+    /**
+     * Enables xml upload of local bpmn diagrams
+     */
     xmlUpload.addEventListener('click',function (e) {
         xmlFile.click();
         $debug();
