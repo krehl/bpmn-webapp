@@ -11,7 +11,7 @@ import scala.concurrent.Future
 /**
   * Controller that manages the diagram repository
   *
-  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/17/2016
+  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 30/7/2016
   */
 class RepositoryController(implicit inj: Injector) extends ApplicationController {
   val diagramDAO = inject[BPMNDiagramDAO]

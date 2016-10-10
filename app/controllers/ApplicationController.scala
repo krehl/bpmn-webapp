@@ -18,7 +18,7 @@ import scala.concurrent.Future
   * Base Controller class
   *
   * @param inj scaldi injector
-  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 15/07/2016
+  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 23/07/2016
   */
 class ApplicationController(implicit inj: Injector) extends Controller
   with Injectable

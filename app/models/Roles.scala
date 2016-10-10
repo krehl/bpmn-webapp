@@ -10,7 +10,7 @@ import scala.concurrent.Future
 /**
   * Singleton objects that describe different authorization levels of users
   *
-  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/18/2016
+  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 8/8/2016
   */
 sealed case class Role(subSet: Set[Role])
 

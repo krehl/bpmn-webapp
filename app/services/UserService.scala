@@ -11,7 +11,7 @@ import scala.concurrent.Future
 /**
   * Service that is required by Silhouette, acts as a layer between DAO and Controller
   *
-  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/4/2016
+  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/28/2016
   */
 sealed trait UserService extends IdentityService[User] {
   override def retrieve(loginInfo: LoginInfo): Future[Option[User]]
