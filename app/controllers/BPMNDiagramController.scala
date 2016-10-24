@@ -18,7 +18,7 @@ import scala.concurrent.Future
   * also more fine grained methods.
   *
   * @param inj scaldi injector
-  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 4/08/2016
+  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 15/07/2016
   */
 class BPMNDiagramController(implicit inj: Injector) extends ApplicationController {
   val diagramDAO = inject[BPMNDiagramDAO]

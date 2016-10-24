@@ -21,7 +21,7 @@ import scala.concurrent.Future
   * @param id diagram id
   * @param inj scaldi injector
   *
-  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 30/7/2016
+  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/18/2016
   */
 case class DiagramAction(id: BSONObjectID)
                         (implicit inj: Injector)

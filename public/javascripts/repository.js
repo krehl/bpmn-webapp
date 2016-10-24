@@ -7,15 +7,13 @@
  * Input: JQuery instance
  *
  */
-
-
 var repository = (function ($) {
 
     //debug function to not fill the entire console in production mode
     var debug = true;
     var $debug = function (message) {
         if (debug) console.log(message);
-    }
+    };
 
     if(undefined === $('#repository')[0]) return; //if there is no repository element, stop
 
@@ -51,10 +49,14 @@ var repository = (function ($) {
 
     Vue.component('profile', profileComponent); //registers the component to be used subsequently
 
+    /**
+     * Vue component that manges the diagram repository
+     * @type {any}
+     */
     repoVue = new Vue({
         el: '#app-repo',
         data: {
-            diagrams: [],
+            diagrams: []
         },
         created: function(){
             $this = this;

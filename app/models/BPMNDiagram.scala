@@ -18,7 +18,7 @@ import scala.xml.{NodeSeq, XML}
   * This object is a domain level object and represents a BPMNDiagram. It also encapsulates injected
   * database methods
   *
-  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/29/2016
+  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/11/2016
   */
 class BPMNDiagram(private val data: BPMNDiagram.Data)(implicit inj: Injector) extends Injectable {
   val bpmnDiagramDAO = inject[BPMNDiagramDAO]

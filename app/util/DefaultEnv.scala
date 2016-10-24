@@ -7,7 +7,7 @@ import models.User
 /**
   * Silhouette environment that defines the user class as well as the authentication method.
   *
-  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/28/2016
+  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/5/2016
   */
 trait DefaultEnv extends Env {
   type I = User
