@@ -14,7 +14,7 @@ import scala.concurrent.Future
   * @param permission permission type that should be checked for authorization (edit, view or owns)
   * @param inj scaldi injector
   *
-  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/19/2016
+  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/30/2016
   */
 case class DiagramPermissionAction(permission: Permission)
                                   (implicit inj: Injector)

@@ -29,7 +29,7 @@ import scala.language.postfixOps
 /**
   * Defines dependency injection wiring for the silhouette library
   *
-  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/4/2016
+  * @author A. Roberto Fischer <a.robertofischer@gmail.com> on 7/28/2016
   */
 class SilhouetteModule extends Module {
   // DATA STORE BINDINGS
